@@ -35,14 +35,14 @@ import {
 const hostieWechatyOptions: WechatyOptions = {
   puppet: 'wechaty-puppet-hostie',
   puppetOptions: {
-    token: 'hostie-secret'
+    token: 'hostie-token'
   }
 }
 
 const padplusWechatyOptions: WechatyOptions = {
   puppet: 'wechaty-puppet-padplus',
   puppetOptions: {
-    token: 'padplus-secret'
+    token: 'padplus-token'
   }
 }
 
@@ -60,7 +60,7 @@ haWechaty.start()
 
 ### 1 `HA_WECHATY_PUPPET`
 
-The wechaty puppet list, seprated by `:`.
+The wechaty puppet list, seprated by a colon (`:`).
 
 Examples:
 
@@ -74,18 +74,18 @@ The `${PROTOCOL}` could be the puppet name that the Wechaty supported.
 
 For example:
 
-| Puppet Provider | Protocol | HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN |
-| :--- | :--- |
+| Puppet Provider | ${PROTOCOL} | HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN |
+| :--- | :--- | :--- |
 | wechaty-puppet-hostie  | hostie     | HA_WECHATY_PUPPET_HOSTIE_TOKEN |
 | wechaty-puppet-padplus | padplus    | HA_WECHATY_PUPPET_PADPLUS_TOKEN |
 | wechaty-puppet-hostie  | puppeteer  | HA_WECHATY_PUPPET_PUPPETEER_TOKEN |
 
 The token set to this environment variable will become the default value of `puppetOptions.token` when instanciating Wechaty.
 
-To specify more tokens for a specific puppet, use `:` to seprate them, for example:
+To specify more tokens for a specific puppet, use a colon (`:`) to seprate them, for example:
 
 ```sh
-export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_secret_1:hostie_secret_2
+export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_token_1:hostie_token_2
 ```
 
 ## History
