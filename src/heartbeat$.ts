@@ -124,9 +124,12 @@ export const heartbeat$ = (wechatyList: Wechaty[]) => {
       .join(','),
   )
   return merge(
-    wechatyList.map(wechaty => merge(
-      heartbeatDing$(wechaty),
-      heartbeatTimeout$(wechaty),
-    )),
+    wechatyList.map(wechaty => {
+      availableState[wechaty.id] = true // init the available state at beginning
+      return merge(
+        heartbeatDing$(wechaty),
+        heartbeatTimeout$(wechaty),
+      )
+    }),
   )
 }
