@@ -24,9 +24,9 @@ import {
 }                   from './heartbeat$'
 
 export interface HAWechatyOptions {
-  name?              : string,
-  memory?            : MemoryCard,
-  wechatyOptionsList : WechatyOptions[],
+  name?               : string,
+  memory?             : MemoryCard,
+  wechatyOptionsList? : WechatyOptions[],
 }
 
 export class HAWechaty {
@@ -94,9 +94,7 @@ export class HAWechaty {
   }
 
   constructor (
-    public options: HAWechatyOptions = {
-      wechatyOptionsList: [],
-    },
+    public options: HAWechatyOptions = {},
   ) {
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
     this.wechatyList = []

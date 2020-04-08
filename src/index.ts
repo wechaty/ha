@@ -1,3 +1,5 @@
+export * from 'wechaty'
+
 export {
   log,
   VERSION,
