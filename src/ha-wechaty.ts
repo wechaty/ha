@@ -178,14 +178,6 @@ export class HAWechaty {
         throw new Error('no wechaty puppet found')
       }
 
-      log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
-
-      await Promise.all(
-        this.wechatyList.map(
-          wechaty => wechaty.start()
-        )
-      )
-
       this.heartbeatSub = heartbeat$(this.wechatyList).subscribe(
         x => {
           log.verbose('HAWechaty', 'start() heartbeat$() next: %s', x)
@@ -193,6 +185,16 @@ export class HAWechaty {
         },
         e => log.error('HAWechaty', 'start() heartbeat$(%s) error: %s', e),
         () => log.verbose('HAWechaty', 'start() heartbeat$() complete'),
+      )
+
+      log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
+      await Promise.all(
+        this.wechatyList.map(
+          wechaty => {
+            availableState[wechaty.id] = true
+            return wechaty.start()
+          }
+        )
       )
 
       this.state.on(true)
