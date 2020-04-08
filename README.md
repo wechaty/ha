@@ -12,15 +12,39 @@ HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot 
 
 One two three, chatbots team up!
 
-## The Problem
+## Background
+
+### The Problem of Single Point Of Failure (SPOF)
 
 Currently we have only one bot on WeChat, which means that if the bot was offline, then our service will be stopped.
 
-## The Solution
+### The Solution for Single Point Of Failure (SPOF)
 
 Use two (3 or even 4 will be better) WeChat bot at the same time, with the different wechaty-puppet providers (for example: padplus + windows).
 
 So when an issue event has come, we can use a RR (round robin) or other very easy to implementing algorithm to make our service both load-balancable and high-available.
+
+### The Problem of Heartbeat (HB)
+
+When a Wechaty bot is started and logged in, it is mostly liked to be work as expected for sending/receiving messages.
+
+However, sometimes it might run into trouble for some unknown reason, which caused it can not work anymore, but we have nothing to know about that.
+
+In order to check whether a Wechaty bot is available, we need to take a test on it to see if it can send & receive the message successfully.
+
+How can archive that? It is not a good idea if we send a message to another Wechaty bot because it is not stable enough for this kind of online service.
+
+### The Solution for Heartbeat (HB)
+
+We can set up an Official Account for WeChat, with an auto-responding strategy that will reply a `dong` when it receives a `ding`.
+
+So we let our Chatie Official Account takes the responsibility to provide this service.
+
+## HAProxy Requirement
+
+![QR Code for ChatieIO WeChat Official Account](docs/images/qrcode_for_gh_051c89260e5d_258.jpg)
+
+If you want to use HAProxy, please make sure every bot account has followed the `ChatieIO` WeChat Official Account by scanning the above QR Code.
 
 ## Usage
 
