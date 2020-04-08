@@ -47,6 +47,7 @@ const padplusWechatyOptions: WechatyOptions = {
 }
 
 const haWechaty = new HAWechaty({
+  name: 'high-available-wechaty',
   wechatyOptionsList: [
     hostieWechathyOptions,
     padplusWechatyOptions,
@@ -76,9 +77,9 @@ For example:
 
 | Puppet Provider | ${PROTOCOL} | HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN |
 | :--- | :--- | :--- |
-| wechaty-puppet-hostie  | hostie     | HA_WECHATY_PUPPET_HOSTIE_TOKEN |
-| wechaty-puppet-padplus | padplus    | HA_WECHATY_PUPPET_PADPLUS_TOKEN |
-| wechaty-puppet-hostie  | puppeteer  | HA_WECHATY_PUPPET_PUPPETEER_TOKEN |
+| wechaty-puppet-hostie  | hostie  | HA_WECHATY_PUPPET_HOSTIE_TOKEN |
+| wechaty-puppet-padplus | padplus | HA_WECHATY_PUPPET_PADPLUS_TOKEN |
+| wechaty-puppet-macpro  | macpro  | HA_WECHATY_PUPPET_MACPRO_TOKEN |
 
 The token set to this environment variable will become the default value of `puppetOptions.token` when instanciating Wechaty.
 
@@ -94,9 +95,16 @@ export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_token_1:hostie_token_2
 
 ### v0.0.1 (Apr 2020)
 
-This module was design for the project [OSSChat](https://github.com/kaiyuanshe/osschat) [#58](https://github.com/kaiyuanshe/osschat/issues/58)
+This module was originally design for the project [OSSChat](https://github.com/kaiyuanshe/osschat) [#58](https://github.com/kaiyuanshe/osschat/issues/58)
 
 1. Publish the NPM module [ha-wechaty](https://www.npmjs.com/package/ha-wechaty)
+
+## Links
+
+1. [RxJS recipes: ‘forkJoin’ with the progress of completion for bulk network requests in Angular](https://indepth.dev/forkjoin-with-the-progress-of-completion-for-bulk-network-requests-in-angular/)
+1. [Handle multiple API requests in Angular using mergeMap and forkJoin to avoid nested subscriptions](https://levelup.gitconnected.com/handle-multiple-api-requests-in-angular-using-mergemap-and-forkjoin-to-avoid-nested-subscriptions-a20fb5040d0c)
+1. [Googl Cloud - Truncated exponential backoff](https://cloud.google.com/storage/docs/exponential-backoff)
+1. [Power of RxJS when using exponential backoff](https://medium.com/angular-in-depth/power-of-rxjs-when-using-exponential-backoff-a4b8bde276b0)
 
 ## Author
 
