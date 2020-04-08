@@ -9,6 +9,7 @@ import {
   debounce,
   takeUntil,
   tap,
+  repeat,
 }               from 'rxjs/operators'
 
 import {
@@ -48,7 +49,7 @@ const notSelf     = (message: Message) => !message.self()
 const chatieOA = (wechaty: Wechaty): Contact => {
   const contact = wechaty.Contact.load(CHATIE_OA_ID)
   contact.ready().catch(e => {
-    log.error('heartbeat$', 'chatie(%s) contact.ready() rejection: %s', wechaty, e)
+    log.error('HAWechaty', 'heartbeat$ chatie(%s) contact.ready() rejection: %s', wechaty, e)
     const error = new Error(`
 
     In order to use HAWechaty, we need to follow WeChat Official Account "chatieio" first.
@@ -64,9 +65,9 @@ const chatieOA = (wechaty: Wechaty): Contact => {
  * Actions
  */
 const dingChatie = (wechaty: Wechaty) => () => chatieOA(wechaty).say(DING)
-  .catch(e => log.error('heartbeat$', 'dingChatie() say() rejection: %s', e))
+  .catch(e => log.error('HAWechaty', 'heartbeat$() dingChatie() say() rejection: %s', e))
 const unAvailable = (wechaty: Wechaty) => () => {
-  log.warn('heartbeat$', 'unAvailable(%s)', wechaty)
+  log.warn('HAWechaty', 'heartbeat$() unAvailable(%s)', wechaty)
   availableState[wechaty.id] = false
 }
 const available = (wechaty: Wechaty) => () => (availableState[wechaty.id] = true)
@@ -91,7 +92,7 @@ const messageChatieDong$ = (wechaty: Wechaty) => message$(wechaty).pipe(
 // Heartbeat stream is like ECG (ElectroCardioGraphy)
 const switchOnHeartbeat$ = (wechaty: Wechaty) => switchOn$(wechaty).pipe(
   filter(switchSuccess),
-  tap(_ => log.verbose('heartbeat$', 'switchOnHeartbeat$() switchOn$ fired')),
+  tap(_ => log.verbose('HAWechaty', 'heartbeat$() switchOnHeartbeat$() switchOn$ fired')),
   switchMap(_ => message$(wechaty).pipe(
     tap(message => log.verbose('heartbeat$', 'switchOnHeartbeat$() message$(): %s', message)),
   ))
@@ -100,12 +101,13 @@ const switchOnHeartbeat$ = (wechaty: Wechaty) => switchOn$(wechaty).pipe(
 // Ding is like CPR (Cardio Pulmonary Resuscitation)
 export const heartbeatDing$ = (wechaty: Wechaty) => switchOnHeartbeat$(wechaty).pipe(
   debounce(() => interval(16 * 1000)),
-  tap(_ => log.verbose('heartbeat$', 'heartbeatDing$() no heartbeat after 16s')),
+  tap(_ => log.verbose('HAWechaty', 'heartbeat$() heartbeatDing$() no heartbeat after 16s')),
   switchMap(_ => interval(16 * 1000).pipe(
     tap(dingChatie(wechaty)),
     takeUntil(messageChatieDong$(wechaty)),
-    takeUntil(switchOff$(wechaty)), // HAWechaty can do this.
-  ))
+  )),
+  repeat(),
+  takeUntil(switchOff$(wechaty)), // HAWechaty can do this.
 )
 
 // Reset is like AED (Automated External Defibrillator)
