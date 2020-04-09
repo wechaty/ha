@@ -14,17 +14,26 @@ One two three, chatbots team up!
 
 ## Background
 
-### The Problem of Single Point Of Failure (SPOF)
+We have serval issues when we providing a Chatbot service, like:
+
+1. Single Point Of Failure (SPOF)
+1. Heartbeat Network
+
+### 1 Single Point Of Failure (SPOF)
+
+#### The Problem
 
 Currently we have only one bot on WeChat, which means that if the bot was offline, then our service will be stopped.
 
-### The Solution for Single Point Of Failure (SPOF)
+#### The Solution
 
 Use two (3 or even 4 will be better) WeChat bot at the same time, with the different wechaty-puppet providers (for example: padplus + windows).
 
 So when an issue event has come, we can use a RR (round robin) or other very easy to implementing algorithm to make our service both load-balancable and high-available.
 
-### The Problem of Heartbeat (HB)
+### 2 Heartbeat Network
+
+#### The Problem
 
 When a Wechaty bot is started and logged in, it is mostly liked to be work as expected for sending/receiving messages.
 
@@ -34,7 +43,7 @@ In order to check whether a Wechaty bot is available, we need to take a test on 
 
 How can archive that? It is not a good idea if we send a message to another Wechaty bot because it is not stable enough for this kind of online service.
 
-### The Solution for Heartbeat (HB)
+#### The Solution
 
 We can set up an Official Account for WeChat, with an auto-responding strategy that will reply a `dong` when it receives a `ding`.
 
