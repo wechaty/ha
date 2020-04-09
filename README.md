@@ -17,7 +17,7 @@ One two three, chatbots team up!
 We have serval issues when we providing a Chatbot service, like:
 
 1. Single Point Of Failure (SPOF)
-1. Heartbeat Network
+1. Heartbeat & Keepalive
 
 ### 1 Single Point Of Failure (SPOF)
 
@@ -31,7 +31,10 @@ Use two (3 or even 4 will be better) WeChat bot at the same time, with the diffe
 
 So when an issue event has come, we can use a RR (round robin) or other very easy to implementing algorithm to make our service both load-balancable and high-available.
 
-### 2 Heartbeat Network
+### 2 Heartbeat and Keepalive
+
+1. [Heartbeat](https://en.wikipedia.org/wiki/Heartbeat_(computing))
+1. [Keepalive](https://en.wikipedia.org/wiki/Keepalive)
 
 #### The Problem
 
