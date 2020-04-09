@@ -180,7 +180,7 @@ export class HAWechaty {
 
       this.heartbeatSub = heartbeat$(this.wechatyList).subscribe(
         x => {
-          log.verbose('HAWechaty', 'start() heartbeat$() next: %s', x)
+          log.verbose('HAWechaty', 'start() heartbeat$() next: %s', JSON.stringify(x))
           log.verbose('HAWechaty', 'start() heartbeat$() availableState: "%s"', JSON.stringify(availableState))
         },
         e => log.error('HAWechaty', 'start() heartbeat$(%s) error: %s', e),
