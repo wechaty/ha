@@ -90,7 +90,7 @@ const haWechaty = new HAWechaty({
   ]
 })
 
-haWechaty.start()
+await haWechaty.start()
 ```
 
 ## Environment Variables
