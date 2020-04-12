@@ -22,55 +22,55 @@ import {
   log,
 }             from './config'
 
-const CHATIE_OA_ID = 'gh_051c89260e5d'  // chatieio official account
-const DING = 'ding'
-const DONG = 'dong'
+// export const CHATIE_OA_ID = 'gh_051c89260e5d'  // chatieio official account
+// export const DING = 'ding'
+// export const DONG = 'dong'
 
 /**
  * State
  */
-export const availableState: {
-  [wechatyId: string]: boolean
-} = {}
+// export const availableState: {
+//   [wechatyId: string]: boolean
+// } = {}
 
 /**
  * Filters
  */
-const switchSuccess = (status: true | 'pending') => status === true
+// export const switchSuccess = (status: true | 'pending') => status === true
 
-const isChatieOA  = (message: Message) => message.from()!.id === CHATIE_OA_ID
-const isDong      = (message: Message) => message.text() === DONG
+// export const isChatieOA  = (message: Message) => message.from()!.id === CHATIE_OA_ID
+// export const isDong      = (message: Message) => message.text() === DONG
 
-const notSelf     = (message: Message) => !message.self()
+// const notSelf = (message: Message) => !message.self()
 
 /**
  * Mappers
  */
-const chatieOA = (wechaty: Wechaty): Contact => {
-  const contact = wechaty.Contact.load(CHATIE_OA_ID)
-  contact.ready().catch(e => {
-    log.error('HAWechaty', 'heartbeat$ chatie(%s) contact.ready() rejection: %s', wechaty, e)
-    const error = new Error(`
+// const chatieOA = (wechaty: Wechaty): Contact => {
+//   const contact = wechaty.Contact.load(CHATIE_OA_ID)
+//   contact.ready().catch(e => {
+//     log.error('HAWechaty', 'heartbeat$ chatie(%s) contact.ready() rejection: %s', wechaty, e)
+//     const error = new Error(`
 
-    In order to use HAWechaty, we need to follow WeChat Official Account "chatieio" first.
-    See #1: https://github.com/wechaty/HAWechaty/issues/1
+//     In order to use HAWechaty, we need to follow WeChat Official Account "chatieio" first.
+//     See #1: https://github.com/wechaty/HAWechaty/issues/1
 
-    `)
-    wechaty.emit('error', error)
-  })
-  return contact
-}
+//     `)
+//     wechaty.emit('error', error)
+//   })
+//   return contact
+// }
 
 /**
  * Actions
  */
-const dingChatie = (wechaty: Wechaty) => () => chatieOA(wechaty).say(DING)
-  .catch(e => log.error('HAWechaty', 'heartbeat$() dingChatie() say() rejection: %s', e))
-const unAvailable = (wechaty: Wechaty) => () => {
-  log.warn('HAWechaty', 'heartbeat$() unAvailable(%s)', wechaty)
-  availableState[wechaty.id] = false
-}
-const available = (wechaty: Wechaty) => () => (availableState[wechaty.id] = true)
+// const dingChatie = (wechaty: Wechaty) => () => chatieOA(wechaty).say(DING)
+//   .catch(e => log.error('HAWechaty', 'heartbeat$() dingChatie() say() rejection: %s', e))
+// const unAvailable = (wechaty: Wechaty) => () => {
+//   log.warn('HAWechaty', 'heartbeat$() unAvailable(%s)', wechaty)
+//   availableState[wechaty.id] = false
+// }
+// const available = (wechaty: Wechaty) => () => (availableState[wechaty.id] = true)
 
 /**
  * Observables
