@@ -14,6 +14,8 @@ One two three, chatbots team up!
 
 ## Background
 
+How to delivering high levels of [SLA uptime](https://www.vxchnge.com/blog/uptime-statistics-impact-business)?
+
 ### The Problem of Single Point Of Failure (SPOF)
 
 Currently we have only one bot on WeChat, which means that if the bot was offline, then our service will be stopped.
@@ -129,6 +131,12 @@ This module was originally design for the project [OSSChat](https://github.com/k
 1. [Handle multiple API requests in Angular using mergeMap and forkJoin to avoid nested subscriptions](https://levelup.gitconnected.com/handle-multiple-api-requests-in-angular-using-mergemap-and-forkjoin-to-avoid-nested-subscriptions-a20fb5040d0c)
 1. [Googl Cloud - Truncated exponential backoff](https://cloud.google.com/storage/docs/exponential-backoff)
 1. [Power of RxJS when using exponential backoff](https://medium.com/angular-in-depth/power-of-rxjs-when-using-exponential-backoff-a4b8bde276b0)
+1. [A better approach for testing your Redux code](https://blog.henriquebarcelos.dev/a-better-approach-for-testing-your-redux-code-ck3dnpqnu00uro4s178b8aw3e)
+1. [Redux Best Practices](https://medium.com/@kylpo/redux-best-practices-eef55a20cc72#.e8gil0ncl)
+1. [Marble testing with RxJS testing utils - You don’t need a third-party library for marble testing](https://medium.com/@kevinkreuzer/marble-testing-with-rxjs-testing-utils-3ae36ac3346a)
+1. [Testing RxJS Code with Marble Diagrams](https://github.com/ReactiveX/rxjs/blob/6.5.4/docs_app/content/guide/testing/marble-testing.md)
+1. [Typesafe utilities for "action-creators" in Redux / Flux Architecture](https://github.com/piotrwitek/typesafe-actions)
+1. [createAsyncEpic - Generic redux-observable factory handling async-actions - #162](https://github.com/piotrwitek/typesafe-actions/issues/162)
 
 ## Author
 

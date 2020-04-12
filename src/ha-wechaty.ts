@@ -31,6 +31,7 @@ export interface HAWechatyOptions {
 
 export class HAWechaty {
 
+  public id: string
   public state: StateSwitch
 
   public wechatyList: Wechaty[]
@@ -97,6 +98,7 @@ export class HAWechaty {
     public options: HAWechatyOptions = {},
   ) {
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
+    this.id = cuid()
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
