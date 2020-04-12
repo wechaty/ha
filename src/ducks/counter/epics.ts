@@ -23,4 +23,3 @@
 //   mapTo({ type: 'PONG' })
 //   tap(_ => console.info('state$.value', state$.value))
 // )
-

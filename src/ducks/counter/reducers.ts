@@ -7,10 +7,10 @@ import { createReducer } from 'typesafe-actions'
 import * as types from './types'
 import * as actions from './actions'
 
-const initialState = {
+const initialState: types.State = {
   mo: 0,
   mt: 0,
-} as types.State
+}
 
 // using action-creators
 const counterReducer = createReducer(initialState)
