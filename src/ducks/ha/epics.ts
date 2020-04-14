@@ -21,6 +21,7 @@ import {
   from,
 }                 from 'rxjs'
 import {
+  take,
   catchError,
   filter,
   map,
@@ -33,7 +34,6 @@ import {
 }                   from 'rxjs/operators'
 
 import {
-  CHATIE_OA_ID,
   DING,
   DONG,
 }                 from '../../config'
@@ -44,19 +44,22 @@ import {
 
 import {
   wechatyActions,
-  wechatyOperations,
 }                     from '../wechaty'
 
 import * as actions     from './actions'
 import * as operations  from './operations'
 
+import {
+  aroundSeconds,
+}                     from './utils'
+
 const ASYNC_TIMEOUT_SECONDS = 15
+const DING_WAIT_SECONDS     = 60
+const RESET_WAIT_SECONDS    = 300
 
-const isFromOf = (contact: Contact) => (action: PayloadMessage) => action.payload.message.from()!.id === contact.id
-
-const dongWorkerEpic: RootEpic = action$ => action$.pipe(
+const dongEmitterEpic: RootEpic = action$ => action$.pipe(
   filter(isActionOf(wechatyActions.messageEvent)),
-  filter(isTextOf(DONG)),
+  filter(operations.isTextOf(DONG)),
   map(action => actions.dongHA(action.payload.message)),
 )
 
@@ -66,40 +69,14 @@ const dingHAAsyncEpic: RootEpic = action$ => action$.pipe(
   mergeMap(action => from(action.payload.contact.say(DING)).pipe(
     mergeMap(_ => action$.pipe(
       filter(isActionOf(actions.dongHA)),
-      filter(isFromOf(action.payload.contact)),
+      take(1),
+      filter(operations.isFromOf(action.payload.contact)),
       mapTo(actions.dingHAAsync.success(action.payload)),
     )),
     timeout(aroundSeconds(ASYNC_TIMEOUT_SECONDS)),
     catchError(err => of(actions.dingHAAsync.failure(err))),
   ))
 )
-
-const isTextOf = (text: string) => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.text() === text
-
-type PayloadWechaty = { payload: { wechaty: Wechaty } }
-type PayloadMessage = { payload: { message: Message } }
-
-const toWechaty   =                       (action: PayloadWechaty) => action.payload.wechaty
-const isMessageOf = (wechaty: Wechaty) => (action: PayloadMessage) => action.payload.message.wechaty.id === wechaty.id
-
-const DING_WAIT_SECONDS = 60
-const RESET_WAIT_SECONDS = 300
-
-/**
- * Increase or Decrease a random time on the target seconds
- * based on the `factor`
- * @param seconds base number of target seconds
- */
-const aroundSeconds = (seconds: number) => {
-  const factor = 1 / 7
-  const ms = seconds * 1000
-
-  const base = ms * (1 - factor)
-  const vari = ms * factor * 2 * Math.random()
-
-  const finalTime = base + Math.round(vari)
-  return finalTime
-}
 
 const takeUntilRecover = <T extends RootAction>(action$: ActionsObservable<T>) => takeUntil<T>(
   merge(
@@ -108,35 +85,35 @@ const takeUntilRecover = <T extends RootAction>(action$: ActionsObservable<T>) =
   )
 )
 
-const resetMonitorEpic: RootEpic = (action$) => action$.pipe(
+const resetEmitterEpic: RootEpic = (action$) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
-  map(toWechaty),
+  map(operations.toWechaty),
   switchMap(wechaty => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    filter(isMessageOf(wechaty)),
+    filter(operations.isMessageOf(wechaty)),
 
     throttle(() => interval(aroundSeconds(RESET_WAIT_SECONDS))),
     switchMap(action => interval(aroundSeconds(RESET_WAIT_SECONDS)).pipe(
       mapTo(wechatyActions.resetAsync.request({
-        data: 'RxJS',
-        wechaty: action.payload.message.wechaty,
+        data    : 'HAWechaty/ha/epics/resetEmitterEpic(action)',
+        wechaty : action.payload.message.wechaty,
       })),
       takeUntilRecover(action$),
     )),
   )),
 )
 
-const dingMonitorEpic: RootEpic = (action$) => action$.pipe(
+const dingEmitterEpic: RootEpic = (action$) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
-  map(toWechaty),
+  map(operations.toWechaty),
   switchMap(wechaty => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    filter(isMessageOf(wechaty)),
+    filter(operations.isMessageOf(wechaty)),
 
     throttle(() => interval(aroundSeconds(DING_WAIT_SECONDS))),
     switchMap(action => interval(aroundSeconds(DING_WAIT_SECONDS)).pipe(
       mapTo(actions.dingHAAsync.request({
-        contact: action.payload.message.wechaty.Contact.load(CHATIE_OA_ID),
+        contact: operations.toChatieOA(action.payload.message.wechaty),
       })),
     )),
     takeUntilRecover(action$),
@@ -144,8 +121,8 @@ const dingMonitorEpic: RootEpic = (action$) => action$.pipe(
 )
 
 export default combineEpics(
-  dingMonitorEpic,
-  resetMonitorEpic,
-  dongWorkerEpic,
+  dingEmitterEpic,
+  resetEmitterEpic,
+  dongEmitterEpic,
   dingHAAsyncEpic,
 )

@@ -17,12 +17,18 @@ import {
 
 // import * as actions from './actions'
 
-export const isSwitchSuccess = (action: ReturnType<typeof wechatyActions (status: true | 'pending') => status === true
+type PayloadWechaty = { payload: { wechaty: Wechaty } }
+type PayloadMessage = { payload: { message: Message } }
 
-export const isChatieOA  = (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.from()!.id === CHATIE_OA_ID
-export const isDong      = (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.text() === DONG
+export const isFromOf    = (contact: Contact) => (action: PayloadMessage) => action.payload.message.from()!.id === contact.id
+export const isMessageOf = (wechaty: Wechaty) => (action: PayloadMessage) => action.payload.message.wechaty.id === wechaty.id
+export const isTextOf    = (text: string)     => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.text() === text
+export const toWechaty   =                       (action: PayloadWechaty) => action.payload.wechaty
 
-export const isNotSelf = (message: Message) => !message.self()
+export const isChatieOA  = (action: ReturnType<typeof wechatyActions.messageEvent>) => isFromOf(toChatieOA(action.payload.message.wechaty))(action)
+export const isDong      = (action: ReturnType<typeof wechatyActions.messageEvent>) => isTextOf(DONG)(action)
+
+export const isNotSelf   = (message: Message) => !message.self()
 
 export const toChatieOA = (wechaty: Wechaty): Contact => {
   const contact = wechaty.Contact.load(CHATIE_OA_ID)
@@ -41,9 +47,3 @@ export const toChatieOA = (wechaty: Wechaty): Contact => {
 
 export const dingChatie = (wechaty: Wechaty) => () => toChatieOA(wechaty).say(DING)
   .catch(e => log.error('HAWechaty', 'heartbeat$() dingChatie() say() rejection: %s', e))
-
-export const setUnavailable = (wechaty: Wechaty) => () => {
-  log.verbose('HAWechaty', 'ducks/ha/operations setUnavailable(%s)', wechaty)
-  availableState[wechaty.id] = false
-}
-const available = (wechaty: Wechaty) => () => (availableState[wechaty.id] = true)

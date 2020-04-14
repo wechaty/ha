@@ -31,10 +31,8 @@ export const dongHA = createAction(types.HA_DONG, prepareMessage)()
 /**
  * Async
  */
-export interface PayloadContact { contact: Contact }
-
 export const dingHAAsync = createAsyncAction(
   types.HA_DING_REQUEST,
   types.HA_DING_SUCCESS,
   types.HA_DING_FAILURE,
-)<PayloadContact, PayloadContact, Error>()
+)<{ contact: Contact }, { contact: Contact }, Error>()
