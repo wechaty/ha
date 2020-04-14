@@ -1,46 +1,27 @@
-import {
-  createReducer,
-  Action,
-}                   from '@reduxjs/toolkit'
+import { createReducer } from 'typesafe-actions'
 
-import * as types from './types'
 import * as actions from './actions'
+import * as types   from './types'
 
 const initialState: types.State = {}
 
-const scanReducer = (state: types.State, action: Action) => {
-  if (actions.scanEvent.match(action)) {
-    return {
-      ...state,
-      [action.payload.wechaty.id]: {
-        qrcode: action.payload.qrcode,
-      },
-    }
-  }
-  return state
-}
-
-const loginReducer = (state: types.State, action: Action) => {
-  if (actions.loginEvent.match(action)) {
-    return {
-      ...state,
-      [action.payload.wechaty.id]: {
-        userName: action.payload.userName,
-      },
-    }
-  }
-  return state
-}
-
-const logoutReducer = (state: types.State, action: Action) => {
-  if (actions.logoutEvent.match(action)) {
-    return {
-      ...state,
-      [action.payload.wechaty.id]: {},
-    }
-  }
-  return state
-}
+const wechatyReducer = createReducer(initialState)
+  .handleAction(actions.scanEvent, (state, action) => ({
+    ...state,
+    [action.payload.wechaty.id]: {
+      qrcode: action.payload.qrcode,
+    },
+  }))
+  .handleAction(actions.loginEvent, (state, action) => ({
+    ...state,
+    [action.payload.wechaty.id]: {
+      userName: action.payload.userName,
+    },
+  }))
+  .handleAction(actions.logoutEvent, (state, action) => ({
+    ...state,
+    [action.payload.wechaty.id]: undefined,
+  }))
 
 /**
  * https://redux-toolkit.js.org/usage/usage-with-typescript#building-type-safe-reducer-argument-objects
@@ -59,14 +40,4 @@ const logoutReducer = (state: types.State, action: Action) => {
 //     })
 // )
 
-const logonoffReducer = createReducer(
-  initialState,
-  {
-    [types.EVENT_SCAN]    : scanReducer,
-    [types.EVENT_LOGIN]   : loginReducer,
-    [types.EVENT_LOGOUT]  : logoutReducer,
-    // [types.EVENT_MESSAGE] : messageReducer,
-  },
-)
-
-export default logonoffReducer
+export default wechatyReducer

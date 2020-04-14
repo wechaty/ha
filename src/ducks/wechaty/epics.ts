@@ -6,46 +6,27 @@ import {
 }                 from 'typesafe-actions'
 
 import {
-  ActionsObservable,
-  combineEpics,
-  ofType,
   Epic,
-  // StateObservable,
 }                     from 'redux-observable'
 
 import {
-  interval,
-  fromEvent,
   of,
-  merge as mergeFrom,
-  pipe,
   from,
 }                 from 'rxjs'
 import {
   catchError,
-  delay,
   filter,
   ignoreElements,
-  map,
   mapTo,
-  merge,
   mergeMap,
-  retryWhen,
-  repeat,
-  repeatWhen,
-  switchMap,
-  startWith,
-  takeUntil,
   tap,
-  throttle,
-  timeout,
 }                   from 'rxjs/operators'
 
-import {
-  Contact,
-  Message,
-  Wechaty,
-}             from 'wechaty'
+// import {
+//   Contact,
+//   Message,
+//   Wechaty,
+// }             from 'wechaty'
 
 import * as actions from './actions'
 

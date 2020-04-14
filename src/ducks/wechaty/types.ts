@@ -25,7 +25,7 @@ export const DING_SUCCESS = 'wechaty/DING_SUCCESS'
 export const DING_FAILURE = 'wechaty/DING_FAILURE'
 
 export type State = DeepReadonly<{
-  [wechatyId: string]: {  // wechaty id
+  [wechatyId: string]: undefined | {  // wechaty id
     qrcode?   : string,
     userName? : string,
   }
