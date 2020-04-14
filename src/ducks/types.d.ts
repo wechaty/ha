@@ -14,10 +14,6 @@ declare module 'typesafe-actions' {
 
   export type RootAction = ActionType<typeof import('./root-action').default>
 
-  // Huan(202004) FIXME:
-  // export type Services = typeof import('./index').default;
-  export type RootService = any
-
   interface Types {
     RootAction: RootAction
   }

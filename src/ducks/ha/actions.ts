@@ -26,11 +26,15 @@ export const recoverHA = createAction(types.HA_RECOVER, prepareHA)()
 export const failWechaty    = createAction(types.WECHATY_FAIL,    prepareWechaty)()
 export const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
 
+export const dongHA = createAction(types.HA_DONG, prepareMessage)()
+
 /**
  * Async
  */
-export const dingAsync = createAsyncAction(
+export interface PayloadContact { contact: Contact }
+
+export const dingHAAsync = createAsyncAction(
   types.HA_DING_REQUEST,
   types.HA_DING_SUCCESS,
   types.HA_DING_FAILURE,
-)<Contact, Contact, Error>()
+)<PayloadContact, PayloadContact, Error>()

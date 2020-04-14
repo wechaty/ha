@@ -12,12 +12,14 @@ export const WECHATY_RECOVER = 'HAWechaty/ha/WECHATY_RECOVER'
 export const HA_FAIL    = 'HAWechaty/ha/FAIL'
 export const HA_RECOVER = 'HAWechaty/ha/RESTORE'
 
+export const HA_DONG = 'HAWechaty/ha/DONG'
+
 /**
  * Async
  */
 export const HA_DING_REQUEST = 'HAWechaty/ha/DING_REQUEST'
 export const HA_DING_SUCCESS = 'HAWechaty/ha/DING_SUCCESS'
-export const HA_DING_FAILURE = 'HAWechaty/ha/DING_TIMEOUT'
+export const HA_DING_FAILURE = 'HAWechaty/ha/DING_FAILURE'
 
 export type State = DeepReadonly<{
   availability: {

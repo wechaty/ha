@@ -1,8 +1,6 @@
 import {
   isActionOf,
-  RootState,
   RootAction,
-  RootService,
 }                 from 'typesafe-actions'
 
 import {
@@ -14,42 +12,35 @@ import {
 import {
   ActionsObservable,
   combineEpics,
-  ofType,
-  Epic,
-  // StateObservable,
 }                     from 'redux-observable'
 
 import {
   interval,
-  fromEvent,
   of,
   merge,
-  pipe,
+  from,
 }                 from 'rxjs'
 import {
   catchError,
-  delay,
   filter,
-  ignoreElements,
   map,
   mapTo,
   mergeMap,
-  retryWhen,
-  repeat,
-  repeatWhen,
   switchMap,
-  startWith,
   takeUntil,
-  tap,
   throttle,
   timeout,
 }                   from 'rxjs/operators'
 
-import { HAWechaty } from '../../'
 import {
-  log,
   CHATIE_OA_ID,
+  DING,
+  DONG,
 }                 from '../../config'
+
+import {
+  RootEpic,
+}               from '../'
 
 import {
   wechatyActions,
@@ -59,146 +50,102 @@ import {
 import * as actions     from './actions'
 import * as operations  from './operations'
 
-type DucksEpic = Epic<
-  RootAction,
-  RootAction,
-  RootState,
-  RootService,
->
-type HADucksEpic = (ha: HAWechaty) => DucksEpic
+const ASYNC_TIMEOUT_SECONDS = 15
 
-const toHaDongAction = (action: ReturnType<typeof actions.message>) => actions.haDong(action.payload.message.wechaty.id)
+const isFromOf = (contact: Contact) => (action: PayloadMessage) => action.payload.message.from()!.id === contact.id
 
-const onMessageHaDongEpic = (
-  action$: ActionsObservable<Action>,
-) => action$.pipe(
-  filter(actions.message.match),
-  filter(isDong),
-  filter(isChatieOA),
-  map(toHaDongAction),
+const dongWorkerEpic: RootEpic = action$ => action$.pipe(
+  filter(isActionOf(wechatyActions.messageEvent)),
+  filter(isTextOf(DONG)),
+  map(action => actions.dongHA(action.payload.message)),
 )
 
-const sixtySecondsInterval = () => interval(60 * 1000)
-const fifteenSecondsInterval = () => interval(15 * 1000)
-const fifteenSecondsDelay = () => delay(15 * 1000)
-const sayDing = (contact: Contact) => contact.say('ding')
-
-const toChatieOA = (action: ReturnType<typeof actions.message>) => action.payload.message.wechaty.Contact.load(CHATIE_OA_ID)
-
-const onMessageEpic = (
-  action$: ActionsObservable<Action>,
-  // states$: StateObservable<types.State>,
-) => action$.pipe(
-  filter(actions.message.match),
-  throttle(sixtySecondsInterval),
-  mergeMap(action => fifteenSecondsInterval()
-    .pipe(
-      mapTo(action),
-      tap(sendHaDing),
-      mergeMap(recvHaDong),
-    )
-  )
+const dingHAAsyncEpic: RootEpic = action$ => action$.pipe(
+  filter(isActionOf(actions.dingHAAsync.request)),
+  // throttle(() => interval(1000)),  // execute every ding ha request
+  mergeMap(action => from(action.payload.contact.say(DING)).pipe(
+    mergeMap(_ => action$.pipe(
+      filter(isActionOf(actions.dongHA)),
+      filter(isFromOf(action.payload.contact)),
+      mapTo(actions.dingHAAsync.success(action.payload)),
+    )),
+    timeout(aroundSeconds(ASYNC_TIMEOUT_SECONDS)),
+    catchError(err => of(actions.dingHAAsync.failure(err))),
+  ))
 )
 
-const recvHaDong = (
-  action$: ActionsObservable<RootAction>,
-  // states$: StateObservable<types.State>,
-) => action$.pipe(
-  filter(actions.haDong.match),
-  mergeMap(action => of(action).pipe(
-    timeout(60 * 1000),
-    catchError(() => of(actions.haDingTimeout(action.payload))),
-    takeUntilDongOrOff(action$),
-  )),
-)
-
-
-function haDing (
-  this: HAWechaty,
-  action$: ActionsObservable<Action>,
-) {
-  action$.
-  this.wechatyList
-    .map(toChatieOA)
-    .forEach(sayDing)
-}
-
-const mock = {} as any
-
-const isMessageEvent = isActionOf(wechatyActions.messageEvent)
-const isDong = (action: ReturnType<typeof wechatyActions.messageEvent>) => /dong/i.test(action.payload.message.text())
-
-const dongEpic: HADucksEpic = (ha: HAWechaty) => (action$) => action$.pipe(
-  filter(isMessageEvent),
-  filter(isDong),
-  map(action => actions.dong(ha, action.payload.message))
-)
+const isTextOf = (text: string) => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.text() === text
 
 type PayloadWechaty = { payload: { wechaty: Wechaty } }
 type PayloadMessage = { payload: { message: Message } }
 
-const toWechaty =                                  (action: PayloadWechaty) => action.payload.wechaty
-const isMessageFromWechaty = (wechaty: Wechaty) => (action: PayloadMessage) => action.payload.message.wechaty.id === wechaty.id
-
-const dingTimeoutEpic: HADucksEpic = ha => action$ => action$.pipe(
-  filter(isActionOf(wechatyActions.loginEvent)),
-  map(toWechaty),
-  switchMap(wechaty => action$.pipe(
-    filter(isActionOf(wechatyActions.messageEvent)),
-    tap(action => console.log(action)),
-    filter(isMessageFromWechaty(wechaty)),
-    // tap(action => console.log(action)),
-  )),
-  mapTo(wechatyActions.turnOnSwitch(true))
-  // map(action => action.type + '33'),
-  // switchMap(action => ),
-)
+const toWechaty   =                       (action: PayloadWechaty) => action.payload.wechaty
+const isMessageOf = (wechaty: Wechaty) => (action: PayloadMessage) => action.payload.message.wechaty.id === wechaty.id
 
 const DING_WAIT_SECONDS = 60
 const RESET_WAIT_SECONDS = 300
 
-const intervalAroundSeconds = (seconds: number) => {
-  const factor = 1 / 5
+/**
+ * Increase or Decrease a random time on the target seconds
+ * based on the `factor`
+ * @param seconds base number of target seconds
+ */
+const aroundSeconds = (seconds: number) => {
+  const factor = 1 / 7
   const ms = seconds * 1000
 
   const base = ms * (1 - factor)
   const vari = ms * factor * 2 * Math.random()
 
   const finalTime = base + Math.round(vari)
-  return interval(finalTime)
+  return finalTime
 }
 
-const takeUntilRecover = (action$: ActionsObservable<RootAction>) => takeUntil(
+const takeUntilRecover = <T extends RootAction>(action$: ActionsObservable<T>) => takeUntil<T>(
   merge(
     action$.pipe(filter(isActionOf(wechatyActions.messageEvent))),
     action$.pipe(filter(isActionOf(wechatyActions.logoutEvent))),
   )
 )
 
-const resetEpic: DucksEpic = (action$) => action$.pipe(
+const resetMonitorEpic: RootEpic = (action$) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
-
-  switchMap(_ => action$.pipe(
+  map(toWechaty),
+  switchMap(wechaty => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    throttle(() => intervalAroundSeconds(RESET_WAIT_SECONDS)),
-    switchMap(action => intervalAroundSeconds(RESET_WAIT_SECONDS).pipe(
-      mapTo(wechatyActions.reset(action.payload.message.wechaty, 'RxJS')),
+    filter(isMessageOf(wechaty)),
+
+    throttle(() => interval(aroundSeconds(RESET_WAIT_SECONDS))),
+    switchMap(action => interval(aroundSeconds(RESET_WAIT_SECONDS)).pipe(
+      mapTo(wechatyActions.resetAsync.request({
+        data: 'RxJS',
+        wechaty: action.payload.message.wechaty,
+      })),
+      takeUntilRecover(action$),
     )),
-    // takeUntilRecover(action$),
   )),
 )
 
-const dingEpic: DucksEpic = (action$) => action$.pipe(
+const dingMonitorEpic: RootEpic = (action$) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
-
-  switchMap(_ => action$.pipe(
+  map(toWechaty),
+  switchMap(wechaty => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    throttle(() => intervalAroundSeconds(DING_WAIT_SECONDS)),
-    switchMap(action => intervalAroundSeconds(DING_WAIT_SECONDS).pipe(
-      mapTo(actions.dingAsync.request(action.payload.message.wechaty.Contact.load(CHATIE_OA_ID)))),
+    filter(isMessageOf(wechaty)),
+
+    throttle(() => interval(aroundSeconds(DING_WAIT_SECONDS))),
+    switchMap(action => interval(aroundSeconds(DING_WAIT_SECONDS)).pipe(
+      mapTo(actions.dingHAAsync.request({
+        contact: action.payload.message.wechaty.Contact.load(CHATIE_OA_ID),
+      })),
     )),
     takeUntilRecover(action$),
   )),
 )
 
-export default resetEpic
+export default combineEpics(
+  dingMonitorEpic,
+  resetMonitorEpic,
+  dongWorkerEpic,
+  dingHAAsyncEpic,
+)

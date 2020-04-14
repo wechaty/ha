@@ -16,6 +16,7 @@ import {
 }                           from 'redux'
 import {
   createEpicMiddleware,
+  Epic,
 }                           from 'redux-observable'
 import {
   ActionType,
@@ -29,17 +30,15 @@ import rootAction   from './root-action'
 import rootReducer  from './root-reducer'
 import rootEpic     from './root-epic'
 
-export const fetchEmployees = createAsyncAction(
-  '@employees/FETCH_EMPLOYEES',
-  '@employees/FETCH_EMPLOYEES_SUCCESS',
-  '@employees/FETCH_EMPLOYEES_FAILURE',
-  '@employees/FETCH_EMPLOYEES_CANCEL',
-)<undefined, string[], Error>();
-
-fetchEmployees.cancel
-
-interface Services {}
+export interface Services {}
 const services = {} as Services
+
+export type RootEpic = Epic<
+  RootAction,
+  RootAction,
+  RootState,
+  Services,
+>
 
 /**
  * Store
