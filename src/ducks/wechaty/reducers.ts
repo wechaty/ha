@@ -1,11 +1,16 @@
 import { createReducer } from 'typesafe-actions'
+import { DeepReadonly } from 'utility-types'
 
-import * as actions from './actions'
-import * as types   from './types'
+import actions from './actions'
 
-const initialState: types.State = {}
+const initialState: DeepReadonly<{
+  [wechatyId: string]: undefined | {  // wechaty id
+    qrcode?   : string,
+    userName? : string,
+  }
+}> = {}
 
-const wechatyReducer = createReducer(initialState)
+const reducer = createReducer(initialState)
   .handleAction(actions.scanEvent, (state, action) => ({
     ...state,
     [action.payload.wechaty.id]: {
@@ -23,21 +28,5 @@ const wechatyReducer = createReducer(initialState)
     [action.payload.wechaty.id]: undefined,
   }))
 
-/**
- * https://redux-toolkit.js.org/usage/usage-with-typescript#building-type-safe-reducer-argument-objects
- */
-// const logonoffReducder = createReducer(0, builder =>
-//   builder
-//     .addCase(types.SCAN, (state, action) => {
-//       // action is inferred correctly here
-//       console.info(state, action.payload)
-//     })
-//     .addCase(types.LOGIN, (state, action) => {
-//       console.info(state, action)
-//     })
-//     .addCase(types.LOGOUT, (state, action) => {
-//       console.info(state, action)
-//     })
-// )
-
-export default wechatyReducer
+export default reducer
+export type State = ReturnType<typeof reducer>

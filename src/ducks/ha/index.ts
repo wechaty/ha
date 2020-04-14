@@ -1,16 +1,15 @@
-import haReducer from './reducers'
+import reducer  from './reducers'
 
-// export { default as haSelectors } from './selectors'
-// export { default as haOperations } from './operations'
-
-import * as haActions   from './actions'
-import * as haSelectors from './selectors'
-import * as haTypes     from './types'
+import epics     from './epics'
+import actions   from './actions'
+import selectors from './selectors'
+import types     from './types'
 
 export {
-  haActions,
-  haSelectors,
-  haTypes,
+  actions,
+  epics,
+  selectors,
+  types,
 }
 
-export default haReducer
+export default reducer

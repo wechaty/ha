@@ -3,7 +3,7 @@
  * based on the `factor`
  * @param seconds base number of target seconds
  */
-export const aroundSeconds = (seconds: number) => {
+const aroundSeconds = (seconds: number) => {
   const factor = 1 / 7
   const ms = seconds * 1000
 
@@ -12,4 +12,8 @@ export const aroundSeconds = (seconds: number) => {
 
   const finalTime = base + Math.round(vari)
   return finalTime
+}
+
+export default {
+  aroundSeconds,
 }

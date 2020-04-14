@@ -1,17 +1,13 @@
 import reducer from './reducers'
 
-// export { default as counterSelectors } from './selectors'
-// export { default as counterOperations } from './operations'
-
-import * as counterActions    from './actions'
-import * as counterTypes      from './types'
-import * as counterSelectors  from './selectors'
+import actions    from './actions'
+import types      from './types'
+import selectors  from './selectors'
 
 export {
-  counterActions,
-  // counterEpics,
-  counterSelectors,
-  counterTypes,
+  actions,
+  selectors,
+  types,
 }
 
 export default reducer

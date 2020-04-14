@@ -1,18 +1,17 @@
-import wechatyReducer from './reducers'
-// import wechatyEpic from './epics'
+import reducer from './reducers'
 
-import * as wechatyActions    from './actions'
-import * as wechatySelectors  from './selectors'
-import * as wechatyTypes      from './types'
-import * as wechatyOperations from './operations'
+import epics      from './epics'
+import actions    from './actions'
+import selectors  from './selectors'
+import types      from './types'
+import operations from './operations'
 
 export {
-  wechatyActions,
-  // wechatyEpic,
-  wechatyReducer,
-  wechatySelectors,
-  wechatyTypes,
-  wechatyOperations,
+  actions,
+  epics,
+  selectors,
+  types,
+  operations,
 }
 
-export default wechatyReducer
+export default reducer

@@ -1,11 +1,15 @@
-import * as types from './types'
+import { State } from './reducers'
 
-export function status (
-  state: types.State,
-  wechatyId: string,
+function status (
+  state     : State,
+  wechatyId : string,
 ) {
   if (wechatyId in state) {
     return state[wechatyId]
   }
   return {}
+}
+
+export default {
+  status,
 }

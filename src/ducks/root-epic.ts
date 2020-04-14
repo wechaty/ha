@@ -1,5 +1,9 @@
 import { combineEpics } from 'redux-observable'
 
-import * as haEpics from './ha/epics'
+import { epics as ha }       from './ha/'
+import { epics as wechaty }  from './wechaty/'
 
-export default combineEpics(...Object.values(haEpics))
+export default combineEpics(
+  ...Object.values(ha),
+  ...Object.values(wechaty),
+)

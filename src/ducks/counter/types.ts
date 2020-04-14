@@ -1,9 +1,7 @@
-import { DeepReadonly } from 'utility-types'
+const MESSAGE_MO = 'HAWechaty/counter/MESSAGE_MO'
+const MESSAGE_MT = 'HAWechaty/counter/MESSAGE_MT'
 
-export const MESSAGE_MO = 'HAWechaty/counter/MESSAGE_MO'
-export const MESSAGE_MT = 'HAWechaty/counter/MESSAGE_MT'
-
-export type State = DeepReadonly<{
-  mo: number,
-  mt: number,
-}>
+export default {
+  MESSAGE_MO,
+  MESSAGE_MT,
+}

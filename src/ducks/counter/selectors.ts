@@ -1,4 +1,9 @@
-import * as types from './types'
+import { State } from './reducers'
 
-export const getMO = (state: types.State) => state.mo
-export const getMT = (state: types.State) => state.mt
+const getMO = (state: State) => state.mo
+const getMT = (state: State) => state.mt
+
+export default {
+  getMO,
+  getMT,
+}

@@ -4,14 +4,7 @@ import {
 }                 from 'typesafe-actions'
 
 import {
-  Contact,
-  Message,
-  Wechaty,
-}             from 'wechaty'
-
-import {
   ActionsObservable,
-  combineEpics,
 }                     from 'redux-observable'
 
 import {
@@ -43,11 +36,11 @@ import {
 }               from '../'
 
 import {
-  wechatyActions,
-}                     from '../wechaty'
+  actions as wechatyActions,
+}                             from '../wechaty'
 
-import * as actions     from './actions'
-import * as operations  from './operations'
+import actions     from './actions'
+import operations  from './operations'
 
 import {
   aroundSeconds,
@@ -120,9 +113,9 @@ const dingEmitterEpic: RootEpic = (action$) => action$.pipe(
   )),
 )
 
-export default combineEpics(
+export default {
   dingEmitterEpic,
-  resetEmitterEpic,
-  dongEmitterEpic,
   dingHAAsyncEpic,
-)
+  dongEmitterEpic,
+  resetEmitterEpic,
+}

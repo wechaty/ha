@@ -1,37 +1,38 @@
-import { DeepReadonly } from 'utility-types'
-import { Wechaty }      from 'wechaty'
+const WECHATY_ADD = 'HAWechaty/ha/WECHATY_ADD'
+const WECHATY_DEL = 'HAWechaty/ha/WECHATY_DEL'
 
-import { HAWechaty } from '../../ha-wechaty'
+const WECHATY_FAIL    = 'HAWechaty/ha/WECHATY_FAIL'
+const WECHATY_RECOVER = 'HAWechaty/ha/WECHATY_RECOVER'
 
-export const WECHATY_ADD = 'HAWechaty/ha/WECHATY_ADD'
-export const WECHATY_DEL = 'HAWechaty/ha/WECHATY_DEL'
+const HA_FAIL    = 'HAWechaty/ha/FAIL'
+const HA_RECOVER = 'HAWechaty/ha/RESTORE'
 
-export const WECHATY_FAIL    = 'HAWechaty/ha/WECHATY_FAIL'
-export const WECHATY_RECOVER = 'HAWechaty/ha/WECHATY_RECOVER'
-
-export const HA_FAIL    = 'HAWechaty/ha/FAIL'
-export const HA_RECOVER = 'HAWechaty/ha/RESTORE'
-
-export const HA_DONG = 'HAWechaty/ha/DONG'
+const HA_DONG = 'HAWechaty/ha/DONG'
 
 /**
  * Async
  */
-export const HA_DING_REQUEST = 'HAWechaty/ha/DING_REQUEST'
-export const HA_DING_SUCCESS = 'HAWechaty/ha/DING_SUCCESS'
-export const HA_DING_FAILURE = 'HAWechaty/ha/DING_FAILURE'
+const HA_DING_REQUEST = 'HAWechaty/ha/DING_REQUEST'
+const HA_DING_SUCCESS = 'HAWechaty/ha/DING_SUCCESS'
+const HA_DING_FAILURE = 'HAWechaty/ha/DING_FAILURE'
 
-export type State = DeepReadonly<{
-  availability: {
-    [wechatyId: string]: undefined | boolean  // the wechaty available or not
-  }
-  cluster: {
-    [wechatyId: string]: undefined | string // wechatyId to haId
+export default {
+  WECHATY_ADD,
+  WECHATY_DEL,
+
+  WECHATY_FAIL,
+  WECHATY_RECOVER,
+
+  ...{
+    HA_FAIL,
+    HA_RECOVER,
   },
-  ha: {
-    [haId: string]: undefined | HAWechaty,
-  }
-  wechaty: {
-    [wechatyId: string]: undefined | Wechaty
-  }
-}>
+
+  HA_DONG,
+
+  ...{
+    HA_DING_FAILURE,
+    HA_DING_REQUEST,
+    HA_DING_SUCCESS,
+  },
+}

@@ -1,9 +1,9 @@
 import { Wechaty }    from 'wechaty'
 import { HAWechaty }  from '../../'
 
-import * as types from './types'
+import { State } from './reducers'
 
-export const getAvailable = (state: types.State, haOrWechaty?: HAWechaty | Wechaty): boolean => {
+const getAvailable = (state: State, haOrWechaty?: HAWechaty | Wechaty): boolean => {
   if (!haOrWechaty) {
     return Object.values(state.availability)
       .filter(Boolean)
@@ -27,4 +27,8 @@ export const getAvailable = (state: types.State, haOrWechaty?: HAWechaty | Wecha
   }
 
   throw new Error('unknown param: ' + typeof haOrWechaty)
+}
+
+export default {
+  getAvailable,
 }

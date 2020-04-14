@@ -1,9 +1,26 @@
-import { createReducer } from 'typesafe-actions'
+import { createReducer }  from 'typesafe-actions'
+import { DeepReadonly }   from 'utility-types'
 
-import * as actions from './actions'
-import * as types   from './types'
+import { Wechaty }      from 'wechaty'
 
-const initialState: types.State = {
+import { HAWechaty } from '../../ha-wechaty'
+
+import actions from './actions'
+
+const initialState: DeepReadonly<{
+  availability: {
+    [wechatyId: string]: undefined | boolean  // the wechaty available or not
+  }
+  cluster: {
+    [wechatyId: string]: undefined | string // wechatyId to haId
+  },
+  ha: {
+    [haId: string]: undefined | HAWechaty,
+  }
+  wechaty: {
+    [wechatyId: string]: undefined | Wechaty
+  }
+}> = {
   availability : {},   // map wechaty id to availability (true or false)
   cluster      : {},   // map wechaty id to ha id
 
@@ -11,7 +28,7 @@ const initialState: types.State = {
   wechaty      : {},   // map wechaty id to instance
 }
 
-const haReducer = createReducer(initialState)
+const reducer = createReducer(initialState)
   .handleAction(actions.failWechaty, (state, action) => ({
     ...state,
     availability: {
@@ -60,4 +77,6 @@ const haReducer = createReducer(initialState)
       [action.payload.wechaty.id]: undefined,
     },
   }))
-export default haReducer
+
+export default reducer
+export type State = ReturnType<typeof reducer>

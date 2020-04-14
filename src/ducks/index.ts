@@ -11,7 +11,7 @@
 
 import {
   createStore,
-  compose,
+  // compose,
   applyMiddleware,
 }                           from 'redux'
 import {
@@ -19,14 +19,14 @@ import {
   Epic,
 }                           from 'redux-observable'
 import {
-  ActionType,
-  StateType,
+  // ActionType,
+  // StateType,
   RootState,
   RootAction,
-  createAsyncAction,
+  // createAsyncAction,
 }                           from 'typesafe-actions'
 
-import rootAction   from './root-action'
+// import rootAction   from './root-action'
 import rootReducer  from './root-reducer'
 import rootEpic     from './root-epic'
 
@@ -37,7 +37,7 @@ export type RootEpic = Epic<
   RootAction,
   RootAction,
   RootState,
-  Services,
+  Services
 >
 
 /**

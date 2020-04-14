@@ -1,9 +1,9 @@
-import { counterActions } from './counter'
-import { haActions }      from './ha'
-import { wechatyActions } from './wechaty'
+import { actions as counter } from './counter'
+import { actions as ha }      from './ha'
+import { actions as wechaty } from './wechaty'
 
 export default {
-  counter : counterActions,
-  ha      : haActions,
-  wechaty : wechatyActions,
+  counter,
+  ha,
+  wechaty,
 }

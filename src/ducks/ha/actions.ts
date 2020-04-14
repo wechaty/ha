@@ -10,29 +10,42 @@ import {
 
 import { HAWechaty } from '../../'
 
-import * as types from './types'
+import types from './types'
 
 const prepareHA         = (ha: HAWechaty)     => ({ ha })
 const prepareWechaty    = (wechaty: Wechaty)  => ({ wechaty })
 const prepareMessage    = (message: Message)  => ({ message })
 const prepareHAWechaty  = (ha: HAWechaty, wechaty: Wechaty)  => ({ ha, wechaty })
 
-export const addWechaty = createAction(types.WECHATY_ADD, prepareHAWechaty)()
-export const delWechaty = createAction(types.WECHATY_DEL, prepareHAWechaty)()
+const addWechaty = createAction(types.WECHATY_ADD, prepareHAWechaty)()
+const delWechaty = createAction(types.WECHATY_DEL, prepareHAWechaty)()
 
-export const failHA    = createAction(types.HA_FAIL,    prepareHA)()
-export const recoverHA = createAction(types.HA_RECOVER, prepareHA)()
+const failHA    = createAction(types.HA_FAIL,    prepareHA)()
+const recoverHA = createAction(types.HA_RECOVER, prepareHA)()
 
-export const failWechaty    = createAction(types.WECHATY_FAIL,    prepareWechaty)()
-export const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
+const failWechaty    = createAction(types.WECHATY_FAIL,    prepareWechaty)()
+const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
 
-export const dongHA = createAction(types.HA_DONG, prepareMessage)()
+const dongHA = createAction(types.HA_DONG, prepareMessage)()
 
 /**
  * Async
  */
-export const dingHAAsync = createAsyncAction(
+const dingHAAsync = createAsyncAction(
   types.HA_DING_REQUEST,
   types.HA_DING_SUCCESS,
   types.HA_DING_FAILURE,
 )<{ contact: Contact }, { contact: Contact }, Error>()
+
+export default {
+  addWechaty,
+  delWechaty,
+  failHA,
+  recoverHA,
+  ...{
+    failWechaty,
+    recoverWechaty,
+  },
+  dingHAAsync,
+  dongHA,
+}
