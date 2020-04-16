@@ -30,14 +30,14 @@ import {
 import rootReducer  from './root-reducer'
 import rootEpic     from './root-epic'
 
-export interface Services {}
-const services = {} as Services
+export interface Dependency {}
+const dependencies = {} as Dependency
 
 export type RootEpic = Epic<
   RootAction,
   RootAction,
   RootState,
-  Services
+  Dependency
 >
 
 /**
@@ -47,9 +47,9 @@ export const epicMiddleware = createEpicMiddleware<
   RootAction,
   RootAction,
   RootState,
-  Services
+  Dependency
 >({
-  dependencies: services,
+  dependencies: dependencies,
 })
 
 // rehydrate state on app start

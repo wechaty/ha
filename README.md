@@ -152,6 +152,8 @@ This module was originally design for the project [OSSChat](https://github.com/k
 1. [Testing RxJS Code with Marble Diagrams](https://github.com/ReactiveX/rxjs/blob/6.5.4/docs_app/content/guide/testing/marble-testing.md)
 1. [Typesafe utilities for "action-creators" in Redux / Flux Architecture](https://github.com/piotrwitek/typesafe-actions)
 1. [createAsyncEpic - Generic redux-observable factory handling async-actions - #162](https://github.com/piotrwitek/typesafe-actions/issues/162)
+1. [Extensive introduction to why and how you might want to use and test redux-observable](https://9oelm.github.io/2020-01-24--Fundamental-yet-extensive-introduction-to-why-and-how-you-might-want-to-use-redux-observable-for-async-actions/)
+1. [Writing Better Marble Tests for Redux Observable and TypeScript](https://itnext.io/better-marble-test-70c7676a1e2)
 
 ## Author
 
