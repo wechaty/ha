@@ -29,7 +29,7 @@ const initialState: DeepReadonly<{
 }
 
 const reducer = createReducer(initialState)
-  .handleAction(actions.failWechaty, (state, action) => ({
+  .handleAction(actions.failureWechaty, (state, action) => ({
     ...state,
     availability: {
       ...state.availability,

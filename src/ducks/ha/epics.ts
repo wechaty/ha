@@ -14,16 +14,17 @@ import {
   from,
 }                 from 'rxjs'
 import {
-  take,
   catchError,
+  debounce,
   filter,
   map,
   mapTo,
   mergeMap,
+  tap,
   switchMap,
   takeUntil,
   throttle,
-  timeout,
+  ignoreElements,
 }                   from 'rxjs/operators'
 
 import {
@@ -56,24 +57,18 @@ const dongEmitterEpic: RootEpic = action$ => action$.pipe(
   map(action => actions.dongHA(action.payload.message)),
 )
 
-const dingHAAsyncEpic: RootEpic = action$ => action$.pipe(
-  filter(isActionOf(actions.dingHAAsync.request)),
+const dingHAEpic: RootEpic = action$ => action$.pipe(
+  filter(isActionOf(actions.dingHA)),
   // throttle(() => interval(1000)),  // execute every ding ha request
   mergeMap(action => from(action.payload.contact.say(DING)).pipe(
-    mergeMap(_ => action$.pipe(
-      filter(isActionOf(actions.dongHA)),
-      take(1),
-      filter(operations.isFromOf(action.payload.contact)),
-      mapTo(actions.dingHAAsync.success(action.payload)),
-    )),
-    timeout(aroundSeconds(ASYNC_TIMEOUT_SECONDS)),
-    catchError(err => of(actions.dingHAAsync.failure(err))),
-  ))
+    catchError(error => of(action.payload.contact.wechaty.emit('error', error))),
+  )),
+  ignoreElements(),
 )
 
 const takeUntilRecover = <T extends RootAction>(action$: ActionsObservable<T>) => takeUntil<T>(
   merge(
-    action$.pipe(filter(isActionOf(wechatyActions.messageEvent))),
+    action$.pipe(filter(isActionOf(wechatyActions.heartbeatEvent))),
     action$.pipe(filter(isActionOf(wechatyActions.logoutEvent))),
   )
 )
@@ -105,9 +100,9 @@ const dingEmitterEpic: RootEpic = (action$) => action$.pipe(
 
     throttle(() => interval(aroundSeconds(DING_WAIT_SECONDS))),
     switchMap(action => interval(aroundSeconds(DING_WAIT_SECONDS)).pipe(
-      mapTo(actions.dingHAAsync.request({
-        contact: operations.toChatieOA(action.payload.message.wechaty),
-      })),
+      mapTo(actions.dingHA(
+        operations.toChatieOA(action.payload.message.wechaty),
+      )),
     )),
     takeUntilRecover(action$),
   )),
@@ -115,7 +110,7 @@ const dingEmitterEpic: RootEpic = (action$) => action$.pipe(
 
 export default {
   dingEmitterEpic,
-  dingHAAsyncEpic,
+  dingHAAsyncEpic: dingHAEpic,
   dongEmitterEpic,
   resetEmitterEpic,
 }

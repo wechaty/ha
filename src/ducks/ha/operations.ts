@@ -12,7 +12,7 @@ import {
 
 import {
   actions as wechatyActions,
-}                   from '../wechaty/'
+}                             from '../wechaty/'
 
 // import * as actions from './actions'
 

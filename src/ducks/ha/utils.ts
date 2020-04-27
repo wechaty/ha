@@ -2,9 +2,12 @@
  * Increase or Decrease a random time on the target seconds
  * based on the `factor`
  * @param seconds base number of target seconds
+ * @returns milliseconds
  */
-const aroundSeconds = (seconds: number) => {
-  const factor = 1 / 7
+export const aroundSeconds = (
+  seconds: number,
+  factor = 1 / 6,
+) => {
   const ms = seconds * 1000
 
   const base = ms * (1 - factor)

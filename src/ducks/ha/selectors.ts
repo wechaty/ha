@@ -3,7 +3,7 @@ import { HAWechaty }  from '../../'
 
 import { State } from './reducers'
 
-const getAvailable = (state: State, haOrWechaty?: HAWechaty | Wechaty): boolean => {
+export const getAvailable = (state: State, haOrWechaty?: HAWechaty | Wechaty): boolean => {
   if (!haOrWechaty) {
     return Object.values(state.availability)
       .filter(Boolean)

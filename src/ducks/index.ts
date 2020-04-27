@@ -49,7 +49,7 @@ export const epicMiddleware = createEpicMiddleware<
   RootState,
   Dependency
 >({
-  dependencies: dependencies,
+  dependencies,
 })
 
 // rehydrate state on app start
