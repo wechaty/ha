@@ -68,10 +68,6 @@ const reducer = createReducer(initialState)
       ...state.cluster,
       [action.payload.wechaty.id]: undefined,
     },
-    // ha: {
-    //   ...state.ha,
-    //   [action.payload.ha.id]: undefined,
-    // },
     wechaty: {
       ...state.wechaty,
       [action.payload.wechaty.id]: undefined,

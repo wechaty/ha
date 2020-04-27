@@ -4,7 +4,7 @@
  * @param seconds base number of target seconds
  * @returns milliseconds
  */
-export const aroundSeconds = (
+export const milliAroundSeconds = (
   seconds: number,
   factor = 1 / 6,
 ) => {
@@ -18,5 +18,5 @@ export const aroundSeconds = (
 }
 
 export default {
-  aroundSeconds,
+  milliAroundSeconds,
 }

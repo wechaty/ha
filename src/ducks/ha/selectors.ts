@@ -3,32 +3,56 @@ import { HAWechaty }  from '../../'
 
 import { State } from './reducers'
 
-export const getAvailable = (state: State, haOrWechaty?: HAWechaty | Wechaty): boolean => {
+const getWechatyAvailable = (state: State, wechaty: Wechaty): boolean => !!(state.availability[wechaty.id])
+
+const getHAAvailable = (state: State, haOrWechaty?: HAWechaty | Wechaty): boolean => {
   if (!haOrWechaty) {
     return Object.values(state.availability)
       .filter(Boolean)
       .length > 0
   }
 
-  if (haOrWechaty instanceof HAWechaty) {
-    const haWechatyId = haOrWechaty.id
-    const isWithHa    = (wechatyId: string) => state.cluster[wechatyId] === haWechatyId
-    const isAvailable = (wechatyId: string) => !!(state.availability[wechatyId])
-
-    return Object.keys(state.cluster)
-      .filter(isWithHa)
-      .filter(isAvailable)
-      .length > 0
-  }
-
   if (haOrWechaty instanceof Wechaty) {
     const wechatyId = haOrWechaty.id
-    return !!(state.availability[wechatyId])
+    const haId = state.cluster[wechatyId]
+    if (!haId) {
+      throw new Error('no haId')
+    }
+    const ha = state.ha[haId]
+    if (!ha) {
+      throw new Error('no ha')
+    }
+    haOrWechaty = ha
   }
 
-  throw new Error('unknown param: ' + typeof haOrWechaty)
+  if (!(haOrWechaty instanceof HAWechaty)) {
+    throw new Error('unknown param: ' + typeof haOrWechaty)
+  }
+
+  const haId = haOrWechaty.id
+  const isWithHa    = (wechatyId: string) => state.cluster[wechatyId] === haId
+  const isAvailable = (wechatyId: string) => !!(state.availability[wechatyId])
+
+  return Object.keys(state.cluster)
+    .filter(isWithHa)
+    .filter(isAvailable)
+    .length > 0
+}
+
+const getHA = (state: State, wechaty: Wechaty) => {
+  const haId = state.cluster[wechaty.id]
+  if (!haId) {
+    throw new Error('no haId')
+  }
+  const ha = state.ha[haId]
+  if (!ha) {
+    throw new Error('no ha')
+  }
+  return ha
 }
 
 export default {
-  getAvailable,
+  getHA,
+  getHAAvailable,
+  getWechatyAvailable,
 }
