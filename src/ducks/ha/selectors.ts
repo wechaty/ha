@@ -1,5 +1,6 @@
 import { Wechaty }    from 'wechaty'
-import { HAWechaty }  from '../../'
+
+import { HAWechaty }  from '../../ha-wechaty'
 
 import { State } from './reducers'
 

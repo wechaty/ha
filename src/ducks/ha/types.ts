@@ -7,8 +7,8 @@ const WECHATY_RECOVER = 'HAWechaty/WECHATY_RECOVER'
 const HA_FAILURE = 'HAWechaty/FAILURE'
 const HA_RECOVER = 'HAWechaty/RESTORE'
 
-const HA_DING = 'HAWechaty/DING'
-const HA_DONG = 'HAWechaty/DONG'
+const DING = 'HAWechaty/DING'
+const DONG = 'HAWechaty/DONG'
 
 export default {
   WECHATY_ADD,
@@ -22,6 +22,6 @@ export default {
     HA_RECOVER,
   },
 
-  HA_DING,
-  HA_DONG,
+  DING,
+  DONG,
 }

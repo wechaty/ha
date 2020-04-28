@@ -25,19 +25,20 @@ import actions from './actions'
 
 import {
   RootEpic,
+  VoidEpic,
 }               from '../'
 
-const dingEpic: RootEpic = actions$ => actions$.pipe(
-  filter(isActionOf(actions.dingAsync.request)),
+const dingEpic: VoidEpic = actions$ => actions$.pipe(
+  filter(isActionOf(actions.ding)),
   tap(action => action.payload.wechaty.ding(action.payload.data)),
   ignoreElements(),
 )
 
-const resetEpic: RootEpic = actions$ => actions$.pipe(
-  filter(isActionOf(actions.resetAsync.request)),
+const resetEpic: VoidEpic = actions$ => actions$.pipe(
+  filter(isActionOf(actions.reset)),
   mergeMap(action => from(action.payload.wechaty.reset(action.payload.data)).pipe(
-    mapTo(actions.resetAsync.success()),
-    catchError(e => of(actions.resetAsync.failure(e))),
+    // catchError(e => of(actions.resetAsync.failure(e))),
+    ignoreElements(),
   ))
 )
 

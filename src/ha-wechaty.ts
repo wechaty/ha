@@ -1,3 +1,5 @@
+import EventEmitter from 'events'
+
 import {
   Wechaty,
   WechatyOptions,
@@ -9,6 +11,8 @@ import { WechatyEventName } from 'wechaty/dist/src/wechaty'
 
 import { StateSwitch } from 'state-switch'
 import flattenArray from 'flatten-array'
+
+import cuid from 'cuid'
 
 import {
   Subscription,
@@ -29,7 +33,7 @@ export interface HAWechatyOptions {
   wechatyOptionsList? : WechatyOptions[],
 }
 
-export class HAWechaty {
+export class HAWechaty extends EventEmitter {
 
   public id: string
   public state: StateSwitch
@@ -97,6 +101,7 @@ export class HAWechaty {
   constructor (
     public options: HAWechatyOptions = {},
   ) {
+    super()
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
     this.id = cuid()
     this.wechatyList = []

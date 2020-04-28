@@ -10,6 +10,10 @@ import {
 }               from 'wechaty-puppet'
 
 import {
+  EMPTY,
+}               from 'rxjs'
+
+import {
   CHATIE_OA_ID,
   DING,
   DONG,
@@ -21,20 +25,26 @@ import {
 }                             from '../wechaty/'
 
 // import * as actions from './actions'
+import selectors from './selectors'
+import { State } from './reducers'
 
-type PayloadWechaty = { payload: { wechaty: Wechaty } }
-type PayloadMessage = { payload: { message: Message } }
-type PayloadContact = { payload: { contact: Contact } }
+interface PayloadWechaty { wechaty: Wechaty }
+interface PayloadMessage { message: Message }
+interface PayloadContact { contact: Contact }
 
-const isFromOf    = (contact: Contact) => <T extends PayloadMessage>(action: T) => action.payload.message.from()!.id === contact.id
+type PayloadAll = PayloadWechaty | PayloadMessage | PayloadContact
 
-const isMessageFrom     = <T extends PayloadMessage>(wechaty: Wechaty)  => (action: T) => action.payload.message.wechaty.id === wechaty.id
-const isMessageFromSelf = (isSelf = true)     => <T extends PayloadMessage>(action: T) => action.payload.message.self() === isSelf
+const isFromOf    = (contact: Contact) => <T extends { payload: PayloadMessage }>(action: T) => action.payload.message.from()!.id === contact.id
+
+const isMessageFromSelf = (isSelf = true)     => <T extends { payload: PayloadMessage }>(action: T) => action.payload.message.self() === isSelf
 
 const isMessageType = (type: MessageType) => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.type() === type
 const isMessageText = (text: string)     => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.text() === text
-const toWechaty   = <T extends PayloadWechaty | PayloadContact | PayloadMessage>(action: T) => {
-  const payload = action.payload
+
+const belongsToWechaty = <T extends { payload: PayloadAll }>(wechaty: Wechaty) => (action: T) => toWechaty(action).id === wechaty.id
+
+const payloadToWechaty = <T extends PayloadAll>(payloadAll: T): Wechaty => {
+  const payload = payloadAll as PayloadAll
   const wechaty = 'wechaty' in payload ? payload.wechaty
     : 'message' in payload ? payload.message.wechaty
       : 'contact' in payload ? payload.contact.wechaty
@@ -45,6 +55,17 @@ const toWechaty   = <T extends PayloadWechaty | PayloadContact | PayloadMessage>
   return wechaty
 }
 
+const emitError$ = <T extends { payload: PayloadAll }>(action: T, state: State) => (error: any) => {
+  const wechaty = payloadToWechaty(action.payload)
+  const ha = selectors.getHA(state, wechaty)
+  wechaty.emit('error', error)
+  ha.emit('error', error)
+  return EMPTY
+}
+
+const toWechaty = <T extends { payload: PayloadAll }>(action: T) => payloadToWechaty(action.payload)
+// const toHA      = <T extends { payload: PayloadAll }>(action: T) => selectors.getHA(payloadToWechaty(action.payload)
+
 const isMessageTypeText = isMessageType(Message.Type.Text)
 const isMessageTextDong = isMessageText(DONG)
 
@@ -53,7 +74,7 @@ const isDong      = (action: ReturnType<typeof wechatyActions.messageEvent>) => 
 
 const isNotSelf   = (message: Message) => !message.self()
 
-const sayDing = (contact: Contact) => contact.say(DING)
+const sayDingTo = (contact: Contact) => contact.say(DING)
 
 const toChatieOA = (wechaty: Wechaty): Contact => {
   const contact = wechaty.Contact.load(CHATIE_OA_ID)
@@ -71,10 +92,11 @@ const toChatieOA = (wechaty: Wechaty): Contact => {
 }
 
 export default {
+  belongsToWechaty,
+  emitError$,
   isChatieOA,
   isDong,
   isFromOf,
-  isMessageFrom,
   isMessageFromSelf,
   isMessageText,
   isMessageType,
@@ -87,5 +109,5 @@ export default {
     isMessageTypeText,
   },
 
-  sayDing,
+  sayDingTo,
 }

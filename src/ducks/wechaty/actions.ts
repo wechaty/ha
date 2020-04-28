@@ -35,7 +35,7 @@ const messageEvent   = createAction(types.EVENT_MESSAGE,    prepareMessageEvent)
 const dongEvent      = createAction(types.EVENT_DONG,       prepareData)()
 const heartbeatEvent = createAction(types.EVENT_HEARTBEAT,  prepareData)()
 
-const ding = createAction(types.DING,   prepareData)()
+const ding  = createAction(types.DING,  prepareData)()
 const reset = createAction(types.RESET, prepareData)()
 
 /**

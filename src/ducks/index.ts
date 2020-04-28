@@ -40,6 +40,13 @@ export type RootEpic = Epic<
   Dependency
 >
 
+export type VoidEpic = Epic<
+  RootAction,
+  never,
+  RootState,
+  Dependency
+>
+
 /**
  * Store
  */

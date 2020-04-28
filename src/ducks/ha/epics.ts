@@ -1,17 +1,13 @@
 import {
   isActionOf,
-  RootAction,
 }                 from 'typesafe-actions'
-
-import {
-  ActionsObservable,
-}                     from 'redux-observable'
 
 import {
   interval,
   of,
   merge,
   from,
+  Observable,
 }                 from 'rxjs'
 import {
   catchError,
@@ -23,10 +19,14 @@ import {
   switchMap,
   takeUntil,
   ignoreElements,
+  groupBy,
 }                   from 'rxjs/operators'
+
+import { Wechaty } from 'wechaty'
 
 import {
   RootEpic,
+  VoidEpic,
 }               from '../'
 
 import {
@@ -45,40 +45,71 @@ const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
 const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
 
 /**
+ * Huan(202004):
+ *  We are using `messageEvent` at here, not `heartbeatEvent` for reasons.
+ *
+ *  e.g.:
+ *    `heartbeatEvent` is not suitable at here,
+ *    because the hostie server will emit heartbeat no matter than WeChat protocol available or not.
+ */
+const takeUntilDong = <T>(wechaty: Wechaty, action$: ReturnType<RootEpic>) => takeUntil<T>(
+  action$.pipe(
+    filter(isActionOf(actions.dong)),
+    filter(operations.belongsToWechaty(wechaty)),
+  ),
+)
+
+const takeUntilLoginout = <T>(wechaty: Wechaty, action$: ReturnType<RootEpic>) => takeUntil<T>(
+  action$.pipe(
+    filter(isActionOf([
+      wechatyActions.loginEvent,
+      wechatyActions.logoutEvent,
+    ])),
+    filter(operations.belongsToWechaty(wechaty)),
+  ),
+)
+
+/**
  * High Available Stream Entrence
  *  emit all messages that come from the logined wechaty(s)
  *
  * In:  RootAction
- * Out: wechatyActions.messageEvent
+ * Out: wechatyActions.messageEvent groupBy wechatyId
  */
-const ha$ = (action$: ReturnType<RootEpic>) => action$.pipe(
+const wechatyMessage$$ = (action$: ReturnType<RootEpic>) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
   map(operations.toWechaty),
+
   /**
    * mergeMap instead of switchMap:
    *  there might be multiple Wechaty instance passed to here
    */
   mergeMap(wechaty => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    filter(operations.isMessageFrom(wechaty)),
+    filter(operations.belongsToWechaty(wechaty)),
     filter(operations.isMessageFromSelf(false)),
-  ))
+    takeUntilLoginout(wechaty, action$),
+  )),
+
+  groupBy(action => action.payload.message.wechaty.id),
 )
 
-const takeUntilRecover = <T extends RootAction>(action$: ActionsObservable<T>) => takeUntil<T>(
-  merge(
-    /**
-     * Huan(202004):
-     *  We are using `messageEvent` at here, not `heartbeatEvent` for reasons.
-     *
-     *  e.g.:
-     *    `heartbeatEvent` is not suitable at here,
-     *    because the hostie server will emit heartbeat no matter than WeChat protocol available or not.
-     */
-    // action$.pipe(filter(isActionOf(wechatyActions.messageEvent))),
-    action$.pipe(filter(isActionOf(actions.dongHA))),
-    action$.pipe(filter(isActionOf(wechatyActions.logoutEvent))),
-  )
+// https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
+type Extract<P> = P extends Observable<infer T> ? T : never;
+type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
+
+/**
+ * In:  actions.ding
+ * Out: void
+ *
+ * Side Effect: call contact.say(ding)
+ */
+const dingEvokerEpic: VoidEpic = (action$, state$) => action$.pipe(
+  filter(isActionOf(actions.ding)),
+  mergeMap(action => from(operations.sayDingTo(action.payload.contact)).pipe(
+    catchError(operations.emitError$(action, state$.value.ha))
+  )),
+  ignoreElements(),
 )
 
 /**
@@ -89,7 +120,7 @@ const dongEmitterEpic: RootEpic = action$ => action$.pipe(
   filter(isActionOf(wechatyActions.messageEvent)),
   filter(operations.isMessageTypeText),
   filter(operations.isMessageTextDong),
-  map(action => actions.dongHA(action.payload.message)),
+  map(action => actions.dong(action.payload.message)),
 )
 
 /**
@@ -99,8 +130,11 @@ const dongEmitterEpic: RootEpic = action$ => action$.pipe(
  *  actions.recoverHA
  */
 const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
-  filter(isActionOf(actions.dongHA)),
+  filter(isActionOf(actions.dong)),
   mergeMap(action => merge(
+    // Recover Wechaty
+    of(actions.recoverWechaty(action.payload.message.wechaty)),
+    // Recover HA
     of(actions.recoverHA(selectors.getHA(
       state$.value.ha,
       action.payload.message.wechaty,
@@ -110,7 +144,6 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
         action.payload.message.wechaty,
       ))
     ),
-    of(actions.recoverWechaty(action.payload.message.wechaty)),
   )),
 )
 
@@ -133,33 +166,22 @@ const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
 )
 
 /**
- * In:  actions.dingHA
- * Out: void
- *
- * Side Effect: call contact.say(ding)
- */
-const performDingEpic: RootEpic = action$ => action$.pipe(
-  filter(isActionOf(actions.dingHA)),
-  // throttle(() => interval(1000)),  // execute every ding ha request
-  mergeMap(action => from(operations.sayDing(action.payload.contact)).pipe(
-    catchError(error => of(action.payload.contact.wechaty.emit('error', error))),
-    ignoreElements(),
-  )),
-)
-
-/**
- * In:  ha$
+ * In:  wechatyMessage$
  * Out:
  *  wechatyActions.reset
  */
-const resetEmitterEpic: RootEpic = action$ => ha$(action$).pipe(
+const resetEmitterPerWechaty$ = (
+  action$         : ReturnType<RootEpic>,
+  wechatyMessage$ : GroupedMessageByWechaty,
+) => wechatyMessage$.pipe(
   debounce(() => interval(RESET_WAIT_MILLISECONDS)),
   switchMap(action => interval(RESET_WAIT_MILLISECONDS).pipe(
     mapTo(wechatyActions.reset(
       action.payload.message.wechaty,
-      'HAWechaty/ha/epics.ts/resetEmitterEpic(action)',
+      'HAWechaty/ha/epics.ts/resetEmitterEpicPerWechaty$(action)',
     )),
-    takeUntilRecover(action$),
+    takeUntilDong(action.payload.message.wechaty, action$),
+    takeUntilLoginout(action.payload.message.wechaty, action$),
   )),
 )
 
@@ -167,26 +189,45 @@ const resetEmitterEpic: RootEpic = action$ => ha$(action$).pipe(
  * In:  ha$
  * Out:
  *  ations.failureWechaty
- *  actions.dingHA
+ *  actions.ding
  */
-const dingEmitterEpic: RootEpic = action$ => ha$(action$).pipe(
+const dingEmitterPerWechaty$ = (
+  action$         : ReturnType<RootEpic>,
+  wechatyMessage$ : GroupedMessageByWechaty,
+) => wechatyMessage$.pipe(
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
   switchMap(action => merge(
     of(actions.failureWechaty(action.payload.message.wechaty)),
     interval(DING_WAIT_MILLISECONDS).pipe(
-      mapTo(actions.dingHA(
+      mapTo(actions.ding(
         operations.toChatieOA(action.payload.message.wechaty),
       )),
-      takeUntilRecover(action$),
+      takeUntilDong(action.payload.message.wechaty, action$),
+      takeUntilLoginout(action.payload.message.wechaty, action$),
     )
   )),
 )
 
+/**
+ * Main Epic at here:
+ *
+ *  Out:
+ *    actions.failureWechaty
+ *    actions.ding
+ *
+ *    wechatyActions.reset
+ */
+const mainEpic: RootEpic = action$ => wechatyMessage$$(action$).pipe(
+  mergeMap(wechatyMessage$ => merge(
+    dingEmitterPerWechaty$(action$, wechatyMessage$),
+    resetEmitterPerWechaty$(action$, wechatyMessage$),
+  )),
+)
+
 export default {
-  dingEmitterEpic,
+  dingEvokerEpic,
   dongEmitterEpic,
   failureHAEmitterEpic,
-  performDingEpic,
+  mainEpic,
   recoverWechatyEmitterEpic,
-  resetEmitterEpic,
 }

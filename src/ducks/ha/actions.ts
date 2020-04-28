@@ -26,15 +26,15 @@ const recoverHA = createAction(types.HA_RECOVER, prepareHA)()
 const failureWechaty = createAction(types.WECHATY_FAILURE, prepareWechaty)()
 const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
 
-const dingHA = createAction(types.HA_DING, prepareContact)()
-const dongHA = createAction(types.HA_DONG, prepareMessage)()
+const ding = createAction(types.DING, prepareContact)()
+const dong = createAction(types.DONG, prepareMessage)()
 
 export default {
   addWechaty,
   delWechaty,
 
-  dingHA,
-  dongHA,
+  ding,
+  dong,
 
   failureHA,
   recoverHA,
