@@ -50,7 +50,7 @@ export type VoidEpic = Epic<
 /**
  * Store
  */
-export const epicMiddleware = createEpicMiddleware<
+const epicMiddleware = createEpicMiddleware<
   RootAction,
   RootAction,
   RootState,
@@ -63,7 +63,7 @@ export const epicMiddleware = createEpicMiddleware<
 const initialState = {}
 
 // create store
-const store = createStore(
+export const store = createStore(
   rootReducer,
   initialState,
   applyMiddleware(
@@ -74,7 +74,7 @@ const store = createStore(
 epicMiddleware.run(rootEpic)
 
 // export store singleton instance
-export default store
+// export default store
 
 /**
  * Epic
