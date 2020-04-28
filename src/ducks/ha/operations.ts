@@ -26,14 +26,14 @@ type PayloadWechaty = { payload: { wechaty: Wechaty } }
 type PayloadMessage = { payload: { message: Message } }
 type PayloadContact = { payload: { contact: Contact } }
 
-const isFromOf    = (contact: Contact) => (action: PayloadMessage) => action.payload.message.from()!.id === contact.id
+const isFromOf    = (contact: Contact) => <T extends PayloadMessage>(action: T) => action.payload.message.from()!.id === contact.id
 
-const isMessageFrom     = (wechaty: Wechaty)  => (action: PayloadMessage) => action.payload.message.wechaty.id === wechaty.id
-const isMessageFromSelf = (isSelf = true)     => (action: PayloadMessage) => action.payload.message.self() === isSelf
+const isMessageFrom     = <T extends PayloadMessage>(wechaty: Wechaty)  => (action: T) => action.payload.message.wechaty.id === wechaty.id
+const isMessageFromSelf = (isSelf = true)     => <T extends PayloadMessage>(action: T) => action.payload.message.self() === isSelf
 
 const isMessageType = (type: MessageType) => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.type() === type
 const isMessageText = (text: string)     => (action: ReturnType<typeof wechatyActions.messageEvent>) => action.payload.message.text() === text
-const toWechaty   = (action: PayloadWechaty | PayloadContact | PayloadMessage) => {
+const toWechaty   = <T extends PayloadWechaty | PayloadContact | PayloadMessage>(action: T) => {
   const payload = action.payload
   const wechaty = 'wechaty' in payload ? payload.wechaty
     : 'message' in payload ? payload.message.wechaty

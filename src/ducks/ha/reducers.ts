@@ -74,5 +74,6 @@ const reducer = createReducer(initialState)
     },
   }))
 
-export default reducer
 export type State = ReturnType<typeof reducer>
+
+export default reducer

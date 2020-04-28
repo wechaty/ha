@@ -25,12 +25,11 @@ We have serval issues when we providing a Chatbot service, like:
 
 ### 1 Single Point Of Failure (SPOF)
 
-#### The Problem
-
+#### The Problem #1
 
 Currently we have only one bot on WeChat, which means that if the bot was offline, then our service will be stopped.
 
-#### The Solution
+#### The Solution #1
 
 Use two (3 or even 4 will be better) WeChat bot at the same time, with the different wechaty-puppet providers (for example: padplus + windows).
 
@@ -41,7 +40,7 @@ So when an issue event has come, we can use a RR (round robin) or other very eas
 1. [Heartbeat](https://en.wikipedia.org/wiki/Heartbeat_(computing))
 1. [Keepalive](https://en.wikipedia.org/wiki/Keepalive)
 
-#### The Problem
+#### The Problem #2
 
 When a Wechaty bot is started and logged in, it is mostly liked to be work as expected for sending/receiving messages.
 
@@ -51,7 +50,7 @@ In order to check whether a Wechaty bot is available, we need to take a test on 
 
 How can archive that? It is not a good idea if we send a message to another Wechaty bot because it is not stable enough for this kind of online service.
 
-#### The Solution
+#### The Solution #2
 
 We can set up an Official Account for WeChat, with an auto-responding strategy that will reply a `dong` when it receives a `ding`.
 
@@ -142,18 +141,31 @@ This module was originally design for the project [OSSChat](https://github.com/k
 
 ## Links
 
-1. [RxJS recipes: ‘forkJoin’ with the progress of completion for bulk network requests in Angular](https://indepth.dev/forkjoin-with-the-progress-of-completion-for-bulk-network-requests-in-angular/)
-1. [Handle multiple API requests in Angular using mergeMap and forkJoin to avoid nested subscriptions](https://levelup.gitconnected.com/handle-multiple-api-requests-in-angular-using-mergemap-and-forkjoin-to-avoid-nested-subscriptions-a20fb5040d0c)
+### Back Off Alghorithm
+
 1. [Googl Cloud - Truncated exponential backoff](https://cloud.google.com/storage/docs/exponential-backoff)
 1. [Power of RxJS when using exponential backoff](https://medium.com/angular-in-depth/power-of-rxjs-when-using-exponential-backoff-a4b8bde276b0)
-1. [A better approach for testing your Redux code](https://blog.henriquebarcelos.dev/a-better-approach-for-testing-your-redux-code-ck3dnpqnu00uro4s178b8aw3e)
+
+### Redux
+
 1. [Redux Best Practices](https://medium.com/@kylpo/redux-best-practices-eef55a20cc72#.e8gil0ncl)
-1. [Marble testing with RxJS testing utils - You don’t need a third-party library for marble testing](https://medium.com/@kevinkreuzer/marble-testing-with-rxjs-testing-utils-3ae36ac3346a)
-1. [Testing RxJS Code with Marble Diagrams](https://github.com/ReactiveX/rxjs/blob/6.5.4/docs_app/content/guide/testing/marble-testing.md)
 1. [Typesafe utilities for "action-creators" in Redux / Flux Architecture](https://github.com/piotrwitek/typesafe-actions)
 1. [createAsyncEpic - Generic redux-observable factory handling async-actions - #162](https://github.com/piotrwitek/typesafe-actions/issues/162)
+
+### RxJS Testing
+
+1. [A better approach for testing your Redux code](https://blog.henriquebarcelos.dev/a-better-approach-for-testing-your-redux-code-ck3dnpqnu00uro4s178b8aw3e)
+1. [Marble testing with RxJS testing utils - You don’t need a third-party library for marble testing](https://medium.com/@kevinkreuzer/marble-testing-with-rxjs-testing-utils-3ae36ac3346a)
+1. [Testing RxJS Code with Marble Diagrams](https://github.com/ReactiveX/rxjs/blob/6.5.4/docs_app/content/guide/testing/marble-testing.md)
 1. [Extensive introduction to why and how you might want to use and test redux-observable](https://9oelm.github.io/2020-01-24--Fundamental-yet-extensive-introduction-to-why-and-how-you-might-want-to-use-redux-observable-for-async-actions/)
 1. [Writing Better Marble Tests for Redux Observable and TypeScript](https://itnext.io/better-marble-test-70c7676a1e2)
+
+### RxJS Operators
+
+1. [RxJS recipes: ‘forkJoin’ with the progress of completion for bulk network requests in Angular](https://indepth.dev/forkjoin-with-the-progress-of-completion-for-bulk-network-requests-in-angular/)
+1. [Handle multiple API requests in Angular using mergeMap and forkJoin to avoid nested subscriptions](https://levelup.gitconnected.com/handle-multiple-api-requests-in-angular-using-mergemap-and-forkjoin-to-avoid-nested-subscriptions-a20fb5040d0c)
+1. [Fun with RxJS's groupBy](dataquarium.io/blog/fun-with-rxjs-groupby/)
+1. [Here is what I’ve learn about groupBy operator by reading RxJS sources](https://medium.com/angular-in-depth/those-hidden-gotchas-within-rxjs-7d5c57406041)
 
 ## Author
 
