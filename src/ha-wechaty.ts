@@ -24,8 +24,17 @@ import {
 
 import {
   heartbeat$,
-  availableState,
 }                   from './heartbeat$'
+
+import {
+  isWechatyAvailable,
+}                                 from './wechaty-redux'
+
+import {
+  store,
+}           from './ducks/'
+
+import { envWechaty } from './env-wechaty'
 
 export interface HAWechatyOptions {
   name?               : string,
@@ -52,7 +61,7 @@ export class HAWechaty extends EventEmitter {
     const roomListList = Promise.all(
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
-        .filter(wechaty => availableState[wechaty.id])
+        .filter(isWechatyAvailable)
         .map(
           wechaty => wechaty.Room.findAll()
         )
@@ -80,7 +89,7 @@ export class HAWechaty extends EventEmitter {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(wechaty => availableState[wechaty.id])
+      .filter(isWechatyAvailable)
       .map(wechaty => wechaty.Room.load(id))
 
     for (const room of roomList) {
@@ -128,58 +137,7 @@ export class HAWechaty extends EventEmitter {
     try {
       this.state.on('pending')
 
-      const haWechatyPuppet = process.env.HA_WECHATY_PUPPET || ''
-
-      const wechatyPuppetList = haWechatyPuppet
-        .split(':')
-        .filter(v => !!v)
-        .map(v => v.toUpperCase())
-        .map(v => v.replace(/-/g, '_'))
-
-      if (wechatyPuppetList.includes('WECHATY_PUPPET_HOSTIE')
-          && process.env.HA_WECHATY_PUPPET_HOSTIE_TOKEN
-      ) {
-        this.wechatyList.push(
-          new Wechaty({
-            ...this.options,
-            puppet: 'wechaty-puppet-hostie',
-            puppetOptions: {
-              token: process.env.HA_WECHATY_PUPPET_HOSTIE_TOKEN,
-            },
-          }),
-        )
-      }
-
-      if (wechatyPuppetList.includes('WECHATY_PUPPET_PADPLUS')
-          && process.env.HA_WECHATY_PUPPET_PADPLUS_TOKEN
-      ) {
-        // https://github.com/wechaty/wechaty-puppet-padplus#how-to-emit-the-message-that-you-sent
-        process.env.PADPLUS_REPLAY_MESSAGE = 'true'
-
-        this.wechatyList.push(
-          new Wechaty({
-            ...this.options,
-            puppet: 'wechaty-puppet-padplus',
-            puppetOptions: {
-              token: process.env.HA_WECHATY_PUPPET_PADPLUS_TOKEN,
-            },
-          }),
-        )
-      }
-
-      if (wechatyPuppetList.includes('WECHATY_PUPPET_MOCK')
-          && process.env.HA_WECHATY_PUPPET_MOCK_TOKEN
-      ) {
-        this.wechatyList.push(
-          new Wechaty({
-            ...this.options,
-            puppet: 'wechaty-puppet-mock',
-            puppetOptions: {
-              token: process.env.HA_WECHATY_PUPPET_MOCK_TOKEN,
-            },
-          }),
-        )
-      }
+      this.wechatyList.push(...envWechaty(this.options))
 
       if (this.wechatyList.length <= 0) {
         throw new Error('no wechaty puppet found')
@@ -188,7 +146,7 @@ export class HAWechaty extends EventEmitter {
       this.heartbeatSub = heartbeat$(this.wechatyList).subscribe(
         x => {
           log.verbose('HAWechaty', 'start() heartbeat$() next: %s', JSON.stringify(x))
-          log.verbose('HAWechaty', 'start() heartbeat$() availableState: "%s"', JSON.stringify(availableState))
+          log.verbose('HAWechaty', 'start() heartbeat$() availableState: "%s"', JSON.stringify(store.getState().ha))
         },
         e => log.error('HAWechaty', 'start() heartbeat$(%s) error: %s', e),
         () => log.verbose('HAWechaty', 'start() heartbeat$() complete'),
@@ -197,10 +155,7 @@ export class HAWechaty extends EventEmitter {
       log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
       await Promise.all(
         this.wechatyList.map(
-          wechaty => {
-            availableState[wechaty.id] = true
-            return wechaty.start()
-          }
+          wechaty => wechaty.start()
         )
       )
 
@@ -241,7 +196,7 @@ export class HAWechaty extends EventEmitter {
   public logonoff (): boolean {
     log.verbose('HAWechaty', 'logonoff()')
     return this.wechatyList
-      .filter(wechaty => availableState[wechaty.id])
+      .filter(isWechatyAvailable)
       .some(wechaty => wechaty.logonoff())
   }
 
@@ -267,7 +222,7 @@ export class HAWechaty extends EventEmitter {
     log.verbose('HAWechaty', 'say(%s)', text)
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(wechaty => availableState[wechaty.id])
+      .filter(isWechatyAvailable)
       .forEach(wechaty => wechaty.say(text))
   }
 
