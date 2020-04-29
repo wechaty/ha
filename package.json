@@ -53,7 +53,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wechaty/HAWechaty.git"
+    "url": "git+https://github.com/wechaty/ha-wechaty.git"
   },
   "keywords": [
     "wechaty",
@@ -64,9 +64,9 @@
   "author": "Huan LI <zixia@zixia.net>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/wechaty/HAWechaty/issues"
+    "url": "https://github.com/wechaty/ha-wechaty/issues"
   },
-  "homepage": "https://github.com/wechaty/HAWechaty#readme",
+  "homepage": "https://github.com/wechaty/ha-wechaty#readme",
   "publishConfig": {
     "access": "public",
     "tag": "next"

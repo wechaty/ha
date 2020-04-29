@@ -1,9 +1,9 @@
 # HAWechaty
 
-[![NPM Version](https://badge.fury.io/js/ha-wechaty.svg)](https://www.npmjs.com/package/ha-wechaty)
-[![NPM](https://github.com/wechaty/HAWechaty/workflows/NPM/badge.svg)](https://github.com/wechaty/HAWechaty/actions?query=workflow%3ANPM)
+[![NPM Version](https://img.shields.io/npm/v/ha-wechaty?color=brightgreen)](https://www.npmjs.com/package/ha-wechaty)
+[![NPM](https://github.com/wechaty/ha-wechaty/workflows/NPM/badge.svg)](https://github.com/wechaty/ha-wechaty/actions?query=workflow%3ANPM)
 
-![HAWechaty](https://wechaty.github.io/HAWechaty/images/ha-wechaty.png)
+![HAWechaty](https://wechaty.github.io/ha-wechaty/images/ha-wechaty.png)
 
 <!-- markdownlint-disable MD013 -->
 HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.
