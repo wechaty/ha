@@ -29,9 +29,9 @@ const prepareData           = (wechaty: Wechaty, data: string)  => ({ data, wech
 const prepareFriendship     = (friendship: Friendship)          => ({ friendship })
 const prepareMessage        = (message: Message)                => ({ message })
 const prepareRoomInvitation = (roomInvitation: RoomInvitation)  => ({ roomInvitation })
-const prepareRoomJoin = (room: Room, inviteeList: Contact[], inviter: Contact, date: Date)  => ({ date, inviteeList, inviter, room })
-const prepareRoomLeave = (room: Room, removeeList: Contact[], remover: Contact, date: Date)  => ({ date, removeeList, remover, room })
-const prepareRoomTopic = (room: Room, newTopic: string, oldTopic: string, changer: Contact, date: Date)  => ({ changer, date, newTopic, oldTopic, room })
+const prepareRoomJoin       = (room: Room, inviteeList: Contact[], inviter: Contact, date: Date)  => ({ date, inviteeList, inviter, room })
+const prepareRoomLeave      = (room: Room, removeeList: Contact[], remover: Contact, date: Date)  => ({ date, removeeList, remover, room })
+const prepareRoomTopic      = (room: Room, newTopic: string, oldTopic: string, changer: Contact, date: Date)  => ({ changer, date, newTopic, oldTopic, room })
 const prepareScanPayload    = (wechaty: Wechaty, data: EventScanPayload)  => ({ data, wechaty })
 
 /**
@@ -59,13 +59,13 @@ const roomTopicEvent  = createAction(types.EVENT_ROOM_TOPIC,  prepareRoomTopic)(
 const scanEvent       = createAction(types.EVENT_SCAN,        prepareScanPayload)()
 
 /**
- * Actions: APIs
+ * Actions: VOID APIs
  */
 const ding  = createAction(types.DING,  prepareData)()
 const reset = createAction(types.RESET, prepareData)()
 
 /**
- * Actions: Async APIs
+ * Actions: Non-Void APIs
  */
 const sayAsync = createAsyncAction(
   types.SAY_REQUEST,
