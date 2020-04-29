@@ -160,8 +160,11 @@ export class WechatyRedux {
 
     merge(
       /**
-       * We are using `merge` inside `merge` because the typing system max support 6 arguments.
+       * Huan(202004):
+       *  We are using `merge` inside `merge` because the typing system for the arguments of `merge()`
+       *  only support maximum 6 arguments at the same time.
        */
+
       /*  eslint-disable no-whitespace-before-property */
       merge(
         switchOn$   .pipe(map(status => wechatyDucks.actions.turnOnSwitch(wechaty, status))),
