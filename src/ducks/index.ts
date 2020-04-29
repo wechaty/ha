@@ -42,7 +42,7 @@ export type RootEpic = Epic<
 
 export type VoidEpic = Epic<
   RootAction,
-  never,
+  never,        // forbidden to emit new actions
   RootState,
   Dependency
 >
@@ -63,7 +63,7 @@ const epicMiddleware = createEpicMiddleware<
 const initialState = {}
 
 // create store
-export const store = createStore(
+const store = createStore(
   rootReducer,
   initialState,
   applyMiddleware(
@@ -73,8 +73,7 @@ export const store = createStore(
 
 epicMiddleware.run(rootEpic)
 
-// export store singleton instance
-// export default store
+export default store
 
 /**
  * Epic

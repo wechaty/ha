@@ -5,6 +5,9 @@ import { test } from 'tstest'
 
 import { Wechaty } from 'wechaty'
 
+import rxjs       from 'rxjs'
+import operators  from 'rxjs/operators'
+
 import actions  from './actions'
 import epics    from './epics'
 
@@ -27,13 +30,13 @@ expected: ${JSON.stringify(expected, null, 2)}
 // TODO: read https://stackblitz.com/edit/typescript-hqtvgk?file=index.ts
 
 test('should dispatch only one finishRequestText despite many startRequestText', async t => {
-  const fakeFetchResponse: string = 'fake response';
+  const fakeFetchResponse: string = 'fake response'
   // @ts-ignore: this is valid. See https://github.com/facebook/jest/issues/936#issuecomment-214556122
   rxjs.race = jest.fn((...observables: Array<Observable<AllActions>>) => observables[0])
   // @ts-ignore this is valid also
-  FF.fromFetch = jest.fn(() => of({ text: () => {
-    return of(fakeFetchResponse).pipe(
-      delay(5),
+  FF.fromFetch = jest.fn(() => rxjs.of({ text: () => {
+    return rxjs.of(fakeFetchResponse).pipe(
+      operators.delay(5),
     )
   }}))
   const testScheduler = new TestScheduler((actual, expected) => {

@@ -5,6 +5,10 @@ import {
 
 import { timestampToDate } from 'wechaty/dist/src/helper-functions/pure/timestamp-to-date'
 
+// import {
+//   Store,
+// }           from 'typesafe-actions'
+
 import {
   from,
   fromEvent,
@@ -20,9 +24,7 @@ import {
 import * as wechatyDucks from './ducks/wechaty'
 import * as haDucks from './ducks/ha'
 
-import {
-  store,
-}           from './ducks'
+import ducksStore from './ducks'
 
 import {
   EventDongPayload,
@@ -41,7 +43,7 @@ import {
   EventResetPayload,
 }                             from 'wechaty-puppet'
 
-export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWechatyAvailable(store.getState().ha, wechaty)
+export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWechatyAvailable(ducksStore.getState().ha, wechaty)
 
 export type WechatyPlugin = (wechaty: Wechaty) => void
 
@@ -49,17 +51,21 @@ export interface WechatyReduxPluginOptions {
 
 }
 
-export function use (wechaty: Wechaty, plugin: WechatyPlugin): void {
+export function wechatyUse (wechaty: Wechaty, plugin: WechatyPlugin): void {
 
   plugin(wechaty)
 
 }
 
+const store = ducksStore
+
 export class WechatyRedux {
+
+  public store : any
 
   constructor () {
     log.verbose('WechatyRedux', 'constructor()')
-
+    this.store = store
   }
 
   public plugin (options: WechatyReduxPluginOptions = {}) {
@@ -74,23 +80,24 @@ export class WechatyRedux {
      * Actually, we are not installing to the Wechaty,
      *  but the Puppet for convenience
      */
+    /* eslint-disable func-call-spacing */
     const switchOn$  = fromEvent(wechaty.puppet.state, 'on')
     const switchOff$ = fromEvent(wechaty.puppet.state, 'off')
 
-    const dong$       = fromEvent<EventDongPayload>(wechaty.puppet,       'dong')
-    const error$      = fromEvent<EventErrorPayload>(wechaty.puppet,      'error')
-    const friendship$ = fromEvent<EventFriendshipPayload>(wechaty.puppet, 'friendship')
-    const heartbeat$  = fromEvent<EventHeartbeatPayload>(wechaty.puppet,  'heartbeat')
-    const login$      = fromEvent<EventLoginPayload>(wechaty.puppet,      'login')
-    const logout$     = fromEvent<EventLogoutPayload>(wechaty.puppet,     'logout')
-    const message$    = fromEvent<EventMessagePayload>(wechaty.puppet,    'message')
-    const ready$      = fromEvent<EventReadyPayload>(wechaty.puppet,      'ready')
-    const reset$      = fromEvent<EventResetPayload>(wechaty.puppet,      'reset')
-    const roomInvite$ = fromEvent<EventRoomInvitePayload>(wechaty.puppet, 'room-invite')
-    const roomJoin$   = fromEvent<EventRoomJoinPayload>(wechaty.puppet,   'room-join')
-    const roomLeave$  = fromEvent<EventRoomLeavePayload>(wechaty.puppet,  'room-leave')
-    const roomTopic$  = fromEvent<EventRoomTopicPayload>(wechaty.puppet,  'room-topic')
-    const scan$       = fromEvent<EventScanPayload>(wechaty.puppet,       'scan')
+    const dong$       = fromEvent<EventDongPayload>       (wechaty.puppet, 'dong')
+    const error$      = fromEvent<EventErrorPayload>      (wechaty.puppet, 'error')
+    const friendship$ = fromEvent<EventFriendshipPayload> (wechaty.puppet, 'friendship')
+    const heartbeat$  = fromEvent<EventHeartbeatPayload>  (wechaty.puppet, 'heartbeat')
+    const login$      = fromEvent<EventLoginPayload>      (wechaty.puppet, 'login')
+    const logout$     = fromEvent<EventLogoutPayload>     (wechaty.puppet, 'logout')
+    const message$    = fromEvent<EventMessagePayload>    (wechaty.puppet, 'message')
+    const ready$      = fromEvent<EventReadyPayload>      (wechaty.puppet, 'ready')
+    const reset$      = fromEvent<EventResetPayload>      (wechaty.puppet, 'reset')
+    const roomInvite$ = fromEvent<EventRoomInvitePayload> (wechaty.puppet, 'room-invite')
+    const roomJoin$   = fromEvent<EventRoomJoinPayload>   (wechaty.puppet, 'room-join')
+    const roomLeave$  = fromEvent<EventRoomLeavePayload>  (wechaty.puppet, 'room-leave')
+    const roomTopic$  = fromEvent<EventRoomTopicPayload>  (wechaty.puppet, 'room-topic')
+    const scan$       = fromEvent<EventScanPayload>       (wechaty.puppet, 'scan')
 
     const friendshipPayloadToAction = mergeMap((payload: EventFriendshipPayload) => {
       const friendship = wechaty.Friendship.load(payload.friendshipId)
@@ -180,7 +187,7 @@ export class WechatyRedux {
         roomTopic$  .pipe(roomTopicPayloadToAction),
       ),
       scan$         .pipe(map(payload => wechatyDucks.actions.scanEvent(wechaty, payload))),
-    ).subscribe(store.dispatch)
+    ).subscribe(this.store.dispatch)
 
   }
 

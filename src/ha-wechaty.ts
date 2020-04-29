@@ -15,24 +15,15 @@ import flattenArray from 'flatten-array'
 import cuid from 'cuid'
 
 import {
-  Subscription,
-}                   from 'rxjs'
-import {
   VERSION,
   log,
 }             from './config'
 
 import {
-  heartbeat$,
-}                   from './heartbeat$'
-
-import {
   isWechatyAvailable,
+  WechatyRedux,
+  wechatyUse,
 }                                 from './wechaty-redux'
-
-import {
-  store,
-}           from './ducks/'
 
 import { envWechaty } from './env-wechaty'
 
@@ -49,7 +40,7 @@ export class HAWechaty extends EventEmitter {
 
   public wechatyList: Wechaty[]
 
-  private heartbeatSub?: Subscription
+  private redux: WechatyRedux
 
   public Room = {
     findAll : this.roomFindAll.bind(this),
@@ -116,6 +107,8 @@ export class HAWechaty extends EventEmitter {
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
+    this.redux = new WechatyRedux()
+
     // TODO: init via the options
   }
 
@@ -143,14 +136,7 @@ export class HAWechaty extends EventEmitter {
         throw new Error('no wechaty puppet found')
       }
 
-      this.heartbeatSub = heartbeat$(this.wechatyList).subscribe(
-        x => {
-          log.verbose('HAWechaty', 'start() heartbeat$() next: %s', JSON.stringify(x))
-          log.verbose('HAWechaty', 'start() heartbeat$() availableState: "%s"', JSON.stringify(store.getState().ha))
-        },
-        e => log.error('HAWechaty', 'start() heartbeat$(%s) error: %s', e),
-        () => log.verbose('HAWechaty', 'start() heartbeat$() complete'),
-      )
+      this.wechatyList.forEach(wechaty => wechatyUse(wechaty, this.redux.plugin()))
 
       log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
       await Promise.all(
@@ -173,11 +159,6 @@ export class HAWechaty extends EventEmitter {
 
     try {
       this.state.off('pending')
-
-      if (this.heartbeatSub) {
-        this.heartbeatSub.unsubscribe()
-        this.heartbeatSub = undefined
-      }
 
       await Promise.all(
         this.wechatyList.map(
