@@ -1,7 +1,7 @@
 import { createReducer } from 'typesafe-actions'
 import { DeepReadonly } from 'utility-types'
 
-import actions from './actions'
+import * as actions from './actions'
 
 const initialState: DeepReadonly<{
   [wechatyId: string]: undefined | {  // wechaty id
@@ -28,5 +28,5 @@ const reducer = createReducer(initialState)
     [action.payload.contact.wechaty.id]: undefined,
   }))
 
-export default reducer
 export type State = ReturnType<typeof reducer>
+export default reducer

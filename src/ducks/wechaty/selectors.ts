@@ -1,6 +1,6 @@
 import { State } from './reducers'
 
-function status (
+function getStatus (
   state     : State,
   wechatyId : string,
 ) {
@@ -10,6 +10,6 @@ function status (
   return {}
 }
 
-export default {
-  status,
+export {
+  getStatus,
 }

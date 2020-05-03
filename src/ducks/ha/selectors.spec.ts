@@ -7,7 +7,7 @@ import { Wechaty } from 'wechaty'
 import { HAWechaty } from '../../ha-wechaty'
 
 import { State } from './reducers'
-import selectors from './selectors'
+import * as selectors from './selectors'
 
 test('getHAAvailable() for empty state', async t => {
   const state: State = {

@@ -21,7 +21,7 @@ import {
 //   Wechaty,
 // }             from 'wechaty'
 
-import actions from './actions'
+import * as actions from './actions'
 
 import {
   RootEpic,
@@ -50,7 +50,7 @@ const sayEpic: RootEpic = actions$ => actions$.pipe(
   ))
 )
 
-export default {
+export {
   dingEpic,
   resetEpic,
   sayEpic,
