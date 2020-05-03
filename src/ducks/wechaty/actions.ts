@@ -18,7 +18,7 @@ import {
 
 import { Sayable } from 'wechaty/dist/src/types'
 
-import types from './types'
+import * as types from './types'
 import { EventScanPayload } from 'wechaty-puppet'
 
 const prepareTurnOnSwitch  = (wechaty: Wechaty, status: true | 'pending') => ({ status, wechaty })

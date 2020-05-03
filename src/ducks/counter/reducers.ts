@@ -6,6 +6,7 @@ import { createReducer } from 'typesafe-actions'
 import { DeepReadonly } from 'utility-types'
 
 import actions from './actions'
+// import * as types from './types'
 
 const initialState: DeepReadonly<{
   mo: number,
@@ -16,9 +17,10 @@ const initialState: DeepReadonly<{
 }
 
 const reducer = createReducer(initialState)
-  // state and action type is automatically inferred and return type is validated to be exact type
+  // .handleType(types.MESSAGE_MO, state => ({ ...state, mo: state.mo + 1 }))
+  // .handleType(types.MESSAGE_MT, state => ({ ...state, mt: state.mt + 1 }))
   .handleAction(actions.moMessage, (state, _action) => ({ ...state, mo: state.mo + 1 }))
-  // .handleAction(actions.mtMessage, (state, _action) => ({ ...state, mt: state.mt + 1 }))
+  .handleAction(actions.mtMessage, (state, _action) => ({ ...state, mt: state.mt + 1 }))
 
 // reducer(initialState, actions.moMessage()) // => 4
 

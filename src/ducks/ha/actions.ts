@@ -9,7 +9,7 @@ import {
 
 import { HAWechaty } from '../../'
 
-import types from './types'
+import * as types from './types'
 
 const prepareHA         = (ha: HAWechaty)     => ({ ha })
 const prepareWechaty    = (wechaty: Wechaty)  => ({ wechaty })
