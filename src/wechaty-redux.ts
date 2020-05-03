@@ -21,8 +21,8 @@ import {
   mergeMap,
 }             from 'rxjs/operators'
 
-import * as wechatyDucks from './ducks/wechaty'
-import * as haDucks from './ducks/ha'
+import * as wechatyDucks  from './ducks/wechaty'
+import * as haDucks       from './ducks/ha'
 
 import ducksStore from './ducks'
 
@@ -48,12 +48,6 @@ export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWec
 export type WechatyPlugin = (wechaty: Wechaty) => void
 
 export interface WechatyReduxPluginOptions {
-
-}
-
-export function wechatyUse (wechaty: Wechaty, plugin: WechatyPlugin): void {
-
-  plugin(wechaty)
 
 }
 

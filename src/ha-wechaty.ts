@@ -22,7 +22,6 @@ import {
 import {
   isWechatyAvailable,
   WechatyRedux,
-  wechatyUse,
 }                                 from './wechaty-redux'
 
 import { envWechaty } from './env-wechaty'
@@ -130,13 +129,17 @@ export class HAWechaty extends EventEmitter {
     try {
       this.state.on('pending')
 
-      this.wechatyList.push(...envWechaty(this.options))
+      this.wechatyList.push(
+        ...envWechaty(this.options)
+      )
 
       if (this.wechatyList.length <= 0) {
         throw new Error('no wechaty puppet found')
       }
 
-      this.wechatyList.forEach(wechaty => wechatyUse(wechaty, this.redux.plugin()))
+      this.wechatyList.forEach(wechaty => wechaty.use(
+        this.redux.plugin()
+      ))
 
       log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
       await Promise.all(
@@ -165,6 +168,12 @@ export class HAWechaty extends EventEmitter {
           wechaty => wechaty.stop()
         )
       )
+
+      /**
+       * Delete all Wechaty insteances
+       *  Huan(202005) TODO: make sure they are GC-ed?
+       */
+      this.wechatyList = []
 
     } catch (e) {
       log.warn('HAWechaty', 'stop() rejection: %s', e)

@@ -15,14 +15,12 @@ const initialState: DeepReadonly<{
   mt: 0,
 }
 
-// using action-creators
 const reducer = createReducer(initialState)
   // state and action type is automatically inferred and return type is validated to be exact type
-  .handleAction(actions.moMessage, (state) => ({ ...state, mo: state.mo + 1 }))
-  .handleAction(actions.mtMessage, (state) => ({ ...state, mo: state.mt + 1 }))
+  .handleAction(actions.moMessage, (state, _action) => ({ ...state, mo: state.mo + 1 }))
+  // .handleAction(actions.mtMessage, (state, _action) => ({ ...state, mt: state.mt + 1 }))
 
-// counterReducer(initialState, actions.moMessage()) // => 4
-// counterReducer(0, increment()); // => 1
+// reducer(initialState, actions.moMessage()) // => 4
 
 export default reducer
 export type State = ReturnType<typeof reducer>
