@@ -1,3 +1,5 @@
+/// <reference path="./types.d.ts" />
+
 /**
  *  Huan(202003): Redux with Ducks
  *
