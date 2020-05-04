@@ -1,9 +1,9 @@
 import reducer  from './reducers'
 
-import epics     from './epics'
-import actions   from './actions'
-import selectors from './selectors'
-import types     from './types'
+import * as epics     from './epics'
+import * as actions   from './actions'
+import * as selectors from './selectors'
+import * as types     from './types'
 
 export {
   actions,

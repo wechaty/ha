@@ -10,16 +10,12 @@ import {
   Contact,
   RoomInvitation,
   Room,
+  Sayable,
 }             from 'wechaty'
 
-// import {
-//   EventResetPayload,
-// }                       from 'wechaty-puppet'
-
-import { Sayable } from 'wechaty/dist/src/types'
-
-import types from './types'
 import { EventScanPayload } from 'wechaty-puppet'
+
+import * as types from './types'
 
 const prepareTurnOnSwitch  = (wechaty: Wechaty, status: true | 'pending') => ({ status, wechaty })
 const prepareTurnOffSwitch = (wechaty: Wechaty, status: true | 'pending') => ({ status, wechaty })
@@ -73,28 +69,24 @@ const sayAsync = createAsyncAction(
   types.SAY_FAILURE,
 )<{ sayable: Sayable, text: string }, void, Error>()
 
-export default {
-  ...{
-    turnOffSwitch,
-    turnOnSwitch,
-  },
+export {
+  turnOffSwitch,
+  turnOnSwitch,
 
-  ...{
-    dongEvent,
-    errorEvent,
-    friendshipEvent,
-    heartbeatEvent,
-    loginEvent,
-    logoutEvent,
-    messageEvent,
-    readyEvent,
-    resetEvent,
-    roomInviteEvent,
-    roomJoinEvent,
-    roomLeaveEvent,
-    roomTopicEvent,
-    scanEvent,
-  },
+  dongEvent,
+  errorEvent,
+  friendshipEvent,
+  heartbeatEvent,
+  loginEvent,
+  logoutEvent,
+  messageEvent,
+  readyEvent,
+  resetEvent,
+  roomInviteEvent,
+  roomJoinEvent,
+  roomLeaveEvent,
+  roomTopicEvent,
+  scanEvent,
 
   ding,
   reset,

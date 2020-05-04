@@ -5,7 +5,7 @@ import { Wechaty }      from 'wechaty'
 
 import { HAWechaty } from '../../ha-wechaty'
 
-import actions from './actions'
+import * as actions from './actions'
 
 const initialState: DeepReadonly<{
   availability: {

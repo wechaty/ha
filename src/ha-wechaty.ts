@@ -22,7 +22,6 @@ import {
 import {
   isWechatyAvailable,
   WechatyRedux,
-  wechatyUse,
 }                                 from './wechaty-redux'
 
 import { envWechaty } from './env-wechaty'
@@ -130,25 +129,29 @@ export class HAWechaty extends EventEmitter {
     try {
       this.state.on('pending')
 
-      this.wechatyList.push(...envWechaty(this.options))
+      this.wechatyList.push(
+        ...envWechaty(this.options)
+      )
 
       if (this.wechatyList.length <= 0) {
         throw new Error('no wechaty puppet found')
       }
 
-      this.wechatyList.forEach(wechaty => wechatyUse(wechaty, this.redux.plugin()))
+      log.verbose('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
 
-      log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
-      await Promise.all(
-        this.wechatyList.map(
-          wechaty => wechaty.start()
-        )
-      )
+      for (const wechaty of this.wechatyList) {
+        log.silly('HAWechaty', 'start() %s starting', wechaty)
+
+        await wechaty.start()
+        wechaty.use(this.redux.plugin())
+
+      }
 
       this.state.on(true)
 
     } catch (e) {
       log.warn('HAWechaty', 'start() rejection: %s', e)
+      console.info(e)
       this.state.off(true)
     }
 
@@ -165,6 +168,12 @@ export class HAWechaty extends EventEmitter {
           wechaty => wechaty.stop()
         )
       )
+
+      /**
+       * Delete all Wechaty insteances
+       *  Huan(202005) TODO: make sure they are GC-ed?
+       */
+      this.wechatyList = []
 
     } catch (e) {
       log.warn('HAWechaty', 'stop() rejection: %s', e)

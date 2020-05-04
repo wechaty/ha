@@ -25,7 +25,7 @@ import {
 }                             from '../wechaty/'
 
 // import * as actions from './actions'
-import selectors from './selectors'
+import * as selectors from './selectors'
 import { State } from './reducers'
 
 interface PayloadWechaty { wechaty: Wechaty }
@@ -91,7 +91,7 @@ const toChatieOA = (wechaty: Wechaty): Contact => {
   return contact
 }
 
-export default {
+export {
   belongsToWechaty,
   emitError$,
   isChatieOA,
@@ -104,10 +104,8 @@ export default {
   toChatieOA,
   toWechaty,
 
-  ...{
-    isMessageTextDong,
-    isMessageTypeText,
-  },
+  isMessageTextDong,
+  isMessageTypeText,
 
   sayDingTo,
 }

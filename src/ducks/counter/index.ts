@@ -1,8 +1,8 @@
 import reducer from './reducers'
 
-import actions    from './actions'
-import types      from './types'
-import selectors  from './selectors'
+import * as actions    from './actions'
+import * as types      from './types'
+import * as selectors  from './selectors'
 
 export {
   actions,

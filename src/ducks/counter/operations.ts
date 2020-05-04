@@ -12,4 +12,4 @@
 //         dispatch( /* any action */ );
 //     } );
 // }
-export default {}
+export {}

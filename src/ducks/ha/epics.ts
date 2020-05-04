@@ -33,9 +33,9 @@ import {
   actions as wechatyActions,
 }                             from '../wechaty'
 
-import actions     from './actions'
-import operations  from './operations'
-import selectors   from './selectors'
+import * as actions     from './actions'
+import * as operations  from './operations'
+import * as selectors   from './selectors'
 
 import {
   milliAroundSeconds,
@@ -224,7 +224,7 @@ const mainEpic: RootEpic = action$ => wechatyMessage$$(action$).pipe(
   )),
 )
 
-export default {
+export {
   dingEvokerEpic,
   dongEmitterEpic,
   failureHAEmitterEpic,

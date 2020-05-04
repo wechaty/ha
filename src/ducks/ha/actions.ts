@@ -7,9 +7,9 @@ import {
   Contact,
 }           from 'wechaty'
 
-import { HAWechaty } from '../../'
+import { HAWechaty } from '../../ha-wechaty'
 
-import types from './types'
+import * as types from './types'
 
 const prepareHA         = (ha: HAWechaty)     => ({ ha })
 const prepareWechaty    = (wechaty: Wechaty)  => ({ wechaty })
@@ -17,6 +17,9 @@ const prepareMessage    = (message: Message)  => ({ message })
 const prepareContact    = (contact: Contact)  => ({ contact })
 const prepareHAWechaty  = (ha: HAWechaty, wechaty: Wechaty)  => ({ ha, wechaty })
 
+/**
+ * Actions
+ */
 const addWechaty = createAction(types.WECHATY_ADD, prepareHAWechaty)()
 const delWechaty = createAction(types.WECHATY_DEL, prepareHAWechaty)()
 
@@ -29,7 +32,7 @@ const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
 const ding = createAction(types.DING, prepareContact)()
 const dong = createAction(types.DONG, prepareMessage)()
 
-export default {
+export {
   addWechaty,
   delWechaty,
 
@@ -38,8 +41,7 @@ export default {
 
   failureHA,
   recoverHA,
-  ...{
-    failureWechaty,
-    recoverWechaty,
-  },
+
+  failureWechaty,
+  recoverWechaty,
 }

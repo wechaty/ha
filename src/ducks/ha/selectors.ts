@@ -52,7 +52,7 @@ const getHA = (state: State, wechaty: Wechaty) => {
   return ha
 }
 
-export default {
+export {
   getHA,
   getHAAvailable,
   getWechatyAvailable,
