@@ -25,6 +25,15 @@ export function envWechaty (
     wechatyPuppetList.join(', '),
   )
 
+  if (wechatyPuppetList.includes('WECHATY_PUPPET_MOCK')) {
+    wechatyList.push(
+      new Wechaty({
+        ...options,
+        puppet: 'wechaty-puppet-mock',
+      }),
+    )
+  }
+
   if (wechatyPuppetList.includes('WECHATY_PUPPET_HOSTIE')
       && process.env.HA_WECHATY_PUPPET_HOSTIE_TOKEN
   ) {
@@ -51,20 +60,6 @@ export function envWechaty (
         puppet: 'wechaty-puppet-padplus',
         puppetOptions: {
           token: process.env.HA_WECHATY_PUPPET_PADPLUS_TOKEN,
-        },
-      }),
-    )
-  }
-
-  if (wechatyPuppetList.includes('WECHATY_PUPPET_MOCK')
-      && process.env.HA_WECHATY_PUPPET_MOCK_TOKEN
-  ) {
-    wechatyList.push(
-      new Wechaty({
-        ...options,
-        puppet: 'wechaty-puppet-mock',
-        puppetOptions: {
-          token: process.env.HA_WECHATY_PUPPET_MOCK_TOKEN,
         },
       }),
     )

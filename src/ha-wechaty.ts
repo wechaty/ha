@@ -137,21 +137,21 @@ export class HAWechaty extends EventEmitter {
         throw new Error('no wechaty puppet found')
       }
 
-      this.wechatyList.forEach(wechaty => wechaty.use(
-        this.redux.plugin()
-      ))
+      log.verbose('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
 
-      log.info('HAWechaty', 'start() %s puppet inited', this.wechatyList.length)
-      await Promise.all(
-        this.wechatyList.map(
-          wechaty => wechaty.start()
-        )
-      )
+      for (const wechaty of this.wechatyList) {
+        log.silly('HAWechaty', 'start() %s starting', wechaty)
+
+        await wechaty.start()
+        wechaty.use(this.redux.plugin())
+
+      }
 
       this.state.on(true)
 
     } catch (e) {
       log.warn('HAWechaty', 'start() rejection: %s', e)
+      console.info(e)
       this.state.off(true)
     }
 

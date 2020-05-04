@@ -55,11 +55,7 @@ ha
  *
  */
 ha.start()
-  .catch(async e => {
-    console.error('Bot start() fail:', e)
-    await ha.stop()
-    process.exit(-1)
-  })
+  .catch(console.error)
 
 /**
  *
