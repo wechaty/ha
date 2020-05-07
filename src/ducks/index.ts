@@ -1,5 +1,3 @@
-/// <reference path="./types.d.ts" />
-
 /**
  *  Huan(202003): Redux with Ducks
  *
@@ -12,10 +10,13 @@
  */
 
 import {
-  createStore,
-  // compose,
   applyMiddleware,
+  createStore,
+  compose,
 }                           from 'redux'
+import {
+  composeWithDevTools,
+}                           from 'remote-redux-devtools'
 import {
   createEpicMiddleware,
   Epic,
@@ -64,13 +65,22 @@ const epicMiddleware = createEpicMiddleware<
 // rehydrate state on app start
 const initialState = {}
 
+const enhancer = compose(
+  composeWithDevTools({
+    hostname : 'localhost',
+    port     : 8000,
+    realtime : true,
+  })(),
+  applyMiddleware(
+    epicMiddleware,
+  ),
+)
+
 // create store
 const store = createStore(
   rootReducer,
   initialState,
-  applyMiddleware(
-    epicMiddleware,
-  ),
+  enhancer,
 )
 
 epicMiddleware.run(rootEpic)
