@@ -22,6 +22,7 @@ import {
 import {
   isWechatyAvailable,
   WechatyRedux,
+  WechatyPlugin,
 }                                 from './wechaty-redux'
 
 import { envWechaty } from './env-wechaty'
@@ -181,6 +182,15 @@ export class HAWechaty extends EventEmitter {
     } finally {
       this.state.off(true)
     }
+  }
+
+  public use (...pluginList: WechatyPlugin[]): void {
+    log.verbose('HAWechaty', 'use(%s)',
+      pluginList.map(
+        plugin => plugin.name
+      ).join(','),
+    )
+    this.wechatyList.forEach(wechaty => wechaty.use(...pluginList))
   }
 
   public logonoff (): boolean {
