@@ -17,16 +17,20 @@
  *
  */
 import {
-  Contact,
   FileBox,
   Message,
-  ScanStatus,
   Wechaty,
 }               from 'wechaty'
 
-import { generate } from 'qrcode-terminal'
+import {
+  QRCodeTerminal,
+  EventLogger,
+}                   from 'wechaty-plugin-contrib'
 
 import { HAWechaty } from '../src/'
+
+import dotenv from 'dotenv'
+dotenv.config()
 
 /**
  *
@@ -37,17 +41,17 @@ const ha = new HAWechaty({
   name : 'ha-ding-dong-bot',
 })
 
+ha.use(
+  EventLogger(),
+  QRCodeTerminal(),
+)
+
 /**
  *
  * 2. Register event handlers for Bot
  *
  */
-ha
-  .on('logout', onLogout)
-  .on('login',  onLogin)
-  .on('scan',   onScan)
-  .on('error',  onError)
-  .on('message', onMessage)
+ha.on('message', onMessage)
 
 /**
  *
@@ -56,52 +60,6 @@ ha
  */
 ha.start()
   .catch(console.error)
-
-/**
- *
- * 5. Define Event Handler Functions for:
- *  `scan`, `login`, `logout`, `error`, and `message`
- *
- */
-function onScan (qrcode: string, status: ScanStatus) {
-  if (status === ScanStatus.Waiting || status === ScanStatus.Timeout) {
-    generate(qrcode)
-
-    // Generate a QR Code online via
-    // http://goqr.me/api/doc/create-qr-code/
-    const qrcodeImageUrl = [
-      'https://api.qrserver.com/v1/create-qr-code/?data=',
-      encodeURIComponent(qrcode),
-    ].join('')
-
-    console.info('onScan: %s(%s) - %s', ScanStatus[status], status, qrcodeImageUrl)
-  } else {
-    console.info('onScan: %s(%s)', ScanStatus[status], status)
-  }
-
-  // console.info(`[${ScanStatus[status]}(${status})] ${qrcodeImageUrl}\nScan QR Code above to log in: `)
-}
-
-function onLogin (
-  this: Wechaty,
-  user: Contact,
-) {
-  console.info(`${user.name()} login`)
-  this.say('Wechaty login').catch(console.error)
-}
-
-function onLogout (user: Contact) {
-  console.info(`${user.name()} logouted`)
-}
-
-function onError (e: Error) {
-  console.error('Bot error:', e)
-  /*
-  if (bot.logonoff()) {
-    bot.say('Wechaty error: ' + e.message).catch(console.error)
-  }
-  */
-}
 
 /**
  *
