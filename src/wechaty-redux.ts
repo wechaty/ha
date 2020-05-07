@@ -53,6 +53,20 @@ export interface WechatyReduxPluginOptions {
 
 const store = ducksStore
 
+const wechatyStore = new Map<string, Wechaty>()
+
+export const getWechaty = (id: string) => {
+  const wechaty = wechatyStore.get(id)
+  if (!wechaty) {
+    throw new Error('no wechaty found for id ' + id)
+  }
+  return wechaty
+}
+
+export const getMessage = (wechatyId: string, id: string) => getWechaty(wechatyId).Message.load(id)
+export const getRoom    = (wechatyId: string, id: string) => getWechaty(wechatyId).Room.load(id)
+export const getContact = (wechatyId: string, id: string) => getWechaty(wechatyId).Contact.load(id)
+
 export class WechatyRedux {
 
   public store : any
@@ -69,6 +83,11 @@ export class WechatyRedux {
 
   protected install (wechaty: Wechaty): void {
     log.verbose('WechatyRedux', 'install(%s)', wechaty)
+
+    /**
+     * Save wechaty id with the instance for the future usage
+     */
+    wechatyStore.set(wechaty.id, wechaty)
 
     /**
      * Actually, we are not installing to the Wechaty,
