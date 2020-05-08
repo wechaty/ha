@@ -12,8 +12,9 @@ import { timestampToDate } from 'wechaty/dist/src/helper-functions/pure/timestam
 import {
   from,
   fromEvent,
-  merge,
   forkJoin,
+  merge,
+  of,
 }             from 'rxjs'
 import {
   map,
@@ -112,65 +113,6 @@ export class WechatyRedux {
     const roomTopic$  = fromEvent<EventRoomTopicPayload>  (wechaty.puppet, 'room-topic')
     const scan$       = fromEvent<EventScanPayload>       (wechaty.puppet, 'scan')
 
-    const friendshipPayloadToAction = mergeMap((payload: EventFriendshipPayload) => {
-      const friendship = wechaty.Friendship.load(payload.friendshipId)
-      return from(friendship.ready()).pipe(
-        mapTo(wechatyDucks.actions.friendshipEvent(friendship)),
-      )
-    })
-    const loginoutPayloadToAction = mergeMap((payload: EventLoginPayload | EventLogoutPayload) => {
-      const contact = wechaty.Contact.load(payload.contactId)
-      return from(contact.ready()).pipe(
-        mapTo(wechatyDucks.actions.loginEvent(contact)),
-      )
-    })
-    const messagePayloadToAction = mergeMap((payload: EventMessagePayload) => {
-      const message = wechaty.Message.load(payload.messageId)
-      return from(message.ready()).pipe(
-        mapTo(wechatyDucks.actions.messageEvent(message)),
-      )
-    })
-    const roomJoinPayloadToAction = mergeMap((payload: EventRoomJoinPayload) => {
-      const room        = wechaty.Room.load(payload.roomId)
-      const inviteeList = payload.inviteeIdList.map(id => wechaty.Contact.load(id))
-      const inviter     = wechaty.Contact.load(payload.inviterId)
-      const date        = timestampToDate(payload.timestamp)
-
-      return forkJoin(
-        from(room.ready()),
-        from(inviter.ready()),
-        from(Promise.all(inviteeList.map(c => c.ready()))),
-      ).pipe(
-        mapTo(wechatyDucks.actions.roomJoinEvent(room, inviteeList, inviter, date)),
-      )
-    })
-    const roomLeavePayloadToAction = mergeMap((payload: EventRoomLeavePayload) => {
-      const room        = wechaty.Room.load(payload.roomId)
-      const removeeList = payload.removeeIdList.map(id => wechaty.Contact.load(id))
-      const remover     = wechaty.Contact.load(payload.removerId)
-      const date        = timestampToDate(payload.timestamp)
-
-      return forkJoin(
-        from(room.ready()),
-        from(remover.ready()),
-        from(Promise.all(removeeList.map(c => c.ready()))),
-      ).pipe(
-        mapTo(wechatyDucks.actions.roomLeaveEvent(room, removeeList, remover, date)),
-      )
-    })
-    const roomTopicPayloadToAction = mergeMap((payload: EventRoomTopicPayload) => {
-      const room        = wechaty.Room.load(payload.roomId)
-      const changer     = wechaty.Contact.load(payload.changerId)
-      const date        = timestampToDate(payload.timestamp)
-
-      return forkJoin(
-        from(room.ready()),
-        from(changer.ready()),
-      ).pipe(
-        mapTo(wechatyDucks.actions.roomTopicEvent(room, payload.newTopic, payload.oldTopic, changer, date)),
-      )
-    })
-
     merge(
       /**
        * Huan(202004):
@@ -184,23 +126,23 @@ export class WechatyRedux {
         switchOff$  .pipe(map(status => wechatyDucks.actions.turnOffSwitch(wechaty, status))),
       ),
       merge(
-        dong$       .pipe(map(payload => wechatyDucks.actions.dongEvent(wechaty, payload.data))),
-        error$      .pipe(map(payload => wechatyDucks.actions.errorEvent(wechaty, payload.data))),
-        friendship$ .pipe(friendshipPayloadToAction),
-        heartbeat$  .pipe(map(payload => wechatyDucks.actions.heartbeatEvent(wechaty, payload.data))),
-        login$      .pipe(loginoutPayloadToAction),
-        logout$     .pipe(loginoutPayloadToAction),
+        dong$       .pipe(map(payload => wechatyDucks.actions.dongEvent(wechaty, payload))),
+        error$      .pipe(map(payload => wechatyDucks.actions.errorEvent(wechaty, payload))),
+        friendship$ .pipe(map(payload => wechatyDucks.actions.friendshipEvent(wechaty, payload))),
+        heartbeat$  .pipe(map(payload => wechatyDucks.actions.heartbeatEvent(wechaty, payload))),
+        login$      .pipe(map(payload => wechatyDucks.actions.loginEvent(wechaty,     payload))),
+        logout$     .pipe(map(payload => wechatyDucks.actions.logoutEvent(wechaty,    payload))),
       ),
       merge(
-        message$    .pipe(messagePayloadToAction),
-        ready$      .pipe(map(payload => wechatyDucks.actions.readyEvent(wechaty, payload.data))),
-        reset$      .pipe(map(payload => wechatyDucks.actions.resetEvent(wechaty, payload.data))),
+        message$    .pipe(map(payload => wechatyDucks.actions.messageEvent(wechaty, payload))),
+        ready$      .pipe(map(payload => wechatyDucks.actions.readyEvent(wechaty,   payload))),
+        reset$      .pipe(map(payload => wechatyDucks.actions.resetEvent(wechaty,   payload))),
       ),
       merge(
-        roomInvite$ .pipe(map(payload => wechatyDucks.actions.roomInviteEvent(wechaty.RoomInvitation.load(payload.roomInvitationId)))),
-        roomJoin$   .pipe(roomJoinPayloadToAction),
-        roomLeave$  .pipe(roomLeavePayloadToAction),
-        roomTopic$  .pipe(roomTopicPayloadToAction),
+        roomInvite$ .pipe(map(payload => wechatyDucks.actions.roomInviteEvent(wechaty,  payload))),
+        roomJoin$   .pipe(map(payload => wechatyDucks.actions.roomJoinEvent(wechaty,    payload))),
+        roomLeave$  .pipe(map(payload => wechatyDucks.actions.roomLeaveEvent(wechaty,   payload))),
+        roomTopic$  .pipe(map(payload => wechatyDucks.actions.roomTopicEvent(wechaty,   payload))),
       ),
       scan$         .pipe(map(payload => wechatyDucks.actions.scanEvent(wechaty, payload))),
     ).subscribe(this.store.dispatch)
