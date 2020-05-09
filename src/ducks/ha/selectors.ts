@@ -31,7 +31,7 @@ const getHAByWechatyId = (state: State, wechatyId: string) => {
 }
 
 export {
-  getHAByWechatyId as getHA,
+  getHAByWechatyId,
   getHAAvailable,
   getWechatyAvailable,
 }

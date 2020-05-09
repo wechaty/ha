@@ -130,7 +130,7 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
     // Recover Wechaty
     of(actions.recoverWechaty(action.payload.wechatyId)),
     // Recover HA
-    of(actions.recoverHA(selectors.getHA(
+    of(actions.recoverHA(selectors.getHAByWechatyId(
       state$.value.ha,
       action.payload.wechatyId,
     ))).pipe(
@@ -153,7 +153,7 @@ const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
     action.payload.wechatyId,
   )),
   map(action => actions.failureHA(
-    selectors.getHA(
+    selectors.getHAByWechatyId(
       state$.value.ha,
       action.payload.wechatyId,
     ),

@@ -18,7 +18,7 @@ import {
 
 const emitError$ = <T extends { payload: PayloadAllId }>(action: T, state: State) => (error: any) => {
   const wechaty = getWechaty(action.payload.wechatyId)
-  const ha = selectors.getHA(state, wechaty.id)
+  const ha = selectors.getHAByWechatyId(state, wechaty.id)
   wechaty.emit('error', error)
   ha.emit('error', error)
   return EMPTY

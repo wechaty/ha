@@ -2,10 +2,6 @@
 
 import { test } from 'tstest'
 
-import { Wechaty } from 'wechaty'
-
-import { HAWechaty } from '../../ha-wechaty'
-
 import { State } from './reducers'
 import * as selectors from './selectors'
 
@@ -13,8 +9,6 @@ test('getHAAvailable() for empty state', async t => {
   const state: State = {
     availability : {},
     cluster      : {},
-    ha           : {},
-    wechaty      : {},
   }
 
   const result = selectors.getHAAvailable(state)
@@ -25,18 +19,14 @@ test('getWechatyAvailable() for empty state', async t => {
   const state: State = {
     availability : {},
     cluster      : {},
-    ha           : {},
-    wechaty      : {},
   }
 
-  const result = selectors.getWechatyAvailable(state, { id: 'xxxfds' } as Wechaty)
+  const result = selectors.getWechatyAvailable(state, 'wechaty_id')
   t.equal(result, false, 'should not available')
 })
 
 test('getWechatyAvailable() with a state', async t => {
-  const WECHATY_ID = 'fdasfasdfsd'
-
-  const wechaty   = { id: WECHATY_ID } as Wechaty
+  const WECHATY_ID = 'test_id'
 
   const state = {
     availability: {
@@ -44,7 +34,7 @@ test('getWechatyAvailable() with a state', async t => {
     },
   } as any as State
 
-  let result = selectors.getWechatyAvailable(state, wechaty)
+  let result = selectors.getWechatyAvailable(state, WECHATY_ID)
   t.equal(result, true, 'should available')
 
   const state2 = {
@@ -55,16 +45,13 @@ test('getWechatyAvailable() with a state', async t => {
     },
   }
 
-  result = selectors.getWechatyAvailable(state2, wechaty)
+  result = selectors.getWechatyAvailable(state2, WECHATY_ID)
   t.equal(result, true, 'should not available')
 })
 
 test('getHAAvailable() with a state', async t => {
-  const WECHATY_ID = 'fdasfasdfsd'
-  const HAWECHATY_ID = 'j4132431fgvdsvbg'
-
-  const wechaty   = { id: WECHATY_ID }    as Wechaty
-  const haWechaty = { id: HAWECHATY_ID }  as HAWechaty
+  const WECHATY_ID = 'test_id'
+  const HAWECHATY_ID = 'test_ha_id'
 
   const state: State = {
     availability: {
@@ -73,19 +60,13 @@ test('getHAAvailable() with a state', async t => {
     cluster: {
       [WECHATY_ID]: HAWECHATY_ID,
     },
-    ha: {
-      [HAWECHATY_ID]: haWechaty,
-    },
-    wechaty: {
-      [WECHATY_ID]: wechaty,
-    },
   }
 
   let result = selectors.getHAAvailable(state)
   t.equal(result, true, 'should available')
-  result = selectors.getHAAvailable(state, wechaty)
+  result = selectors.getHAAvailable(state, WECHATY_ID)
   t.equal(result, true, 'should available query by wechaty')
-  result = selectors.getHAAvailable(state, haWechaty)
+  result = selectors.getHAAvailable(state, HAWECHATY_ID)
   t.equal(result, true, 'should available query by haWechaty')
 
   const state2 = {
@@ -98,32 +79,23 @@ test('getHAAvailable() with a state', async t => {
 
   result = selectors.getHAAvailable(state2)
   t.equal(result, true, 'should not available')
-  result = selectors.getHAAvailable(state2, wechaty)
+  result = selectors.getHAAvailable(state2, WECHATY_ID)
   t.equal(result, true, 'should not available query by wechaty')
-  result = selectors.getHAAvailable(state2, haWechaty)
+  result = selectors.getHAAvailable(state2, HAWECHATY_ID)
   t.equal(result, true, 'should not available query by haWechaty')
 })
 
 test('getHA()', async t => {
-  const WECHATY_ID = 'fdasfasdfsd'
-  const HAWECHATY_ID = 'j4132431fgvdsvbg'
-
-  const wechaty   = { id: WECHATY_ID }    as Wechaty
-  const haWechaty = { id: HAWECHATY_ID }  as HAWechaty
+  const WECHATY_ID = 'wechaty_id'
+  const HAWECHATY_ID = 'hawechaty_id'
 
   const state: State = {
     availability: {},
     cluster: {
       [WECHATY_ID]: HAWECHATY_ID,
     },
-    ha: {
-      [HAWECHATY_ID]: haWechaty,
-    },
-    wechaty: {
-      [WECHATY_ID]: wechaty,
-    },
   }
 
-  let result = selectors.getHA(state, wechaty)
-  t.equal(result, haWechaty, 'should get haWechaty from wechaty')
+  let result = selectors.getHAByWechatyId(state, WECHATY_ID)
+  t.equal(result, HAWECHATY_ID, 'should get haWechaty from wechaty')
 })
