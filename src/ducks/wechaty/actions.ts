@@ -5,7 +5,8 @@ import {
 }                       from 'typesafe-actions'
 
 import {
-  Wechaty, Sayable,
+  Wechaty,
+  Sayable,
 }             from 'wechaty'
 
 import {
@@ -24,6 +25,8 @@ import {
   EventFriendshipPayload,
   EventResetPayload,
 }                             from 'wechaty-puppet'
+
+import cuid from 'cuid'
 
 import * as types from './types'
 
@@ -75,7 +78,7 @@ const scanEvent       = createAction(types.EVENT_SCAN,        prepareScan)()
 /**
  * Actions: VOID APIs
  */
-const prepareData = (wechaty: Wechaty, data: string)  => ({ data, wechatyId: wechaty.id })
+const prepareData = (wechatyId: string, data: string)  => ({ data, wechatyId })
 
 const ding  = createAction(types.DING,  prepareData)()
 const reset = createAction(types.RESET, prepareData)()
@@ -83,13 +86,14 @@ const reset = createAction(types.RESET, prepareData)()
 /**
  * Actions: Non-Void APIs
  */
-const prepareSayRequest = (wechaty: Wechaty, sayable: Sayable, text: string) => ({ wechatyId: wechaty.id, conversationId: sayable.id, text })
-const prepareSaySuccess = (wechaty: Wechaty, id?: string) => ({ wechatyId: wechaty.id, messageId: id })
+const prepareSayRequest = (wechaty: Wechaty, sayable: Sayable, text: string) => ({ id: cuid(), wechatyId: wechaty.id, conversationId: sayable.id, text })
+const prepareSaySuccess = (wechaty: Wechaty, id: string, messageId?: string) => ({ id, wechatyId: wechaty.id, messageId })
+const prepareSayFailure = (wechaty: Wechaty, id: string, error: Error)       => ({ id, wechatyId: wechaty.id, error: error.toString() })
 
 const sayAsync = createAsyncAction(
   [types.SAY_REQUEST, prepareSayRequest],
   [types.SAY_SUCCESS, prepareSaySuccess],
-  types.SAY_FAILURE,
+  [types.SAY_FAILURE, prepareSayFailure],
 )()
 
 export {

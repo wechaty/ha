@@ -48,10 +48,13 @@ const resetEpic: VoidEpic = actions$ => actions$.pipe(
 
 const sayEpic: RootEpic = actions$ => actions$.pipe(
   filter(isActionOf(actions.sayAsync.request)),
-  mergeMap(action => from(getWechaty(action.payload.wechatyId).say(action.payload.text)).pipe(
-    mapTo(actions.sayAsync.success()),
-    catchError(e => of(actions.sayAsync.failure(e))),
-  ))
+  mergeMap(action => {
+    const wechaty = getWechaty(action.payload.wechatyId)
+    return from(wechaty.say(action.payload.text)).pipe(
+      mapTo(actions.sayAsync.success(wechaty, action.payload.id)),
+      catchError(e => of(actions.sayAsync.failure(wechaty, action.payload.id, e))),
+    )
+  })
 )
 
 export {

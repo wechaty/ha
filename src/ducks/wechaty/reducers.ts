@@ -3,6 +3,10 @@ import { DeepReadonly } from 'utility-types'
 
 import * as actions from './actions'
 
+import {
+  getWechaty,
+}               from '../../wechaty-redux'
+
 const initialState: DeepReadonly<{
   [wechatyId: string]: undefined | {  // wechaty id
     qrcode?   : string,
@@ -13,19 +17,19 @@ const initialState: DeepReadonly<{
 const reducer = createReducer(initialState)
   .handleAction(actions.scanEvent, (state, action) => ({
     ...state,
-    [action.payload.wechaty.id]: {
-      qrcode: action.payload.data.qrcode,
+    [action.payload.wechatyId]: {
+      qrcode: action.payload.qrcode,
     },
   }))
   .handleAction(actions.loginEvent, (state, action) => ({
     ...state,
-    [action.payload.contact.wechaty.id]: {
-      userName: action.payload.contact.name(),
+    [action.payload.wechatyId]: {
+      userName: getWechaty(action.payload.wechatyId).Contact.load(action.payload.contactId).name(),
     },
   }))
   .handleAction(actions.logoutEvent, (state, action) => ({
     ...state,
-    [action.payload.contact.wechaty.id]: undefined,
+    [action.payload.wechatyId]: undefined,
   }))
 
 export type State = ReturnType<typeof reducer>

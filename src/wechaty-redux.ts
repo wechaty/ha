@@ -3,23 +3,23 @@ import {
   log,
 }             from 'wechaty'
 
-import { timestampToDate } from 'wechaty/dist/src/helper-functions/pure/timestamp-to-date'
+// import { timestampToDate } from 'wechaty/dist/src/helper-functions/pure/timestamp-to-date'
 
 // import {
 //   Store,
 // }           from 'typesafe-actions'
 
 import {
-  from,
+  // from,
   fromEvent,
-  forkJoin,
+  // forkJoin,
   merge,
-  of,
+  // of,
 }             from 'rxjs'
 import {
   map,
-  mapTo,
-  mergeMap,
+  // mapTo,
+  // mergeMap,
 }             from 'rxjs/operators'
 
 import * as wechatyDucks  from './ducks/wechaty'
@@ -44,7 +44,10 @@ import {
   EventResetPayload,
 }                             from 'wechaty-puppet'
 
-export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWechatyAvailable(ducksStore.getState().ha, wechaty)
+export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWechatyAvailable(
+  ducksStore.getState().ha,
+  wechaty.id,
+)
 
 export type WechatyPlugin = (wechaty: Wechaty) => void
 

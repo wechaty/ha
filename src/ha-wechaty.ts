@@ -27,6 +27,16 @@ import {
 
 import { envWechaty } from './env-wechaty'
 
+const haWechatyStore = new Map<string, HAWechaty>()
+
+export const getHA = (id: string) => {
+  const ha = haWechatyStore.get(id)
+  if (!ha) {
+    throw new Error('no HA Wechaty instance for id ' + id)
+  }
+  return ha
+}
+
 export interface HAWechatyOptions {
   name?               : string,
   memory?             : MemoryCard,
@@ -109,6 +119,8 @@ export class HAWechaty extends EventEmitter {
 
     this.redux = new WechatyRedux()
 
+    haWechatyStore.set(this.id, this)
+
     // TODO: init via the options
   }
 
@@ -171,7 +183,7 @@ export class HAWechaty extends EventEmitter {
       )
 
       /**
-       * Delete all Wechaty insteances
+       * Delete all Wechaty instances
        *  Huan(202005) TODO: make sure they are GC-ed?
        */
       this.wechatyList = []

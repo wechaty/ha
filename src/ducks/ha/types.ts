@@ -1,14 +1,14 @@
-const WECHATY_ADD = 'HAWechaty/WECHATY_ADD'
-const WECHATY_DEL = 'HAWechaty/WECHATY_DEL'
+const WECHATY_ADD = 'ha-wechaty/WECHATY_ADD'
+const WECHATY_DEL = 'ha-wechaty/WECHATY_DEL'
 
-const WECHATY_FAILURE = 'HAWechaty/WECHATY_FAILURE'
-const WECHATY_RECOVER = 'HAWechaty/WECHATY_RECOVER'
+const WECHATY_FAILURE = 'ha-wechaty/WECHATY_FAILURE'
+const WECHATY_RECOVER = 'ha-wechaty/WECHATY_RECOVER'
 
-const HA_FAILURE = 'HAWechaty/FAILURE'
-const HA_RECOVER = 'HAWechaty/RESTORE'
+const HA_FAILURE = 'ha-wechaty/FAILURE'
+const HA_RECOVER = 'ha-wechaty/RESTORE'
 
-const DING = 'HAWechaty/DING'
-const DONG = 'HAWechaty/DONG'
+const DING = 'ha-wechaty/DING'
+const DONG = 'ha-wechaty/DONG'
 
 export {
   WECHATY_ADD,
