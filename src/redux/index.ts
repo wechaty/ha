@@ -65,22 +65,23 @@ const epicMiddleware = createEpicMiddleware<
 // rehydrate state on app start
 const initialState = {}
 
-const enhancer = compose(
+const composeEnhancers = compose(
   composeWithDevTools({
     hostname : 'localhost',
     port     : 8000,
     realtime : true,
-  })(),
-  applyMiddleware(
-    epicMiddleware,
-  ),
+  }),
 )
 
 // create store
 const store = createStore(
   rootReducer,
   initialState,
-  enhancer,
+  composeEnhancers(
+    applyMiddleware(
+      epicMiddleware,
+    ),
+  ),
 )
 
 epicMiddleware.run(rootEpic)
