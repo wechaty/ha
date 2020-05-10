@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 import {
   Wechaty,
   WechatyOptions,
+  WechatyPlugin,
   Room,
   MemoryCard,
 }                   from 'wechaty'
@@ -22,7 +23,6 @@ import {
 import {
   isWechatyAvailable,
   WechatyRedux,
-  WechatyPlugin,
 }                                 from './wechaty-redux'
 
 import { envWechaty } from './env-wechaty'

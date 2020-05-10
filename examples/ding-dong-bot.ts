@@ -131,7 +131,7 @@ const welcome = `
 -------- https://github.com/wechaty/wechaty --------
           Version: ${ha.version()}
 
-I'm a bot, my superpower is talk in Wechat.
+I'm a bot, my superpower is talk in WeChat.
 
 If you send me a 'ding', I will reply you a 'dong'!
 __________________________________________________

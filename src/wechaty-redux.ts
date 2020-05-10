@@ -49,8 +49,6 @@ export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWec
   wechaty.id,
 )
 
-export type WechatyPlugin = (wechaty: Wechaty) => void
-
 export interface WechatyReduxPluginOptions {
 
 }
