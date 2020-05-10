@@ -23,7 +23,7 @@ import {
 import {
   isWechatyAvailable,
   WechatyRedux,
-}                                 from './wechaty-redux'
+}                                 from './wechaty-redux/wechaty-redux'
 
 import { envWechaty } from './env-wechaty'
 

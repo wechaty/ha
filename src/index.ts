@@ -7,5 +7,4 @@ export {
 
 export {
   HAWechaty,
-  HAWechaty as default,
-}                       from './ha-wechaty'
+}               from './ha-wechaty'
