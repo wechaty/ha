@@ -50,13 +50,16 @@ const say$ = (action: ReturnType<typeof actions.sayAsync.request>) => from( // p
   getWechaty(action.payload.wechatyId)
     .say(action.payload.text)
 ).pipe(
-  mapTo(actions.sayAsync.success(action.payload.wechatyId, action.payload.id)),
+  mapTo(actions.sayAsync.success({
+    id        : action.payload.id,
+    wechatyId : action.payload.wechatyId,
+  })),
   catchError(e => of(
-    actions.sayAsync.failure(
-      action.payload.wechatyId,
-      action.payload.id,
-      e,
-    )
+    actions.sayAsync.failure({
+      error     : e,
+      id        : action.payload.id,
+      wechatyId : action.payload.wechatyId,
+    })
   ))
 )
 

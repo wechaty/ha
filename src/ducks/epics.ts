@@ -84,8 +84,7 @@ const wechatyMessage$$ = (action$: ReturnType<RootEpic>) => action$.pipe(
   mergeMap(wechatyId => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
     filter(action => action.payload.wechatyId === wechatyId),
-    // FIXME: ready() it
-    filter(utils.isMessageFromSelf(false)),
+    mergeMap(wechatyUtils.skipSelfMessage$),
     takeUntilLoginout(wechatyId, action$),
   )),
 

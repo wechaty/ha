@@ -1,13 +1,14 @@
 import { createReducer } from 'typesafe-actions'
 import { DeepReadonly } from 'utility-types'
 
+import { ContactPayload } from 'wechaty-puppet'
+
 import * as actions from './actions'
-import * as selectors from './selectors'
 
 const initialState: DeepReadonly<{
   [wechatyId: string]: undefined | {  // wechaty id
-    qrcode?   : string,
-    userName? : string,
+    qrcode? : string,
+    user?   : ContactPayload,
   }
 }> = {}
 
@@ -15,13 +16,17 @@ const reducer = createReducer(initialState)
   .handleAction(actions.scanEvent, (state, action) => ({
     ...state,
     [action.payload.wechatyId]: {
+      ...state[action.payload.wechatyId],
       qrcode: action.payload.qrcode,
+      user: undefined,
     },
   }))
-  .handleAction(actions.loginEvent, (state, action) => ({
+  .handleAction(actions.loginUser, (state, action) => ({
     ...state,
     [action.payload.wechatyId]: {
-      userName: selectors.getUserName(action.payload.wechatyId, action.payload.contactId),
+      ...state[action.payload.wechatyId],
+      qrcode: undefined,
+      user: action.payload,
     },
   }))
   .handleAction(actions.logoutEvent, (state, action) => ({

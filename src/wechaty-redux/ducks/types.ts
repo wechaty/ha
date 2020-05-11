@@ -16,15 +16,23 @@ const EVENT_ROOM_LEAVE  = 'wechaty/EVENT_ROOM_LEAVE'
 const EVENT_ROOM_TOPIC  = 'wechaty/EVENT_ROOM_TOPIC'
 const EVENT_SCAN        = 'wechaty/EVENT_SCAN'
 
+/**
+ * Wechaty APIs
+ */
 const DING  = 'wechaty/DING'
 const RESET = 'wechaty/RESET'
 
 /**
- * Async
+ * Wechaty Async APIs
  */
 const SAY_REQUEST = 'wechaty/SAY_REQUEST'
 const SAY_SUCCESS = 'wechaty/SAY_SUCCESS'
 const SAY_FAILURE = 'wechaty/SAY_FAILURE'
+
+/**
+ * Other Types
+ */
+const USER_LOGIN = 'wechaty/USER_LOGIN'
 
 export {
   SWITCH_OFF,
@@ -51,4 +59,6 @@ export {
   SAY_FAILURE,
   SAY_REQUEST,
   SAY_SUCCESS,
+
+  USER_LOGIN,
 }

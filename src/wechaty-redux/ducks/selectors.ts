@@ -5,24 +5,13 @@
  * Huan https://github.com/huan May 2020
  */
 import { State } from './reducers'
-import {
-  getWechaty,
-}               from '../wechaty-redux'
 
-export const getUserName = (wechatyId: string, contactId: string) => getWechaty(wechatyId)
-  .Contact.load(contactId)
-  .name()
-
-function getStatus (
-  state     : State,
-  wechatyId : string,
-) {
-  if (wechatyId in state) {
-    return state[wechatyId]
-  }
-  return {}
-}
+const getQRCode      = (state: State, wechatyId: string) => state[wechatyId]?.qrcode
+const getUserPayload = (state: State, wechatyId: string) => state[wechatyId]?.user
+const isLoggedIn     = (state: State, wechatyId: string) => state[wechatyId]?.user !== undefined
 
 export {
-  getStatus,
+  getQRCode,
+  getUserPayload,
+  isLoggedIn,
 }

@@ -5,15 +5,16 @@ import {
 import {
   filter,
   mergeMap,
+  map,
 }                   from 'rxjs/operators'
-
-import * as actions from './actions'
 
 import {
   RootEpic,
 }               from '../../redux/'
 
-import * as operations from './operations'
+import * as actions     from './actions'
+import * as operations  from './operations'
+import * as utils       from './utils'
 
 const dingEpic: RootEpic = actions$ => actions$.pipe(
   filter(isActionOf(actions.ding)),
@@ -30,8 +31,15 @@ const sayEpic: RootEpic = actions$ => actions$.pipe(
   mergeMap(operations.say$),
 )
 
+const loginEpic: RootEpic = actions$ => actions$.pipe(
+  filter(isActionOf(actions.loginEvent)),
+  mergeMap(utils.toContactPayload$),
+  map(payload => actions.loginUser(payload)),
+)
+
 export {
   dingEpic,
   resetEpic,
   sayEpic,
+  loginEpic,
 }

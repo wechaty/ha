@@ -1,4 +1,3 @@
-/* eslint-disable sort-keys */
 import {
   createAction,
   createAsyncAction,
@@ -23,11 +22,21 @@ import {
   EventHeartbeatPayload,
   EventFriendshipPayload,
   EventResetPayload,
+
+  ContactPayload,
 }                             from 'wechaty-puppet'
 
 import cuid from 'cuid'
 
 import * as types from './types'
+
+// interface ContactIdOptions  { contactId: string }
+interface ErrorOptions      { error: Error }
+interface IdOptions         { id: string }
+interface MessageIdOptions  { messageId: string }
+interface SayableOptions    { sayable: Sayable }
+interface TextOptions       { text: string }
+export interface WechatyIdOptions  { wechatyId: string }
 
 /**
  * Event Actions' Payloads
@@ -85,15 +94,21 @@ const reset = createAction(types.RESET, prepareData)()
 /**
  * Actions: Non-Void APIs
  */
-const prepareSayRequest = (wechatyId: string, sayable: Sayable, text: string) => ({ id: cuid(), wechatyId, conversationId: sayable.id, text })
-const prepareSaySuccess = (wechatyId: string, id: string, messageId?: string) => ({ id, wechatyId, messageId })
-const prepareSayFailure = (wechatyId: string, id: string, error: Error)       => ({ id, wechatyId, error: error.toString() })
+const prepareSayRequest = ({ wechatyId, sayable, text }: WechatyIdOptions & SayableOptions & TextOptions)           => ({ id: cuid(), wechatyId, conversationId: sayable.id, text })
+const prepareSaySuccess = ({ wechatyId, id, messageId }: WechatyIdOptions & IdOptions & Partial<MessageIdOptions>)  => ({ id, wechatyId, messageId })
+const prepareSayFailure = ({ wechatyId, id, error }: WechatyIdOptions & IdOptions & ErrorOptions)                   => ({ id, wechatyId, error: error.toString() })
 
 const sayAsync = createAsyncAction(
   [types.SAY_REQUEST, prepareSayRequest],
   [types.SAY_SUCCESS, prepareSaySuccess],
   [types.SAY_FAILURE, prepareSayFailure],
 )()
+
+/**
+ * Other Actions
+ */
+const prepareLoginUser = (payload: WechatyIdOptions & ContactPayload) => payload
+const loginUser = createAction(types.USER_LOGIN, prepareLoginUser)()
 
 export {
   turnOffSwitch,
@@ -118,4 +133,6 @@ export {
   reset,
 
   sayAsync,
+
+  loginUser,
 }
