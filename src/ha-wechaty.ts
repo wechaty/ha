@@ -155,8 +155,8 @@ export class HAWechaty extends EventEmitter {
       for (const wechaty of this.wechatyList) {
         log.silly('HAWechaty', 'start() %s starting', wechaty)
 
-        await wechaty.start()
         wechaty.use(this.redux.plugin())
+        await wechaty.start()
 
       }
 

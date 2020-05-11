@@ -4,9 +4,9 @@ import {
 
 import { State } from './reducers'
 
-const getWechatyAvailable = (state: State, wechatyId: string): boolean => !!(state.availability[wechatyId])
+const isWechatyAvailable = (state: State, wechatyId: string): boolean => !!(state.availability[wechatyId])
 
-const getHAAvailable = (state: State, haId?: string): boolean => {
+const isHAAvailable = (state: State, haId?: string): boolean => {
   if (!haId) {
     return Object.values(state.availability)
       .filter(Boolean)
@@ -22,7 +22,7 @@ const getHAAvailable = (state: State, haId?: string): boolean => {
     .length > 0
 }
 
-const getHAByWechatyId = (state: State, wechatyId: string) => {
+const getHAOfWechatyId = (state: State, wechatyId: string) => {
   const haId = state.cluster[wechatyId]
   if (!haId) {
     throw new Error('no haId')
@@ -31,7 +31,7 @@ const getHAByWechatyId = (state: State, wechatyId: string) => {
 }
 
 export {
-  getHAByWechatyId,
-  getHAAvailable,
-  getWechatyAvailable,
+  getHAOfWechatyId,
+  isHAAvailable,
+  isWechatyAvailable,
 }

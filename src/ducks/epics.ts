@@ -6,11 +6,9 @@ import {
   interval,
   of,
   merge,
-  from,
   Observable,
 }                 from 'rxjs'
 import {
-  catchError,
   debounce,
   filter,
   map,
@@ -18,18 +16,22 @@ import {
   mergeMap,
   switchMap,
   takeUntil,
-  ignoreElements,
   groupBy,
 }                   from 'rxjs/operators'
 
 import {
   RootEpic,
-  VoidEpic,
 }               from '../redux/'
 
 import {
   actions as wechatyActions,
+  utils as wechatyUtils,
 }                             from '../wechaty-redux/ducks/'
+
+import {
+  CHATIE_OA_ID,
+  DONG,
+}                     from '../config'
 
 import * as actions     from './actions'
 import * as operations  from './operations'
@@ -50,7 +52,7 @@ const RESET_WAIT_MILLISECONDS = utils.milliAroundSeconds(300)
 const takeUntilDong = <T>(wechatyId: string, action$: ReturnType<RootEpic>) => takeUntil<T>(
   action$.pipe(
     filter(isActionOf(actions.dong)),
-    filter(utils.belongsToWechaty(wechatyId)),
+    filter(action => action.payload.wechatyId === wechatyId),
   ),
 )
 
@@ -60,7 +62,7 @@ const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<RootEpic>) 
       wechatyActions.loginEvent,
       wechatyActions.logoutEvent,
     ])),
-    filter(utils.belongsToWechaty(wechatyId)),
+    filter(action => action.payload.wechatyId === wechatyId),
   ),
 )
 
@@ -81,7 +83,8 @@ const wechatyMessage$$ = (action$: ReturnType<RootEpic>) => action$.pipe(
    */
   mergeMap(wechatyId => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    filter(utils.belongsToWechaty(wechatyId)),
+    filter(action => action.payload.wechatyId === wechatyId),
+    // FIXME: ready() it
     filter(utils.isMessageFromSelf(false)),
     takeUntilLoginout(wechatyId, action$),
   )),
@@ -99,12 +102,9 @@ type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
  *
  * Side Effect: call contact.say(ding)
  */
-const dingEvokerEpic: VoidEpic = (action$, state$) => action$.pipe(
+const dingEvokerEpic: RootEpic = (action$) => action$.pipe(
   filter(isActionOf(actions.ding)),
-  mergeMap(action => from(utils.sayDingTo(action.payload.wechatyId, action.payload.contactId)).pipe(
-    catchError(operations.emitError$(action, state$.value.ha))
-  )),
-  ignoreElements(),
+  mergeMap(operations.ding$),
 )
 
 /**
@@ -113,9 +113,9 @@ const dingEvokerEpic: VoidEpic = (action$, state$) => action$.pipe(
  */
 const dongEmitterEpic: RootEpic = action$ => action$.pipe(
   filter(isActionOf(wechatyActions.messageEvent)),
-  filter(utils.isMessageTypeText),
-  filter(utils.isMessageTextDong),
-  map(action => actions.dong(action.payload.wechatyId, action.payload.messageId)),
+  mergeMap(wechatyUtils.toMessage$),
+  filter(wechatyUtils.isTextMessage(DONG)),
+  map(message => actions.dong(message.wechaty.id, message.id)),
 )
 
 /**
@@ -130,11 +130,13 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
     // Recover Wechaty
     of(actions.recoverWechaty(action.payload.wechatyId)),
     // Recover HA
-    of(actions.recoverHA(selectors.getHAByWechatyId(
-      state$.value.ha,
-      action.payload.wechatyId,
-    ))).pipe(
-      filter(_ => !selectors.getWechatyAvailable(
+    of(actions.recoverHA(
+      selectors.getHAOfWechatyId(
+        state$.value.ha,
+        action.payload.wechatyId,
+      ).id
+    )).pipe(
+      filter(_ => !selectors.isWechatyAvailable(
         state$.value.ha,
         action.payload.wechatyId,
       ))
@@ -148,15 +150,15 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
  */
 const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
   filter(isActionOf(actions.failureWechaty)),
-  filter(action => !selectors.getWechatyAvailable(
+  filter(action => !selectors.isWechatyAvailable(
     state$.value.ha,
     action.payload.wechatyId,
   )),
   map(action => actions.failureHA(
-    selectors.getHAByWechatyId(
+    selectors.getHAOfWechatyId(
       state$.value.ha,
       action.payload.wechatyId,
-    ),
+    ).id,
   )),
 )
 
@@ -173,7 +175,7 @@ const resetEmitterPerWechaty$ = (
   switchMap(action => interval(RESET_WAIT_MILLISECONDS).pipe(
     mapTo(wechatyActions.reset(
       action.payload.wechatyId,
-      'HAWechaty/ha/epics.ts/resetEmitterEpicPerWechaty$(action)',
+      'ha-wechaty/ducks/epics.ts/resetEmitterEpicPerWechaty$(action)',
     )),
     takeUntilDong(action.payload.wechatyId, action$),
     takeUntilLoginout(action.payload.wechatyId, action$),
@@ -195,7 +197,8 @@ const dingEmitterPerWechaty$ = (
     of(actions.failureWechaty(action.payload.wechatyId)),
     interval(DING_WAIT_MILLISECONDS).pipe(
       mapTo(actions.ding(
-        utils.toChatieOA(action.payload.wechatyId),
+        action.payload.wechatyId,
+        CHATIE_OA_ID,
       )),
       takeUntilDong(action.payload.wechatyId, action$),
       takeUntilLoginout(action.payload.wechatyId, action$),

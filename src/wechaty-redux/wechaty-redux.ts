@@ -44,7 +44,7 @@ import {
   EventResetPayload,
 }                             from 'wechaty-puppet'
 
-export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.getWechatyAvailable(
+export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.isWechatyAvailable(
   ducksStore.getState().ha,
   wechaty.id,
 )
@@ -85,6 +85,23 @@ export class WechatyRedux {
 
   protected install (wechaty: Wechaty): void {
     log.verbose('WechatyRedux', 'install(%s)', wechaty)
+
+    /**
+     * Huan(202005):
+     *  the wechaty.puppet will be initialized after the wechaty.start()
+     *  so here might be no puppet yet.
+     */
+    let hasPuppet: any
+    try {
+      hasPuppet = wechaty.puppet
+    } catch (e) {
+      log.verbose('WechatyRedux', 'install() wechaty.puppet not ready yet. retry on puppet event later')
+    }
+
+    if (!hasPuppet) {
+      wechaty.once('puppet', () => this.install(wechaty))
+      return
+    }
 
     /**
      * Save wechaty id with the instance for the future usage

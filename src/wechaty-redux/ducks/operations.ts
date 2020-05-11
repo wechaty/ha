@@ -5,6 +5,7 @@
  * Huan https://github.com/huan May 2020
  */
 import {
+  from,
   of,
 }                 from 'rxjs'
 import {
@@ -19,7 +20,7 @@ import {
 
 import * as actions from './actions'
 
-const ding$ = (action: ReturnType<typeof actions.ding>) => of(
+const ding$ = (action: ReturnType<typeof actions.ding>) => of(  // void
   getWechaty(action.payload.wechatyId)
     .ding(action.payload.data)
 ).pipe(
@@ -32,7 +33,7 @@ const ding$ = (action: ReturnType<typeof actions.ding>) => of(
   )),
 )
 
-const reset$ = (action: ReturnType<typeof actions.reset>) => of(
+const reset$ = (action: ReturnType<typeof actions.reset>) => from(  // promise
   getWechaty(action.payload.wechatyId)
     .reset(action.payload.data)
 ).pipe(
@@ -45,7 +46,7 @@ const reset$ = (action: ReturnType<typeof actions.reset>) => of(
   )),
 )
 
-const say$ = (action: ReturnType<typeof actions.sayAsync.request>) => of(
+const say$ = (action: ReturnType<typeof actions.sayAsync.request>) => from( // promise
   getWechaty(action.payload.wechatyId)
     .say(action.payload.text)
 ).pipe(
