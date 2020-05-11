@@ -8,18 +8,32 @@ import { DeepReadonly } from 'utility-types'
 import * as actions from './actions'
 
 const initialState: DeepReadonly<{
-  mo: number,
-  mt: number,
+  mo: {
+    [wechatyId: string]: undefined | number,
+  }
+  mt:{
+    [wechatyId: string]: undefined | number,
+  },
 }> = {
-  mo: 0,
-  mt: 0,
+  mo: {},
+  mt: {},
 }
 
 const reducer = createReducer(initialState)
-  .handleAction(actions.moMessage, state => ({ ...state, mo: state.mo + 1 }))
-  .handleAction(actions.mtMessage, state => ({ ...state, mt: state.mt + 1 }))
-
-// reducer(initialState, actions.moMessage()) // => 4
+  .handleAction(actions.moMessage, (state, action) => ({
+    ...state,
+    mo: {
+      ...state.mo,
+      [action.payload.wechatyId]: (state.mo[action.payload.wechatyId] || 0) + 1,
+    },
+  }))
+  .handleAction(actions.mtMessage, (state, action) => ({
+    ...state,
+    mt: {
+      ...state.mt,
+      [action.payload.wechatyId]: (state.mt[action.payload.wechatyId] || 0) + 1,
+    },
+  }))
 
 export default reducer
 export type State = ReturnType<typeof reducer>
