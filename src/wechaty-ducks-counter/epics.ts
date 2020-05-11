@@ -3,7 +3,6 @@ import {
 }                 from 'typesafe-actions'
 
 import {
-  tap,
   filter,
   mergeMap,
   map,
@@ -15,7 +14,6 @@ import {
 }                           from '../wechaty-redux/ducks/'
 
 import * as actions from './actions'
-// import * as selectors from './selectors'
 
 import {
   RootEpic,

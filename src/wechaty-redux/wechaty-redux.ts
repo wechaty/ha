@@ -123,29 +123,29 @@ export class WechatyRedux {
 
       /*  eslint-disable no-whitespace-before-property */
       merge(
-        switchOn$   .pipe(map(status => wechatyDucks.actions.turnOnSwitch(wechaty, status))),
-        switchOff$  .pipe(map(status => wechatyDucks.actions.turnOffSwitch(wechaty, status))),
+        switchOn$   .pipe(map(status => wechatyDucks.actions.turnOnSwitch (wechaty.id, status))),
+        switchOff$  .pipe(map(status => wechatyDucks.actions.turnOffSwitch(wechaty.id, status))),
       ),
       merge(
-        dong$       .pipe(map(payload => wechatyDucks.actions.dongEvent(wechaty, payload))),
-        error$      .pipe(map(payload => wechatyDucks.actions.errorEvent(wechaty, payload))),
-        friendship$ .pipe(map(payload => wechatyDucks.actions.friendshipEvent(wechaty, payload))),
-        heartbeat$  .pipe(map(payload => wechatyDucks.actions.heartbeatEvent(wechaty, payload))),
-        login$      .pipe(map(payload => wechatyDucks.actions.loginEvent(wechaty,     payload))),
-        logout$     .pipe(map(payload => wechatyDucks.actions.logoutEvent(wechaty,    payload))),
+        dong$       .pipe(map(payload => wechatyDucks.actions.dongEvent       (wechaty.id, payload))),
+        error$      .pipe(map(payload => wechatyDucks.actions.errorEvent      (wechaty.id, payload))),
+        friendship$ .pipe(map(payload => wechatyDucks.actions.friendshipEvent (wechaty.id, payload))),
+        heartbeat$  .pipe(map(payload => wechatyDucks.actions.heartbeatEvent  (wechaty.id, payload))),
+        login$      .pipe(map(payload => wechatyDucks.actions.loginEvent      (wechaty.id, payload))),
+        logout$     .pipe(map(payload => wechatyDucks.actions.logoutEvent     (wechaty.id, payload))),
       ),
       merge(
-        message$    .pipe(map(payload => wechatyDucks.actions.messageEvent(wechaty, payload))),
-        ready$      .pipe(map(payload => wechatyDucks.actions.readyEvent(wechaty,   payload))),
-        reset$      .pipe(map(payload => wechatyDucks.actions.resetEvent(wechaty,   payload))),
+        message$    .pipe(map(payload => wechatyDucks.actions.messageEvent(wechaty.id, payload))),
+        ready$      .pipe(map(payload => wechatyDucks.actions.readyEvent  (wechaty.id, payload))),
+        reset$      .pipe(map(payload => wechatyDucks.actions.resetEvent  (wechaty.id, payload))),
       ),
       merge(
-        roomInvite$ .pipe(map(payload => wechatyDucks.actions.roomInviteEvent(wechaty,  payload))),
-        roomJoin$   .pipe(map(payload => wechatyDucks.actions.roomJoinEvent(wechaty,    payload))),
-        roomLeave$  .pipe(map(payload => wechatyDucks.actions.roomLeaveEvent(wechaty,   payload))),
-        roomTopic$  .pipe(map(payload => wechatyDucks.actions.roomTopicEvent(wechaty,   payload))),
+        roomInvite$ .pipe(map(payload => wechatyDucks.actions.roomInviteEvent (wechaty.id, payload))),
+        roomJoin$   .pipe(map(payload => wechatyDucks.actions.roomJoinEvent   (wechaty.id, payload))),
+        roomLeave$  .pipe(map(payload => wechatyDucks.actions.roomLeaveEvent  (wechaty.id, payload))),
+        roomTopic$  .pipe(map(payload => wechatyDucks.actions.roomTopicEvent  (wechaty.id, payload))),
       ),
-      scan$         .pipe(map(payload => wechatyDucks.actions.scanEvent(wechaty, payload))),
+      scan$         .pipe(map(payload => wechatyDucks.actions.scanEvent(wechaty.id, payload))),
     ).subscribe(this.store.dispatch)
 
   }

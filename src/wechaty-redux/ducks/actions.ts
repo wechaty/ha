@@ -5,7 +5,6 @@ import {
 }                       from 'typesafe-actions'
 
 import {
-  Wechaty,
   Sayable,
 }             from 'wechaty'
 
@@ -33,23 +32,23 @@ import * as types from './types'
 /**
  * Event Actions' Payloads
  */
-const prepareTurnOnSwitch  = (wechaty: Wechaty, status: true | 'pending') => ({ status, wechatyId: wechaty.id })
-const prepareTurnOffSwitch = (wechaty: Wechaty, status: true | 'pending') => ({ status, wechatyId: wechaty.id })
+const prepareTurnOnSwitch  = (wechatyId: string, status: true | 'pending') => ({ status, wechatyId })
+const prepareTurnOffSwitch = (wechatyId: string, status: true | 'pending') => ({ status, wechatyId })
 
-const prepareDong           = (wechaty: Wechaty, payload: EventDongPayload)       => ({ ...payload, wechatyId: wechaty.id })
-const prepareError          = (wechaty: Wechaty, payload: EventErrorPayload)      => ({ ...payload, wechatyId: wechaty.id })
-const prepareHeartbeat      = (wechaty: Wechaty, payload: EventHeartbeatPayload)  => ({ ...payload, wechatyId: wechaty.id })
-const prepareReady          = (wechaty: Wechaty, payload: EventReadyPayload)      => ({ ...payload, wechatyId: wechaty.id })
-const prepareReset          = (wechaty: Wechaty, payload: EventResetPayload)      => ({ ...payload, wechatyId: wechaty.id })
-const prepareFriendship     = (wechaty: Wechaty, payload: EventFriendshipPayload) => ({ ...payload, wechatyId: wechaty.id })
-const prepareLogin          = (wechaty: Wechaty, payload: EventLoginPayload)      => ({ ...payload, wechatyId: wechaty.id })
-const prepareLogout         = (wechaty: Wechaty, payload: EventLogoutPayload)     => ({ ...payload, wechatyId: wechaty.id })
-const prepareMessage        = (wechaty: Wechaty, payload: EventMessagePayload)    => ({ ...payload, wechatyId: wechaty.id })
-const prepareRoomInvitation = (wechaty: Wechaty, payload: EventRoomInvitePayload) => ({ ...payload, wechatyId: wechaty.id })
-const prepareRoomJoin       = (wechaty: Wechaty, payload: EventRoomJoinPayload)   => ({ ...payload, wechatyId: wechaty.id })
-const prepareRoomLeave      = (wechaty: Wechaty, payload: EventRoomLeavePayload)  => ({ ...payload, wechatyId: wechaty.id })
-const prepareRoomTopic      = (wechaty: Wechaty, payload: EventRoomTopicPayload)  => ({ ...payload, wechatyId: wechaty.id })
-const prepareScan           = (wechaty: Wechaty, payload: EventScanPayload)       => ({ ...payload, wechatyId: wechaty.id })
+const prepareDong           = (wechatyId: string, payload: EventDongPayload)       => ({ ...payload, wechatyId })
+const prepareError          = (wechatyId: string, payload: EventErrorPayload)      => ({ ...payload, wechatyId })
+const prepareHeartbeat      = (wechatyId: string, payload: EventHeartbeatPayload)  => ({ ...payload, wechatyId })
+const prepareReady          = (wechatyId: string, payload: EventReadyPayload)      => ({ ...payload, wechatyId })
+const prepareReset          = (wechatyId: string, payload: EventResetPayload)      => ({ ...payload, wechatyId })
+const prepareFriendship     = (wechatyId: string, payload: EventFriendshipPayload) => ({ ...payload, wechatyId })
+const prepareLogin          = (wechatyId: string, payload: EventLoginPayload)      => ({ ...payload, wechatyId })
+const prepareLogout         = (wechatyId: string, payload: EventLogoutPayload)     => ({ ...payload, wechatyId })
+const prepareMessage        = (wechatyId: string, payload: EventMessagePayload)    => ({ ...payload, wechatyId })
+const prepareRoomInvitation = (wechatyId: string, payload: EventRoomInvitePayload) => ({ ...payload, wechatyId })
+const prepareRoomJoin       = (wechatyId: string, payload: EventRoomJoinPayload)   => ({ ...payload, wechatyId })
+const prepareRoomLeave      = (wechatyId: string, payload: EventRoomLeavePayload)  => ({ ...payload, wechatyId })
+const prepareRoomTopic      = (wechatyId: string, payload: EventRoomTopicPayload)  => ({ ...payload, wechatyId })
+const prepareScan           = (wechatyId: string, payload: EventScanPayload)       => ({ ...payload, wechatyId })
 
 /**
  * Actions: StateSwitch
@@ -86,9 +85,9 @@ const reset = createAction(types.RESET, prepareData)()
 /**
  * Actions: Non-Void APIs
  */
-const prepareSayRequest = (wechaty: Wechaty, sayable: Sayable, text: string) => ({ id: cuid(), wechatyId: wechaty.id, conversationId: sayable.id, text })
-const prepareSaySuccess = (wechaty: Wechaty, id: string, messageId?: string) => ({ id, wechatyId: wechaty.id, messageId })
-const prepareSayFailure = (wechaty: Wechaty, id: string, error: Error)       => ({ id, wechatyId: wechaty.id, error: error.toString() })
+const prepareSayRequest = (wechatyId: string, sayable: Sayable, text: string) => ({ id: cuid(), wechatyId, conversationId: sayable.id, text })
+const prepareSaySuccess = (wechatyId: string, id: string, messageId?: string) => ({ id, wechatyId, messageId })
+const prepareSayFailure = (wechatyId: string, id: string, error: Error)       => ({ id, wechatyId, error: error.toString() })
 
 const sayAsync = createAsyncAction(
   [types.SAY_REQUEST, prepareSayRequest],
