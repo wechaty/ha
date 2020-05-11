@@ -58,9 +58,9 @@ const isTextMessage = (text?: string) => (message: Message) => (
     ? text === message.text()
     : true
 )
+const isWechaty = (wechatyId: string) => (action: ReturnType<typeof actions.messageEvent>) => action.payload.wechatyId === wechatyId
 
 const skipSelfMessage$ = (action: ReturnType<typeof actions.messageEvent>) => {
-  // filter(utils.isMessageFromSelf(false)),
   const wechaty = getWechaty(action.payload.wechatyId)
   const message = wechaty.Message.load(action.payload.messageId)
   return from(message.ready()).pipe(
@@ -74,5 +74,6 @@ export {
   toContact$,
   toContactPayload$,
   isTextMessage,
+  isWechaty,
   skipSelfMessage$,
 }

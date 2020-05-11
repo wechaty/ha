@@ -76,18 +76,16 @@ const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<RootEpic>) 
 const wechatyMessage$$ = (action$: ReturnType<RootEpic>) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
   map(action => action.payload.wechatyId),
-
   /**
    * mergeMap instead of switchMap:
    *  there might be multiple Wechaty instance passed to here
    */
   mergeMap(wechatyId => action$.pipe(
     filter(isActionOf(wechatyActions.messageEvent)),
-    filter(action => action.payload.wechatyId === wechatyId),
+    filter(wechatyUtils.isWechaty(wechatyId)),
     mergeMap(wechatyUtils.skipSelfMessage$),
     takeUntilLoginout(wechatyId, action$),
   )),
-
   groupBy(action => action.payload.wechatyId),
 )
 

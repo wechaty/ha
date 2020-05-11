@@ -120,6 +120,6 @@ export default store
 /**
  * Others
  */
-store.subscribe(() => {
-  console.info('state:', store.getState())
-})
+// store.subscribe(() => {
+//   console.info('state:', store.getState())
+// })
