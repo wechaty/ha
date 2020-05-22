@@ -54,7 +54,8 @@
     "tstest": "^0.4.10",
     "utility-types": "^3.10.0",
     "wechaty": "^0.39.28",
-    "wechaty-plugin-contrib": "^0.2.16"
+    "wechaty-plugin-contrib": "^0.2.16",
+    "wechaty-puppet-mock": "^0.21.5"
   },
   "repository": {
     "type": "git",
