@@ -1,21 +1,14 @@
-/* eslint-disable sort-keys */
 import {
   createAction,
 }                       from 'typesafe-actions'
-import {
-  Wechaty,
-  Contact,
-}           from 'wechaty'
-
-import { HAWechaty } from '../ha-wechaty'
 
 import * as types from './types'
 
-const prepareHA         = (ha: HAWechaty)     => ({ haId: ha.id })
+const prepareHA         = (haId: string)      => ({ haId })
 const prepareWechaty    = (wechatyId: string) => ({ wechatyId })
-// const prepareMessage    = (message: Message)  => ({ wechatyId: message.wechaty.id, messageId: message.id })
-const prepareContact    = (contact: Contact)  => ({ wechatyId: contact.wechaty.id, contactId: contact.id })
-const prepareHAWechaty  = (ha: HAWechaty, wechaty: Wechaty)  => ({ haId: ha.id, wechatyId: wechaty.id })
+
+const prepareContact    = (wechatyId: string, contactId: string)  => ({ contactId, wechatyId })
+const prepareHAWechaty  = (haId: string, wechatyId: string)  => ({ haId, wechatyId })
 
 const prepareDong = (wechatyId: string, messageId: string) => ({ messageId, wechatyId })
 

@@ -1,17 +1,19 @@
 import reducer from './reducers'
 
-import * as epics      from './epics'
 import * as actions    from './actions'
+import * as epics      from './epics'
+import * as operations from './operations'
 import * as selectors  from './selectors'
 import * as types      from './types'
-import * as operations from './operations'
+import * as utils      from './utils'
 
 export {
   actions,
   epics,
+  operations,
   selectors,
   types,
-  operations,
+  utils,
 }
 
 export default reducer

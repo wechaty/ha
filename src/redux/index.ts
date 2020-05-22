@@ -70,7 +70,8 @@ const composeEnhancers = compose(
     hostname : 'localhost',
     port     : 8000,
     realtime : true,
-  }),
+    trace: true,
+  } as any),
 )
 
 // create store

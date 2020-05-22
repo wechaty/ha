@@ -16,7 +16,6 @@ import {
 
 import {
   CHATIE_OA_ID,
-  DING,
   DONG,
   log,
 }             from '../config'
@@ -52,6 +51,7 @@ const isFromOf = (contact: Contact) => <T extends { payload: PayloadMessageId }>
   .Message.load(action.payload.messageId)
   .from()!.id === contact.id
 
+// TODO
 const isMessageFromSelf = (isSelf = true) => <T extends { payload: PayloadMessageId }>(action: T) => getWechaty(action.payload.wechatyId)
   .Message.load(action.payload.messageId)
   .self() === isSelf
@@ -89,10 +89,6 @@ const isDong      = (action: ReturnType<typeof wechatyActions.messageEvent>) => 
 
 const isNotSelf   = (message: Message) => !message.self()
 
-const sayDingTo = (wechatyId: string, contactId: string) => getWechaty(wechatyId)
-  .Contact.load(contactId)
-  .say(DING)
-
 const toChatieOA = (wechatyId: string): Contact => {
   const wechaty = getWechaty(wechatyId)
   const contact = wechaty.Contact.load(CHATIE_OA_ID)
@@ -122,8 +118,6 @@ export {
 
   isMessageTextDong,
   isMessageTypeText,
-
-  sayDingTo,
 }
 
 interface PayloadHAId { haId: string }
