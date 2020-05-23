@@ -33,7 +33,7 @@ import * as types from './types'
 
 // interface ContactIdOptions  { contactId: string }
 interface ErrorOptions      { error: Error }
-interface IdOptions         { id: string }
+interface AsyncIdOptions    { asyncId: string }
 interface MessageIdOptions  { messageId: string }
 interface SayableOptions    { sayable: Sayable }
 interface TextOptions       { text: string }
@@ -85,7 +85,7 @@ const roomTopicEvent  = createAction(types.EVENT_ROOM_TOPIC,  prepareRoomTopic)(
 const scanEvent       = createAction(types.EVENT_SCAN,        prepareScan)()
 
 /**
- * Actions: VOID APIs
+ * Actions: Void APIs
  */
 const prepareData = (wechatyId: string, data: string)  => ({ data, wechatyId })
 
@@ -95,9 +95,9 @@ const reset = createAction(types.RESET, prepareData)()
 /**
  * Actions: Non-Void APIs
  */
-const prepareSayRequest = ({ wechatyId, sayable, text }: WechatyIdOptions & SayableOptions & TextOptions)           => ({ id: cuid(), wechatyId, conversationId: sayable.id, text })
-const prepareSaySuccess = ({ wechatyId, id, messageId }: WechatyIdOptions & IdOptions & Partial<MessageIdOptions>)  => ({ id, wechatyId, messageId })
-const prepareSayFailure = ({ wechatyId, id, error }: WechatyIdOptions & IdOptions & ErrorOptions)                   => ({ id, wechatyId, error: error.toString() })
+const prepareSayRequest = ({ wechatyId, sayable, text }: WechatyIdOptions & SayableOptions & TextOptions)                    => ({ asyncId: cuid(), wechatyId, conversationId: sayable.id, text })
+const prepareSaySuccess = ({ asyncId, wechatyId, messageId }: WechatyIdOptions & AsyncIdOptions & Partial<MessageIdOptions>) => ({ asyncId, wechatyId, messageId })
+const prepareSayFailure = ({ asyncId, wechatyId, error }: WechatyIdOptions & AsyncIdOptions & ErrorOptions)                  => ({ asyncId, wechatyId, error: error.toString() })
 
 const sayAsync = createAsyncAction(
   [types.SAY_REQUEST, prepareSayRequest],

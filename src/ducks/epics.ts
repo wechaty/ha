@@ -26,7 +26,7 @@ import {
 import {
   actions as wechatyActions,
   utils as wechatyUtils,
-}                             from '../wechaty-redux/ducks/'
+}                             from '../wechaty-redux/duck-api'
 
 import {
   CHATIE_OA_ID,

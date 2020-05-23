@@ -1,19 +1,31 @@
+import { Wechaty } from 'wechaty'
+
 import {
   getHA,
+  HAWechaty,
 }                   from '../ha-wechaty'
 
 import { State } from './reducers'
 
-const isWechatyAvailable = (state: State, wechatyId: string): boolean => !!(state.availability[wechatyId])
+const isWechatyAvailable = (state: State) => (wechatyOrId: string | Wechaty): boolean => {
+  if (wechatyOrId instanceof Wechaty) {
+    wechatyOrId = wechatyOrId.id
+  }
+  return !!(state.availability[wechatyOrId])
+}
 
-const isHAAvailable = (state: State, haId?: string): boolean => {
-  if (!haId) {
+const isHAAvailable = (state: State) => (haOrId?: string | HAWechaty): boolean => {
+  if (!haOrId) {
     return Object.values(state.availability)
       .filter(Boolean)
       .length > 0
   }
 
-  const isWithHa    = (wechatyId: string) => state.cluster[wechatyId] === haId
+  if (haOrId instanceof HAWechaty) {
+    haOrId = haOrId.id
+  }
+
+  const isWithHa    = (wechatyId: string) => state.cluster[wechatyId] === haOrId
   const isAvailable = (wechatyId: string) => !!(state.availability[wechatyId])
 
   return Object.keys(state.cluster)
@@ -22,8 +34,12 @@ const isHAAvailable = (state: State, haId?: string): boolean => {
     .length > 0
 }
 
-const getHAOfWechatyId = (state: State, wechatyId: string) => {
-  const haId = state.cluster[wechatyId]
+const getHAByWechaty = (state: State) => (wechatyOrId: string | Wechaty) => {
+  if (wechatyOrId instanceof Wechaty) {
+    wechatyOrId = wechatyOrId.id
+  }
+
+  const haId = state.cluster[wechatyOrId]
   if (!haId) {
     throw new Error('no haId')
   }
@@ -31,7 +47,7 @@ const getHAOfWechatyId = (state: State, wechatyId: string) => {
 }
 
 export {
-  getHAOfWechatyId,
+  getHAByWechaty,
   isHAAvailable,
   isWechatyAvailable,
 }

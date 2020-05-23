@@ -10,7 +10,7 @@ import {
 
 import {
   RootEpic,
-}               from '../../redux/'
+}               from '../../redux'
 
 import * as actions     from './actions'
 import * as operations  from './operations'

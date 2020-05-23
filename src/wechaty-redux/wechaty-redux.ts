@@ -22,10 +22,12 @@ import {
   // mergeMap,
 }             from 'rxjs/operators'
 
-import * as wechatyDucks  from './ducks/'
-import * as haDucks       from '../ducks/'
+import { Store } from 'redux'
 
-import ducksStore from '../redux/'
+import * as wechatyDucks  from './duck-api'
+// import * as haDucks       from '../ducks/'
+
+// import ducksStore from '../redux/'
 
 import {
   EventDongPayload,
@@ -44,16 +46,14 @@ import {
   EventResetPayload,
 }                             from 'wechaty-puppet'
 
-export const isWechatyAvailable = (wechaty: Wechaty) => haDucks.selectors.isWechatyAvailable(
-  ducksStore.getState().ha,
-  wechaty.id,
-)
-
 export interface WechatyReduxPluginOptions {
-
+  store?: Store,
 }
 
-const store = ducksStore
+// TODO: init store if no store is passed to the plugin
+function configureStore () {
+  return {} as any
+}
 
 const wechatyStore = new Map<string, Wechaty>()
 
@@ -71,20 +71,42 @@ export const getContact = (wechatyId: string, id: string) => getWechaty(wechatyI
 
 export class WechatyRedux {
 
-  public store : any
+  public store?: Store
 
   constructor () {
     log.verbose('WechatyRedux', 'constructor()')
+  }
+
+  public plugin (options?: WechatyReduxPluginOptions) {
+    log.verbose('WechatyRedux', 'plugin(%s)', options ? JSON.stringify(options) : '')
+    const normalizedOptions: WechatyReduxPluginOptions = {
+      ...options,
+    }
+
+    let store: Store
+
+    if (normalizedOptions.store) {
+      store = normalizedOptions.store
+    } else {
+      store = configureStore()
+    }
+
     this.store = store
+
+    const that = this
+
+    return function WechatyReduxPlugin (wechaty: Wechaty) {
+      log.verbose('WechatyRedux', 'plugin() WechatyReduxPlugin(%s)', wechaty)
+
+      that.install(
+        store,
+        wechaty,
+      )
+    }
   }
 
-  public plugin (options: WechatyReduxPluginOptions = {}) {
-    log.verbose('WechatyRedux', 'plugin("%s")', JSON.stringify(options))
-    return (wechaty: Wechaty) => this.install(wechaty)
-  }
-
-  protected install (wechaty: Wechaty): void {
-    log.verbose('WechatyRedux', 'install(%s)', wechaty)
+  protected install (store: Store, wechaty: Wechaty): void {
+    log.verbose('WechatyRedux', 'install(%s, %s)', store, wechaty)
 
     /**
      * Huan(202005):
@@ -99,7 +121,7 @@ export class WechatyRedux {
     }
 
     if (!hasPuppet) {
-      wechaty.once('puppet', () => this.install(wechaty))
+      wechaty.once('puppet', () => this.install(store, wechaty))
       return
     }
 
@@ -163,8 +185,17 @@ export class WechatyRedux {
         roomTopic$  .pipe(map(payload => wechatyDucks.actions.roomTopicEvent  (wechaty.id, payload))),
       ),
       scan$         .pipe(map(payload => wechatyDucks.actions.scanEvent(wechaty.id, payload))),
-    ).subscribe(this.store.dispatch)
+    ).subscribe(store.dispatch)
 
+  }
+
+  public getStore (): Store {
+    log.verbose('WechatyRedux', 'getStore()')
+
+    if (!this.store) {
+      throw new Error('no store found!')
+    }
+    return this.store
   }
 
 }

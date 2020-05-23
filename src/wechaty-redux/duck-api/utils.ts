@@ -12,9 +12,7 @@ import {
   map,
 }                 from 'rxjs/operators'
 
-import {
-  getWechaty,
-}               from '../wechaty-redux'
+import { getWechaty } from '../wechaty-redux'
 
 import * as actions from './actions'
 import { Message } from 'wechaty'
