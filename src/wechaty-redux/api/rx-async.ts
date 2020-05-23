@@ -51,13 +51,13 @@ const say$ = (action: ReturnType<typeof actions.sayAsync.request>) => from( // p
     .say(action.payload.text)
 ).pipe(
   mapTo(actions.sayAsync.success({
-    id        : action.payload.id,
+    asyncId   : action.payload.asyncId,
     wechatyId : action.payload.wechatyId,
   })),
   catchError(e => of(
     actions.sayAsync.failure({
+      asyncId   : action.payload.asyncId,
       error     : e,
-      id        : action.payload.id,
       wechatyId : action.payload.wechatyId,
     })
   ))

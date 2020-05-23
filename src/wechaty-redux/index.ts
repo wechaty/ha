@@ -1,6 +1,8 @@
-import * as wechatyDuckAPI from './duck-api'
+import * as api from './api'
 
-export { WechatyRedux } from './wechaty-redux'
+import { WechatyRedux } from './wechaty-redux'
+
 export {
-  wechatyDuckAPI,
+  api,
+  WechatyRedux,
 }

@@ -13,22 +13,22 @@ import {
 }               from '../../redux'
 
 import * as actions     from './actions'
-import * as operations  from './operations'
+import * as rxAsync     from './rx-async'
 import * as utils       from './utils'
 
 const dingEpic: RootEpic = actions$ => actions$.pipe(
   filter(isActionOf(actions.ding)),
-  mergeMap(operations.ding$),
+  mergeMap(rxAsync.ding$),
 )
 
 const resetEpic: RootEpic = actions$ => actions$.pipe(
   filter(isActionOf(actions.reset)),
-  mergeMap(operations.reset$),
+  mergeMap(rxAsync.reset$),
 )
 
 const sayEpic: RootEpic = actions$ => actions$.pipe(
   filter(isActionOf(actions.sayAsync.request)),
-  mergeMap(operations.say$),
+  mergeMap(rxAsync.say$),
 )
 
 const loginEpic: RootEpic = actions$ => actions$.pipe(
