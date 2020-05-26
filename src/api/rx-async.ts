@@ -16,7 +16,7 @@ import {
 }               from '../wechaty-redux/wechaty-redux'
 import {
   actions as wechatyActions,
-}                               from '../wechaty-redux/duck-api'
+}                               from '../wechaty-redux/api/'
 
 // import {
 //   State,

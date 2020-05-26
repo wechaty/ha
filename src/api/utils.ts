@@ -26,7 +26,7 @@ import {
 
 import {
   actions as wechatyActions,
-}                             from '../wechaty-redux/duck-api'
+}                             from '../wechaty-redux/api'
 
 /**
  * Increase or Decrease a random time on the target seconds

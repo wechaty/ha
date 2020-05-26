@@ -22,7 +22,9 @@ import {
   // mergeMap,
 }             from 'rxjs/operators'
 
-import { Store } from 'redux'
+import {
+  Store,
+}             from 'redux'
 
 import * as api  from './api'
 // import * as haDucks       from '../ducks/'
@@ -45,6 +47,10 @@ import {
   EventFriendshipPayload,
   EventResetPayload,
 }                             from 'wechaty-puppet'
+import {
+  Duck,
+  Ducksifiable,
+}                   from 'ducks'
 
 export interface WechatyReduxPluginOptions {
   store?: Store,
@@ -69,12 +75,16 @@ export const getMessage = (wechatyId: string, id: string) => getWechaty(wechatyI
 export const getRoom    = (wechatyId: string, id: string) => getWechaty(wechatyId).Room.load(id)
 export const getContact = (wechatyId: string, id: string) => getWechaty(wechatyId).Contact.load(id)
 
-export class WechatyRedux {
+export class WechatyRedux implements Ducksifiable {
 
   public store?: Store
 
   constructor () {
     log.verbose('WechatyRedux', 'constructor()')
+  }
+
+  public ducksify () {
+    return new Duck(api)
   }
 
   public plugin (options?: WechatyReduxPluginOptions) {

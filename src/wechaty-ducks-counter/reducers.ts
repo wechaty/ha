@@ -3,7 +3,7 @@
  *  https://codesandbox.io/s/github/piotrwitek/typesafe-actions/tree/master/codesandbox
  */
 import { createReducer } from 'typesafe-actions'
-import { DeepReadonly } from 'utility-types'
+import { DeepReadonly }  from 'utility-types'
 
 import * as actions from './actions'
 

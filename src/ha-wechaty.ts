@@ -24,11 +24,15 @@ import {
   WechatyRedux,
 }                                 from './wechaty-redux/'
 
-import * as haDucks from './ducks/'
+import * as api from './api/'
 import { State } from './ducks/reducers'
 
 import { envWechaty } from './env-wechaty'
 import { Store } from 'redux'
+import {
+  Duck,
+  Ducksifiable,
+}                 from 'ducks'
 
 const haWechatyStore = new Map<string, HAWechaty>()
 
@@ -47,7 +51,7 @@ export interface HAWechatyOptions {
   wechatyOptionsList? : WechatyOptions[],
 }
 
-export class HAWechaty extends EventEmitter {
+export class HAWechaty extends EventEmitter implements Ducksifiable {
 
   public store: Store
 
@@ -136,6 +140,10 @@ export class HAWechaty extends EventEmitter {
     this.store = store
 
     // TODO: init via the options
+  }
+
+  public ducksify () {
+    return new Duck(api)
   }
 
   public duckState (): State {

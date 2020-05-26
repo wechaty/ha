@@ -26,7 +26,7 @@ import {
 import {
   actions as wechatyActions,
   utils as wechatyUtils,
-}                             from '../wechaty-redux/duck-api'
+}                             from '../wechaty-redux/api'
 
 import {
   CHATIE_OA_ID,
@@ -34,7 +34,7 @@ import {
 }                     from '../config'
 
 import * as actions     from './actions'
-import * as operations  from './operations'
+import * as rxAsync     from './rx-async'
 import * as selectors   from './selectors'
 import * as utils       from './utils'
 
@@ -101,7 +101,7 @@ type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
  */
 const dingEvokerEpic: RootEpic = (action$) => action$.pipe(
   filter(isActionOf(actions.ding)),
-  mergeMap(operations.ding$),
+  mergeMap(rxAsync.ding$),
 )
 
 /**
@@ -128,13 +128,15 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
     of(actions.recoverWechaty(action.payload.wechatyId)),
     // Recover HA
     of(actions.recoverHA(
-      selectors.getHAOfWechatyId(
+      selectors.getHAByWechaty(
         state$.value.ha,
+      )(
         action.payload.wechatyId,
       ).id
     )).pipe(
       filter(_ => !selectors.isWechatyAvailable(
         state$.value.ha,
+      )(
         action.payload.wechatyId,
       ))
     ),
@@ -149,11 +151,13 @@ const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
   filter(isActionOf(actions.failureWechaty)),
   filter(action => !selectors.isWechatyAvailable(
     state$.value.ha,
+  )(
     action.payload.wechatyId,
   )),
   map(action => actions.failureHA(
-    selectors.getHAOfWechatyId(
+    selectors.getHAByWechaty(
       state$.value.ha,
+    )(
       action.payload.wechatyId,
     ).id,
   )),
