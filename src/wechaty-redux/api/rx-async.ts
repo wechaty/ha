@@ -16,7 +16,7 @@ import {
 
 import {
   getWechaty,
-}                 from '../wechaty-redux'
+}                 from '../manager'
 
 import * as actions from './actions'
 

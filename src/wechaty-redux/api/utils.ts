@@ -12,7 +12,7 @@ import {
   map,
 }                 from 'rxjs/operators'
 
-import { getWechaty } from '../wechaty-redux'
+import { getWechaty } from '../manager'
 
 import * as actions from './actions'
 import { Message } from 'wechaty'
