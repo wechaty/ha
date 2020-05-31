@@ -10,6 +10,8 @@ const HA_RECOVER = 'ha-wechaty/RESTORE'
 const DING = 'ha-wechaty/DING'
 const DONG = 'ha-wechaty/DONG'
 
+const NOOP = 'ha-wechaty/NOOP'
+
 export {
   WECHATY_ADD,
   WECHATY_DEL,
@@ -22,4 +24,6 @@ export {
 
   DING,
   DONG,
+
+  NOOP,
 }

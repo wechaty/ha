@@ -27,6 +27,8 @@ const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
 const ding = createAction(types.DING, prepareContact)()
 const dong = createAction(types.DONG, prepareDong)()
 
+const noop = createAction(types.NOOP)()
+
 export {
   addWechaty,
   delWechaty,
@@ -39,4 +41,6 @@ export {
 
   failureWechaty,
   recoverWechaty,
+
+  noop,
 }
