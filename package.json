@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "cuid": "^2.1.8",
-    "ducks": "^0.2.7",
+    "ducks": "^0.4.5",
     "flatten-array": "^1.0.0",
     "redux-observable": "^1.2.0",
     "rxjs": "^6.5.5",

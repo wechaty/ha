@@ -1,15 +1,16 @@
-// import {
+import { Dispatch } from 'redux'
 
-// } from './actions'
+import * as actions from './actions'
 
-// // This is a link to an action defined in actions.js.
-// export const simpleQuack = actions.quack
+const mo = (dispatch: Dispatch) => (wechatyId: string) => {
+  return dispatch(actions.moMessage(wechatyId))
+}
 
-// // This is a thunk which dispatches multiple actions from actions.js
-// export const complexQuack = ( distance ) => ( dispatch ) => {
-//     dispatch( actions.quack( ) ).then( ( ) => {
-//         dispatch( actions.swim( distance ) );
-//         dispatch( /* any action */ );
-//     } );
-// }
-export {}
+const mt = (dispatch: Dispatch) => (wechatyId: string) => {
+  return dispatch(actions.mtMessage(wechatyId))
+}
+
+export {
+  mo,
+  mt,
+}

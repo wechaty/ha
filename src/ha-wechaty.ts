@@ -25,7 +25,7 @@ import {
 }                                 from './wechaty-redux/'
 
 import * as api from './api/'
-import { State } from './ducks/reducers'
+import { State } from './api/'
 
 import { envWechaty } from './env-wechaty'
 import { Store } from 'redux'
@@ -72,7 +72,7 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     const roomListList = Promise.all(
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
-        .filter(haDucks.selectors.isWechatyAvailable(this.duckState()))
+        .filter(api.selectors.isWechatyAvailable(this.duckState()))
         .map(
           wechaty => wechaty.Room.findAll()
         )
@@ -100,7 +100,7 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(haDucks.selectors.isWechatyAvailable(this.duckState()))
+      .filter(api.selectors.isWechatyAvailable(this.duckState()))
       .map(wechaty => wechaty.Room.load(id))
 
     for (const room of roomList) {
@@ -247,7 +247,7 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
   public logonoff (): boolean {
     log.verbose('HAWechaty', 'logonoff()')
     return this.wechatyList
-      .filter(haDucks.selectors.isWechatyAvailable(this.duckState()))
+      .filter(api.selectors.isWechatyAvailable(this.duckState()))
       .some(wechaty => wechaty.logonoff())
   }
 
@@ -273,7 +273,7 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     log.verbose('HAWechaty', 'say(%s)', text)
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(haDucks.selectors.isWechatyAvailable(this.duckState()))
+      .filter(api.selectors.isWechatyAvailable(this.duckState()))
       .forEach(wechaty => wechaty.say(text))
   }
 

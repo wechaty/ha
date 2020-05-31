@@ -1,4 +1,7 @@
-import { createReducer }  from 'typesafe-actions'
+import {
+  ActionType,
+  createReducer,
+}                         from 'typesafe-actions'
 import { DeepReadonly }   from 'utility-types'
 
 import * as actions from './actions'
@@ -15,7 +18,7 @@ const initialState: DeepReadonly<{
   cluster      : {},   // map wechaty id to ha id
 }
 
-const reducer = createReducer(initialState)
+const reducer = createReducer<typeof initialState, ActionType<typeof actions>>(initialState)
   .handleAction(actions.failureWechaty, (state, action) => ({
     ...state,
     availability: {

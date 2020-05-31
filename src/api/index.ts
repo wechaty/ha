@@ -1,5 +1,3 @@
-// import { Store } from 'redux'
-
 import reducer from './reducers'
 
 import * as epics     from './epics'
@@ -14,14 +12,6 @@ export {
   types,
 }
 
-// export const getSelectors =  (store: Store) => (mountPoint?: string) => {
-//   if (!mountPoint) {
-//     mountPoint = 'default' // FIXME!!!!
-//   }
-
-//   return ({
-//     isHAAvailable: selectors.isHAAvailable(store.getState()[mountPoint]),
-//   })
-// }
-
 export default reducer
+
+export type State = ReturnType<typeof reducer>
