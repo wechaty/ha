@@ -13,7 +13,7 @@ import {
 
 import {
   getWechaty,
-}               from '../wechaty-redux/wechaty-redux'
+}               from '../wechaty-redux/manager'
 import {
   actions as wechatyActions,
 }                               from '../wechaty-redux/api/'

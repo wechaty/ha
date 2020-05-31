@@ -9,7 +9,7 @@ import {
 }                   from 'rxjs/operators'
 
 import {
-  api as wechatyAPI,
+  api as wechatyApi,
 }                           from '../wechaty-redux/'
 
 import * as actions from './actions'
@@ -19,8 +19,8 @@ import {
 }               from '../redux/'
 
 const counterEpic: RootEpic = actions$ => actions$.pipe(
-  filter(isActionOf(wechatyAPI.actions.messageEvent)),
-  mergeMap(wechatyAPI.utils.toMessage$),
+  filter(isActionOf(wechatyApi.actions.messageEvent)),
+  mergeMap(wechatyApi.utils.toMessage$),
   map(message => message.self()
     ? actions.moMessage(message.wechaty.id)
     : actions.mtMessage(message.wechaty.id)
