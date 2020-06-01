@@ -1,60 +1,41 @@
-import { EventEmitter } from 'events'
-
+import { EventEmitter }     from 'events'
 import {
-  Wechaty,
-  // WechatyOptions,
-  WechatyPlugin,
-  Room,
   MemoryCard,
-}                   from 'wechaty'
-
+  Room,
+  Wechaty,
+  WechatyPlugin,
+}                           from 'wechaty'
 import { WechatyEventName } from 'wechaty/dist/src/wechaty'
+import { StateSwitch }      from 'state-switch'
+import cuid                 from 'cuid'
+import {
+  Duck,
+  Ducks,
+}                           from 'ducks'
 
-import { StateSwitch } from 'state-switch'
-
-import cuid from 'cuid'
+import { WechatyRedux } from './wechaty-redux'
 
 import {
   VERSION,
   log,
-}             from './config'
-
-// import { configureStore } from './configure-store'
-
-import * as haApi from './api/'
-// import { State } from './api/'
-
-// import { envWechaty } from './env-wechaty'
-// import { Store } from 'redux'
-import {
-  Duck,
-}                 from 'ducks'
-import { WechatyRedux } from './wechaty-redux'
-
-const haWechatyStore = new Map<string, HAWechaty>()
-
-export const getHA = (id: string) => {
-  const ha = haWechatyStore.get(id)
-  if (!ha) {
-    throw new Error('no HA Wechaty instance for id ' + id)
-  }
-  return ha
-}
+}                     from './config'
+import * as api       from './api/'
+import * as instances from './manager'
 
 export interface HAWechatyOptions {
   name?   : string,
   memory? : MemoryCard,
-  duck: Duck<typeof haApi>,
+  ducks: Ducks<any>,
 }
 
 export class HAWechaty extends EventEmitter {
 
-  // public store: Store
-
   public id: string
   public state: StateSwitch
 
-  public wechatyList: Wechaty[]
+  public duck: Duck<typeof api>
+
+  protected wechatyList: Wechaty[]
 
   public Room = {
     findAll : this.roomFindAll.bind(this),
@@ -67,7 +48,7 @@ export class HAWechaty extends EventEmitter {
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
         .filter(
-          this.options.duck.selectors.isWechatyAvailable
+          this.duck.selectors.isWechatyAvailable
           // haApi.selectors.isWechatyAvailable(this.duckState())
         )
         .map(
@@ -98,7 +79,7 @@ export class HAWechaty extends EventEmitter {
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
-        this.options.duck.selectors.isWechatyAvailable
+        this.duck.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
       .map(wechaty => wechaty.Room.load(id))
@@ -127,22 +108,10 @@ export class HAWechaty extends EventEmitter {
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
-    haWechatyStore.set(this.id, this)
+    this.duck = options.ducks.ducksify(api)
 
-    // let store
-    // if (options.store) {
-    //   store = options.store
-    // } else {
-    //   store = configureStore()
-    // }
-    // this.store = store
-
-    // TODO: init via the options
+    instances.setHa(this)
   }
-
-  // public duckState (): State {
-  //   return this.store.getState().ha
-  // }
 
   public name (): string {
     return this.wechatyList
@@ -167,7 +136,7 @@ export class HAWechaty extends EventEmitter {
       ...wechatyList
     )
 
-    const store = this.options.duck.store
+    const store = this.duck.store
 
     wechatyList.forEach(async wechaty => {
       wechaty.use(WechatyRedux({ store }))
@@ -274,7 +243,7 @@ export class HAWechaty extends EventEmitter {
     log.verbose('HAWechaty', 'logonoff()')
     return this.wechatyList
       .filter(
-        this.options.duck.selectors.isWechatyAvailable
+        this.duck.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
       .some(wechaty => wechaty.logonoff())
@@ -303,7 +272,7 @@ export class HAWechaty extends EventEmitter {
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
-        this.options.duck.selectors.isWechatyAvailable
+        this.duck.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
       .forEach(wechaty => wechaty.say(text))

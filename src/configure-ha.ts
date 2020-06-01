@@ -23,10 +23,9 @@ function configureHa () {
   ducks.configureStore()
 
   const name = 'ha-wechaty'
-  const duck = ducks.ducksify('ha')
 
   const ha = new HAWechaty({
-    duck,
+    ducks,
     name,
   })
 

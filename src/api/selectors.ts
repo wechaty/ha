@@ -1,9 +1,9 @@
 import { Wechaty } from 'wechaty'
 
 import {
-  getHA,
+  getHa,
   HAWechaty,
-}                   from '../ha-wechaty'
+}                   from '../'
 
 import { State } from './reducers'
 
@@ -43,7 +43,7 @@ const getHAByWechaty = (state: State) => (wechatyOrId: string | Wechaty) => {
   if (!haId) {
     throw new Error('no haId')
   }
-  return getHA(haId)
+  return getHa(haId)
 }
 
 export {
