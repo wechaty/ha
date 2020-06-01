@@ -4,6 +4,7 @@ import {
   Room,
   Wechaty,
   WechatyPlugin,
+  Contact,
 }                           from 'wechaty'
 import { WechatyEventName } from 'wechaty/dist/src/wechaty'
 import { StateSwitch }      from 'state-switch'
@@ -36,6 +37,35 @@ export class HAWechaty extends EventEmitter {
   public duck: Duck<typeof api>
 
   protected wechatyList: Wechaty[]
+
+  public Contact = {
+    load : this.contactLoad.bind(this),
+  }
+
+  protected async contactLoad (id: string): Promise<null | Contact> {
+    log.verbose('HAWechaty', 'contactLoad(%s)', id)
+    const contactList = this.wechatyList
+      .filter(wechaty => wechaty.logonoff())
+      .filter(this.duck.selectors.isWechatyAvailable)
+      .map(wechaty => wechaty.Contact.load(id))
+
+    let okList = [] as Contact[]
+    for (const contact of contactList) {
+      try {
+        await contact.ready()
+        okList.push(contact)
+      } catch (e) {
+        log.verbose('HAWechaty', 'contactLoad() %s has no contact id %s', contact.wechaty, contact.id)
+      }
+    }
+
+    if (okList.length > 0) {
+      const pick = Math.floor(Math.random() * okList.length)
+      return okList[pick]
+    }
+
+    return null
+  }
 
   public Room = {
     findAll : this.roomFindAll.bind(this),
