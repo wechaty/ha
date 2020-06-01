@@ -8,7 +8,9 @@ import {
 
 test('tbw', async (t) => {
   const ha = new HAWechaty({
-    ducks: {} as any,
+    ducks: {
+      ducksify: (..._: any[]) => ({} as any),
+    } as any,
     name: 'test',
   })
   t.ok(ha, 'should be instantiated')
