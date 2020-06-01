@@ -129,6 +129,14 @@ To specify more tokens for a specific puppet, use a colon (`:`) to seprate them,
 export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_token_1:hostie_token_2
 ```
 
+## Development
+
+### Redux Remote DevTools
+
+```sh
+npm run redux-devtools
+```
+
 ## History
 
 ### master
