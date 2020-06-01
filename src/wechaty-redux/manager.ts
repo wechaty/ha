@@ -2,10 +2,10 @@ import { Wechaty } from 'wechaty'
 
 const instanceStore = new Map<string, Wechaty>()
 
-const getWechaty = (id: string): Wechaty => {
-  const wechaty = instanceStore.get(id)
+const getWechaty = (wechatyId: string): Wechaty => {
+  const wechaty = instanceStore.get(wechatyId)
   if (!wechaty) {
-    throw new Error('no wechaty found for id ' + id)
+    throw new Error('no wechaty found for id ' + wechatyId)
   }
   return wechaty
 }
@@ -27,9 +27,9 @@ const removeWechaty = (wechaty: Wechaty): void => {
 
 }
 
-const getMessage = (wechatyId: string, id: string) => getWechaty(wechatyId).Message.load(id)
-const getRoom    = (wechatyId: string, id: string) => getWechaty(wechatyId).Room.load(id)
-const getContact = (wechatyId: string, id: string) => getWechaty(wechatyId).Contact.load(id)
+const getMessage = (wechatyId: string, messageId: string) => getWechaty(wechatyId).Message.load(messageId)
+const getRoom    = (wechatyId: string, roomId: string)    => getWechaty(wechatyId).Room.load(roomId)
+const getContact = (wechatyId: string, contactId: string) => getWechaty(wechatyId).Contact.load(contactId)
 
 export {
   getWechaty,

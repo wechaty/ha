@@ -49,33 +49,18 @@ import {
   EventResetPayload,
 }                             from 'wechaty-puppet'
 
-import {
-  configureStore,
-}                   from './configure-store'
-
 export interface WechatyReduxOptions {
-  store?: Store,
+  store: Store,
 }
 
-function WechatyRedux (options?: WechatyReduxOptions) {
+function WechatyRedux (options: WechatyReduxOptions) {
   log.verbose('WechatyRedux', '(%s)', options ? JSON.stringify(options) : '')
-  const normalizedOptions: WechatyReduxOptions = {
-    ...options,
-  }
-
-  let store: Store
-
-  if (normalizedOptions.store) {
-    store = normalizedOptions.store
-  } else {
-    store = configureStore()
-  }
 
   return function WechatyReduxPlugin (wechaty: Wechaty) {
     log.verbose('WechatyRedux', 'WechatyReduxPlugin(%s)', wechaty)
 
     install(
-      store,
+      options.store,
       wechaty,
     )
   }

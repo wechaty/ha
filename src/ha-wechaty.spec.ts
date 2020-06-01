@@ -7,6 +7,9 @@ import {
 }               from './ha-wechaty'
 
 test('tbw', async (t) => {
-  const ha = new HAWechaty()
-  t.ok(ha, 'should be instanciated')
+  const ha = new HAWechaty({
+    duck: {} as any,
+    name: 'test',
+  })
+  t.ok(ha, 'should be instantiated')
 })

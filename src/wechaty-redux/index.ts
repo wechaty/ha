@@ -4,11 +4,14 @@ import {
   WechatyRedux,
   WechatyReduxOptions,
 }                         from './wechaty-redux'
-import { configureStore } from './configure-store'
+
+import {
+  getWechaty,
+}                         from './manager'
 
 export {
   api,
-  configureStore,
+  getWechaty,
   WechatyRedux,
   WechatyReduxOptions,
 }

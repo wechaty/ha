@@ -22,7 +22,9 @@ import {
   DingDong,
 }                   from 'wechaty-plugin-contrib'
 
-import { HAWechaty } from '../src/'
+import {
+  configureHa,
+}                 from '../src/'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -32,9 +34,7 @@ dotenv.config()
  * 1. Declare your Bot!
  *
  */
-const ha = new HAWechaty({
-  name: 'ha-ding-dong-bot',
-})
+const ha = configureHa()
 
 ha.use(
   EventLogger(),

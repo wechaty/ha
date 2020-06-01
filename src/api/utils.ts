@@ -3,7 +3,7 @@ import {
 }                   from '../ha-wechaty'
 import {
   getWechaty,
-}                   from '../wechaty-redux/wechaty-redux'
+}                   from '../wechaty-redux/'
 
 import {
   Contact,

@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 
 import {
   Wechaty,
-  WechatyOptions,
+  // WechatyOptions,
   WechatyPlugin,
   Room,
   MemoryCard,
@@ -20,19 +20,17 @@ import {
   log,
 }             from './config'
 
-import {
-  WechatyRedux,
-}                                 from './wechaty-redux/'
+// import { configureStore } from './configure-store'
 
-import * as api from './api/'
-import { State } from './api/'
+import * as haApi from './api/'
+// import { State } from './api/'
 
-import { envWechaty } from './env-wechaty'
-import { Store } from 'redux'
+// import { envWechaty } from './env-wechaty'
+// import { Store } from 'redux'
 import {
   Duck,
-  Ducksifiable,
 }                 from 'ducks'
+import { WechatyRedux } from './wechaty-redux'
 
 const haWechatyStore = new Map<string, HAWechaty>()
 
@@ -47,20 +45,17 @@ export const getHA = (id: string) => {
 export interface HAWechatyOptions {
   name?   : string,
   memory? : MemoryCard,
-  store?  : Store,
-  wechatyOptionsList? : WechatyOptions[],
+  duck: Duck<typeof haApi>,
 }
 
-export class HAWechaty extends EventEmitter implements Ducksifiable {
+export class HAWechaty extends EventEmitter {
 
-  public store: Store
+  // public store: Store
 
   public id: string
   public state: StateSwitch
 
   public wechatyList: Wechaty[]
-
-  private redux: WechatyRedux
 
   public Room = {
     findAll : this.roomFindAll.bind(this),
@@ -72,7 +67,10 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     const roomListList = Promise.all(
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
-        .filter(api.selectors.isWechatyAvailable(this.duckState()))
+        .filter(
+          this.options.duck.selectors.isWechatyAvailable
+          // haApi.selectors.isWechatyAvailable(this.duckState())
+        )
         .map(
           wechaty => wechaty.Room.findAll()
         )
@@ -100,7 +98,10 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(api.selectors.isWechatyAvailable(this.duckState()))
+      .filter(
+        this.options.duck.selectors.isWechatyAvailable
+        // haApi.selectors.isWechatyAvailable(this.duckState())
+      )
       .map(wechaty => wechaty.Room.load(id))
 
     for (const room of roomList) {
@@ -119,7 +120,7 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
   }
 
   constructor (
-    public options: HAWechatyOptions = {},
+    public options: HAWechatyOptions,
   ) {
     super()
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
@@ -127,28 +128,22 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
-    this.redux = new WechatyRedux()
-
     haWechatyStore.set(this.id, this)
 
-    let store
-    if (options.store) {
-      store = options.store
-    } else {
-      store = configureStore()
-    }
-    this.store = store
+    // let store
+    // if (options.store) {
+    //   store = options.store
+    // } else {
+    //   store = configureStore()
+    // }
+    // this.store = store
 
     // TODO: init via the options
   }
 
-  public ducksify () {
-    return new Duck(api)
-  }
-
-  public duckState (): State {
-    return this.store.getState().ha
-  }
+  // public duckState (): State {
+  //   return this.store.getState().ha
+  // }
 
   public name (): string {
     return this.wechatyList
@@ -162,16 +157,51 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     return VERSION
   }
 
+  public add (...wechatyList: Wechaty[]): this {
+    log.verbose('HAWechaty', 'add(%s)',
+      wechatyList
+        .map(wechaty => wechaty.name())
+        .join(', ')
+    )
+
+    this.wechatyList.push(
+      ...wechatyList
+    )
+
+    const store = this.options.duck.store
+
+    wechatyList.forEach(async wechaty => {
+      wechaty.use(WechatyRedux({ store }))
+      // this.emit('wechaty', wechaty)
+      if (wechaty.state.off()) {
+        log.silly('HAWechaty', 'add() %s starting', wechaty)
+        await wechaty.start()
+      } else {
+        log.verbose('HAWechaty', 'add() %s skip starting: its already started.', wechaty)
+      }
+    })
+
+    return this
+  }
+
+  public remove (...wechatyList: Wechaty[]): this {
+    log.verbose('HAWechaty', 'remove(%s)',
+      wechatyList
+        .map(wechaty => wechaty.name())
+        .join(', ')
+    )
+    throw new Error('to be implemented')
+  }
+
+  public nodes (): Wechaty[] {
+    return this.wechatyList
+  }
+
   public async start () {
     log.verbose('HAWechaty', 'start()')
 
     try {
       this.state.on('pending')
-
-      const wechatyList = envWechaty(this.options)
-      this.wechatyList.push(
-        ...wechatyList
-      )
 
       if (this.wechatyList.length <= 0) {
         throw new Error('no wechaty puppet found')
@@ -181,14 +211,11 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
 
       for (const wechaty of this.wechatyList) {
         log.silly('HAWechaty', 'start() %s starting', wechaty)
-
-        this.emit('wechaty', wechaty)
-
-        wechaty.use(this.redux.plugin({
-          store: this.store,
-        }))
-        await wechaty.start()
-
+        if (wechaty.state.off()) {
+          await wechaty.start()
+        } else {
+          log.verbose('HAWechaty', 'start() %s skip starting: its already started.', wechaty)
+        }
       }
 
       this.state.on(true)
@@ -247,7 +274,10 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
   public logonoff (): boolean {
     log.verbose('HAWechaty', 'logonoff()')
     return this.wechatyList
-      .filter(api.selectors.isWechatyAvailable(this.duckState()))
+      .filter(
+        this.options.duck.selectors.isWechatyAvailable
+        // haApi.selectors.isWechatyAvailable(this.duckState())
+      )
       .some(wechaty => wechaty.logonoff())
   }
 
@@ -273,7 +303,10 @@ export class HAWechaty extends EventEmitter implements Ducksifiable {
     log.verbose('HAWechaty', 'say(%s)', text)
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(api.selectors.isWechatyAvailable(this.duckState()))
+      .filter(
+        this.options.duck.selectors.isWechatyAvailable
+        // haApi.selectors.isWechatyAvailable(this.duckState())
+      )
       .forEach(wechaty => wechaty.say(text))
   }
 

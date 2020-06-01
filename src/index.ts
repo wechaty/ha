@@ -1,10 +1,11 @@
-export * from 'wechaty'
+import * as api       from './api/'
+import { VERSION }    from './config'
+import { HAWechaty }  from './ha-wechaty'
+import { configureHa } from './configure-ha'
 
 export {
-  log,
-  VERSION,
-}               from './config'
-
-export {
+  api,
+  configureHa,
   HAWechaty,
-}               from './ha-wechaty'
+  VERSION,
+}
