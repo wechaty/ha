@@ -128,11 +128,11 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
     of(actions.recoverWechaty(action.payload.wechatyId)),
     // Recover HA
     of(actions.recoverHA(
-      selectors.getHAByWechaty(
+      selectors.getHaByWechaty(
         state$.value.ha,
       )(
         action.payload.wechatyId,
-      ).id
+      )
     )).pipe(
       filter(_ => !selectors.isWechatyAvailable(
         state$.value.ha,
@@ -155,11 +155,11 @@ const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
     action.payload.wechatyId,
   )),
   map(action => actions.failureHA(
-    selectors.getHAByWechaty(
+    selectors.getHaByWechaty(
       state$.value.ha,
     )(
       action.payload.wechatyId,
-    ).id,
+    ),
   )),
 )
 

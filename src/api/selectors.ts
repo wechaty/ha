@@ -1,9 +1,6 @@
-import { Wechaty } from 'wechaty'
+import { Wechaty }    from 'wechaty'
 
-import {
-  getHa,
-  HAWechaty,
-}                   from '../'
+import { HAWechaty }  from '../'
 
 import { State } from './reducers'
 
@@ -14,7 +11,7 @@ const isWechatyAvailable = (state: State) => (wechatyOrId: string | Wechaty): bo
   return !!(state.availability[wechatyOrId])
 }
 
-const isHAAvailable = (state: State) => (haOrId?: string | HAWechaty): boolean => {
+const isHaAvailable = (state: State) => (haOrId?: string | HAWechaty): boolean => {
   if (!haOrId) {
     return Object.values(state.availability)
       .filter(Boolean)
@@ -34,7 +31,7 @@ const isHAAvailable = (state: State) => (haOrId?: string | HAWechaty): boolean =
     .length > 0
 }
 
-const getHAByWechaty = (state: State) => (wechatyOrId: string | Wechaty) => {
+const getHaByWechaty = (state: State) => (wechatyOrId: string | Wechaty): string => {
   if (wechatyOrId instanceof Wechaty) {
     wechatyOrId = wechatyOrId.id
   }
@@ -43,11 +40,11 @@ const getHAByWechaty = (state: State) => (wechatyOrId: string | Wechaty) => {
   if (!haId) {
     throw new Error('no haId')
   }
-  return getHa(haId)
+  return haId
 }
 
 export {
-  getHAByWechaty,
-  isHAAvailable,
+  getHaByWechaty,
+  isHaAvailable,
   isWechatyAvailable,
 }
