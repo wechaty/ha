@@ -9,29 +9,29 @@ import {
 }                   from 'rxjs/operators'
 
 import {
-  RootEpic,
-}               from '../../redux'
+  Epic,
+}               from 'redux-observable'
 
 import * as actions     from './actions'
 import * as rxAsync     from './rx-async'
 import * as utils       from './utils'
 
-const dingEpic: RootEpic = actions$ => actions$.pipe(
+const dingEpic: Epic = actions$ => actions$.pipe(
   filter(isActionOf(actions.ding)),
   mergeMap(rxAsync.ding$),
 )
 
-const resetEpic: RootEpic = actions$ => actions$.pipe(
+const resetEpic: Epic = actions$ => actions$.pipe(
   filter(isActionOf(actions.reset)),
   mergeMap(rxAsync.reset$),
 )
 
-const sayEpic: RootEpic = actions$ => actions$.pipe(
+const sayEpic: Epic = actions$ => actions$.pipe(
   filter(isActionOf(actions.sayAsync.request)),
   mergeMap(rxAsync.say$),
 )
 
-const loginEpic: RootEpic = actions$ => actions$.pipe(
+const loginEpic: Epic = actions$ => actions$.pipe(
   filter(isActionOf(actions.loginEvent)),
   mergeMap(utils.toContactPayload$),
   map(payload => actions.loginUser(payload)),

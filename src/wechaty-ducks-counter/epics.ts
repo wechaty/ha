@@ -15,10 +15,10 @@ import {
 import * as actions from './actions'
 
 import {
-  RootEpic,
-}               from '../redux/'
+  Epic,
+}               from 'redux-observable'
 
-const counterEpic: RootEpic = actions$ => actions$.pipe(
+const counterEpic: Epic = actions$ => actions$.pipe(
   filter(isActionOf(wechatyApi.actions.messageEvent)),
   mergeMap(wechatyApi.utils.toMessage$),
   map(message => message.self()

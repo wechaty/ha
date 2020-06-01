@@ -20,8 +20,8 @@ import {
 }                   from 'rxjs/operators'
 
 import {
-  RootEpic,
-}               from '../redux/'
+  Epic,
+}               from 'redux-observable'
 
 import {
   actions as wechatyActions,
@@ -49,14 +49,14 @@ const RESET_WAIT_MILLISECONDS = utils.milliAroundSeconds(300)
  *    `heartbeatEvent` is not suitable at here,
  *    because the hostie server will emit heartbeat no matter than WeChat protocol available or not.
  */
-const takeUntilDong = <T>(wechatyId: string, action$: ReturnType<RootEpic>) => takeUntil<T>(
+const takeUntilDong = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
   action$.pipe(
     filter(isActionOf(actions.dong)),
     filter(action => action.payload.wechatyId === wechatyId),
   ),
 )
 
-const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<RootEpic>) => takeUntil<T>(
+const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
   action$.pipe(
     filter(isActionOf([
       wechatyActions.loginEvent,
@@ -73,7 +73,7 @@ const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<RootEpic>) 
  * In:  RootAction
  * Out: wechatyActions.messageEvent groupBy wechatyId
  */
-const wechatyMessage$$ = (action$: ReturnType<RootEpic>) => action$.pipe(
+const wechatyMessage$$ = (action$: ReturnType<Epic>) => action$.pipe(
   filter(isActionOf(wechatyActions.loginEvent)),
   map(action => action.payload.wechatyId),
   /**
@@ -99,7 +99,7 @@ type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
  *
  * Side Effect: call contact.say(ding)
  */
-const dingEvokerEpic: RootEpic = (action$) => action$.pipe(
+const dingEvokerEpic: Epic = (action$) => action$.pipe(
   filter(isActionOf(actions.ding)),
   mergeMap(rxAsync.ding$),
 )
@@ -108,7 +108,7 @@ const dingEvokerEpic: RootEpic = (action$) => action$.pipe(
  * In:  wechatyActions.messageEvent
  * Out: actions.dongHA
  */
-const dongEmitterEpic: RootEpic = action$ => action$.pipe(
+const dongEmitterEpic: Epic = action$ => action$.pipe(
   filter(isActionOf(wechatyActions.messageEvent)),
   mergeMap(wechatyUtils.toMessage$),
   filter(wechatyUtils.isTextMessage(DONG)),
@@ -121,7 +121,7 @@ const dongEmitterEpic: RootEpic = action$ => action$.pipe(
  *  actions.recoverWechaty
  *  actions.recoverHA
  */
-const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
+const recoverWechatyEmitterEpic: Epic = (action$, state$) => action$.pipe(
   filter(isActionOf(actions.dong)),
   mergeMap(action => merge(
     // Recover Wechaty
@@ -147,7 +147,7 @@ const recoverWechatyEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
  * In:  actions.failureWechaty
  * Out: actions.failureHA
  */
-const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
+const failureHAEmitterEpic: Epic = (action$, state$) => action$.pipe(
   filter(isActionOf(actions.failureWechaty)),
   filter(action => !selectors.isWechatyAvailable(
     state$.value.ha,
@@ -169,7 +169,7 @@ const failureHAEmitterEpic: RootEpic = (action$, state$) => action$.pipe(
  *  wechatyActions.reset
  */
 const resetEmitterPerWechaty$ = (
-  action$         : ReturnType<RootEpic>,
+  action$         : ReturnType<Epic>,
   wechatyMessage$ : GroupedMessageByWechaty,
 ) => wechatyMessage$.pipe(
   debounce(() => interval(RESET_WAIT_MILLISECONDS)),
@@ -190,7 +190,7 @@ const resetEmitterPerWechaty$ = (
  *  actions.ding
  */
 const dingEmitterPerWechaty$ = (
-  action$         : ReturnType<RootEpic>,
+  action$         : ReturnType<Epic>,
   wechatyMessage$ : GroupedMessageByWechaty,
 ) => wechatyMessage$.pipe(
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
@@ -216,7 +216,7 @@ const dingEmitterPerWechaty$ = (
  *
  *    wechatyActions.reset
  */
-const mainEpic: RootEpic = action$ => wechatyMessage$$(action$).pipe(
+const mainEpic: Epic = action$ => wechatyMessage$$(action$).pipe(
   mergeMap(wechatyMessage$ => merge(
     dingEmitterPerWechaty$(action$, wechatyMessage$),
     resetEmitterPerWechaty$(action$, wechatyMessage$),

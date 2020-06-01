@@ -34,6 +34,8 @@ const SAY_FAILURE = 'wechaty/SAY_FAILURE'
  */
 const USER_LOGIN = 'wechaty/USER_LOGIN'
 
+const NOOP = 'wechaty/NOOP'
+
 export {
   SWITCH_OFF,
   SWITCH_ON,
@@ -61,4 +63,6 @@ export {
   SAY_SUCCESS,
 
   USER_LOGIN,
+
+  NOOP,
 }

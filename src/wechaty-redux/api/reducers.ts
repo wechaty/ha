@@ -1,4 +1,4 @@
-import { createReducer } from 'typesafe-actions'
+import { createReducer, ActionType } from 'typesafe-actions'
 import { DeepReadonly } from 'utility-types'
 
 import { ContactPayload } from 'wechaty-puppet'
@@ -12,7 +12,7 @@ const initialState: DeepReadonly<{
   }
 }> = {}
 
-const reducer = createReducer(initialState)
+const reducer = createReducer<typeof initialState, ActionType<typeof actions>>(initialState)
   .handleAction(actions.scanEvent, (state, action) => ({
     ...state,
     [action.payload.wechatyId]: {

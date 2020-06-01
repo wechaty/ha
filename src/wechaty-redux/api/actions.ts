@@ -111,6 +111,12 @@ const sayAsync = createAsyncAction(
 const prepareLoginUser = (payload: WechatyIdOptions & ContactPayload) => payload
 const loginUser = createAction(types.USER_LOGIN, prepareLoginUser)()
 
+/**
+ * Bug compatible & workaround for Ducks API
+ *  https://github.com/huan/ducks/issues/2
+ */
+const noop = createAction(types.NOOP)()
+
 export {
   turnOffSwitch,
   turnOnSwitch,
@@ -136,4 +142,6 @@ export {
   sayAsync,
 
   loginUser,
+
+  noop,
 }
