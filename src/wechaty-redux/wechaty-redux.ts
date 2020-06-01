@@ -3,23 +3,12 @@ import {
   log,
 }             from 'wechaty'
 
-// import { timestampToDate } from 'wechaty/dist/src/helper-functions/pure/timestamp-to-date'
-
-// import {
-//   Store,
-// }           from 'typesafe-actions'
-
 import {
-  // from,
   fromEvent,
-  // forkJoin,
   merge,
-  // of,
 }             from 'rxjs'
 import {
   map,
-  // mapTo,
-  // mergeMap,
 }             from 'rxjs/operators'
 
 import {
@@ -27,10 +16,7 @@ import {
 }             from 'redux'
 
 import * as api  from './api'
-// import * as haDucks       from '../ducks/'
 import * as instances from './manager'
-
-// import ducksStore from '../redux/'
 
 import {
   EventDongPayload,
@@ -67,7 +53,7 @@ function WechatyRedux (options: WechatyReduxOptions) {
 }
 
 function install (store: Store, wechaty: Wechaty): void {
-  log.verbose('WechatyRedux', 'install(%s, %s)', store, wechaty)
+  log.verbose('WechatyRedux', 'install(store, %s)', wechaty)
 
   /**
    * Huan(202005):
