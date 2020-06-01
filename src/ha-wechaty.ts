@@ -11,7 +11,6 @@ import {
 import { WechatyEventName } from 'wechaty/dist/src/wechaty'
 
 import { StateSwitch } from 'state-switch'
-import flattenArray from 'flatten-array'
 
 import cuid from 'cuid'
 
@@ -64,7 +63,7 @@ export class HAWechaty extends EventEmitter {
 
   public async roomFindAll (): Promise<Room[]> {
     log.verbose('HAWechaty', 'roomFindAll()')
-    const roomListList = Promise.all(
+    const roomListList = await Promise.all(
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
         .filter(
@@ -82,7 +81,7 @@ export class HAWechaty extends EventEmitter {
      * allRoomList may contain one room for multiple times
      * because we have more than one bot in the same room
      */
-    const allRoomList = flattenArray(roomListList) as Room[]
+    const allRoomList = roomListList.flat()
     for (const room of allRoomList) {
       const exist = roomList.some(r => r.id === room.id)
       if (exist) {

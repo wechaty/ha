@@ -8,6 +8,7 @@
  *    https://redux-toolkit.js.org/usage/usage-with-typescript
  *
  */
+/// <reference path="./types.d.ts" />
 
 import {
   applyMiddleware,
