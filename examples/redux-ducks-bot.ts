@@ -52,7 +52,7 @@ haWechaty.add(wechaty1, wechaty2)
 
 // haWechaty.remove(wechaty2, wechaty1)
 
-console.info('nodes: ', haWechaty.nodes())
+console.info('nodes: ', haWechaty.nodes().length)
 
 haWechaty.start()
   .catch(console.error)

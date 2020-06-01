@@ -44,12 +44,11 @@ ha.use(
 
 ha.once('login', () => setInterval(
   async () => {
-    const room = await ha.roomLoad('17376996519@chatroom') // Heartbeat Room
-    if (!room) {
-      console.error('can not found room for testing!')
-      return
+    const filehelper = await ha.Contact.load('filehelper')
+    if (!filehelper) {
+      throw new Error('filehelper not found')
     }
-    await room.say('HA Wechaty')
+    await filehelper.say('HA Wechaty')
   },
   5 * 1000,
 ))
