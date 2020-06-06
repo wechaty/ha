@@ -1,11 +1,12 @@
 import { combineReducers }  from 'redux'
 
-import counter from '../../src/wechaty-ducks-counter/'
-import ha      from '../../src/api/'
-import wechaty from '../../src/wechaty-redux/api'
+import { Duck as WechatyDuck }    from 'wechaty-redux'
+import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
+
+import * as HaDuck                from '../../src/duck/'
 
 export default combineReducers({
-  counter,
-  ha,
-  wechaty,
+  counter : CounterDuck.default,
+  ha      : HaDuck.default,
+  wechaty : WechatyDuck.default,
 })

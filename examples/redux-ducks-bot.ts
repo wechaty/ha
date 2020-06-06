@@ -11,16 +11,16 @@ import { Wechaty } from 'wechaty'
 
 import {
   HAWechaty,
-  api as haApi,
-}                             from '../src'
-import { api as wechatyApi }  from '../src/wechaty-redux'
+  Duck as haDuck,
+}                             from '../src/'
+import { Duck as wechatyDuck }  from 'wechaty-redux'
 
-import * as counterApi        from '../src/wechaty-ducks-counter'
+import { Counter as counterDuck } from 'wechaty-ducks-contrib'
 
 const ducks = new Ducks({
-  counter : counterApi,
-  ha      : haApi,
-  wechaty : wechatyApi,
+  counter : counterDuck,
+  ha      : haDuck,
+  wechaty : wechatyDuck,
 })
 
 const compose = composeWithDevTools({

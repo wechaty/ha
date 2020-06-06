@@ -10,23 +10,23 @@ import { WechatyEventName } from 'wechaty/dist/src/wechaty'
 import { StateSwitch }      from 'state-switch'
 import cuid                 from 'cuid'
 import {
-  Duck,
+  Bundle,
   Ducks,
 }                           from 'ducks'
 
-import { WechatyRedux } from './wechaty-redux'
+import { WechatyRedux } from 'wechaty-redux'
 
 import {
   VERSION,
   log,
 }                     from './config'
-import * as api       from './api/'
+import * as haDuck    from './duck/'
 import * as instances from './manager'
 
 export interface HAWechatyOptions {
   name?   : string,
   memory? : MemoryCard,
-  ducks: Ducks<any>,
+  ducks   : Ducks<any>,
 }
 
 export class HAWechaty extends EventEmitter {
@@ -34,7 +34,7 @@ export class HAWechaty extends EventEmitter {
   public id: string
   public state: StateSwitch
 
-  public duck: Duck<typeof api>
+  public bundle: Bundle<typeof haDuck>
 
   protected wechatyList: Wechaty[]
 
@@ -46,7 +46,7 @@ export class HAWechaty extends EventEmitter {
     log.verbose('HAWechaty', 'contactLoad(%s)', id)
     const contactList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(this.duck.selectors.isWechatyAvailable)
+      .filter(this.bundle.selectors.isWechatyAvailable)
       .map(wechaty => wechaty.Contact.load(id))
 
     let okList = [] as Contact[]
@@ -78,7 +78,7 @@ export class HAWechaty extends EventEmitter {
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
         .filter(
-          this.duck.selectors.isWechatyAvailable
+          this.bundle.selectors.isWechatyAvailable
           // haApi.selectors.isWechatyAvailable(this.duckState())
         )
         .map(
@@ -109,7 +109,7 @@ export class HAWechaty extends EventEmitter {
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
-        this.duck.selectors.isWechatyAvailable
+        this.bundle.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
       .map(wechaty => wechaty.Room.load(id))
@@ -138,7 +138,7 @@ export class HAWechaty extends EventEmitter {
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
-    this.duck = options.ducks.ducksify(api)
+    this.bundle = options.ducks.ducksify(haDuck)
 
     instances.setHa(this)
   }
@@ -166,7 +166,7 @@ export class HAWechaty extends EventEmitter {
       ...wechatyList
     )
 
-    const store = this.duck.store
+    const store = this.bundle.store
 
     wechatyList.forEach(async wechaty => {
       wechaty.use(WechatyRedux({ store }))
@@ -273,7 +273,7 @@ export class HAWechaty extends EventEmitter {
     log.verbose('HAWechaty', 'logonoff()')
     return this.wechatyList
       .filter(
-        this.duck.selectors.isWechatyAvailable
+        this.bundle.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
       .some(wechaty => wechaty.logonoff())
@@ -302,7 +302,7 @@ export class HAWechaty extends EventEmitter {
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
-        this.duck.selectors.isWechatyAvailable
+        this.bundle.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
       .forEach(wechaty => wechaty.say(text))

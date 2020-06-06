@@ -1,9 +1,8 @@
 import { Ducks } from 'ducks'
 
-import { api as wechatyApi } from './wechaty-redux'
-import * as haApi from './api'
+import { Duck as wechatyDuck } from 'wechaty-redux'
+import * as haDuck from './duck/'
 
-// import { configureDucks } from './configure-ducks'
 import { HAWechaty } from '.'
 import { envWechaty } from './env-wechaty'
 
@@ -16,8 +15,8 @@ function configureHa () {
   initialized = true
 
   const ducks = new Ducks({
-    ha      : haApi,
-    wechaty : wechatyApi,
+    ha      : haDuck,
+    wechaty : wechatyDuck,
   })
 
   ducks.configureStore()

@@ -1,9 +1,10 @@
-import { actions as counter } from '../../src/wechaty-ducks-counter'
-import { actions as ha }      from '../../src/api'
-import { actions as wechaty } from '../../src/wechaty-redux/api/'
+import { Duck as WechatyDuck }    from 'wechaty-redux'
+import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
+
+import * as HaDuck                from '../../src/duck/'
 
 export default {
-  counter,
-  ha,
-  wechaty,
+  counter : CounterDuck.actions,
+  ha      : HaDuck.actions,
+  wechaty : WechatyDuck.actions,
 }

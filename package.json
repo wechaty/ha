@@ -32,7 +32,8 @@
     "redux": "^4.0.5",
     "redux-observable": "^1.2.0",
     "rxjs": "^6.5.5",
-    "typesafe-actions": "^5.1.0"
+    "typesafe-actions": "^5.1.0",
+    "wechaty-redux": "^0.2.17"
   },
   "peerDependencies": {
     "wechaty": "^0.39.25"
@@ -46,7 +47,7 @@
     "@types/redux-mock-store": "^1.0.2",
     "@types/remote-redux-devtools": "^0.5.4",
     "dotenv": "^8.2.0",
-    "ducks": "^0.5.6",
+    "ducks": "^0.8.1",
     "pkg-jq": "^0.2.4",
     "redux-devtools-cli": "0.0.1-1",
     "redux-mock-store": "^1.5.4",
@@ -55,6 +56,7 @@
     "tstest": "^0.4.10",
     "utility-types": "^3.10.0",
     "wechaty": "^0.39.28",
+    "wechaty-ducks-contrib": "^0.2.2",
     "wechaty-plugin-contrib": "^0.2.19",
     "wechaty-puppet-mock": "^0.21.10"
   },
