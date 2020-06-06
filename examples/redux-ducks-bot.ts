@@ -1,26 +1,33 @@
+import { Wechaty } from 'wechaty'
+import {
+  PuppetMock,
+  Mocker,
+}                   from 'wechaty-puppet-mock'
+import {
+  QRCodeTerminal,
+  EventLogger,
+  DingDong,
+}                   from 'wechaty-plugin-contrib'
+
 import {
   createStore,
 }                               from 'redux'
 import { composeWithDevTools }  from 'remote-redux-devtools'
 import {
   Ducks,
-  noopReducer,
 }                               from 'ducks'
-
-import { Wechaty } from 'wechaty'
+import { Duck as WechatyDuck }  from 'wechaty-redux'
+import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
 
 import {
   HAWechaty,
-  Duck as haDuck,
+  Duck as HaDuck,
 }                             from '../src/'
-import { Duck as wechatyDuck }  from 'wechaty-redux'
-
-import { Counter as counterDuck } from 'wechaty-ducks-contrib'
 
 const ducks = new Ducks({
-  counter : counterDuck,
-  ha      : haDuck,
-  wechaty : wechatyDuck,
+  counter : CounterDuck,
+  ha      : HaDuck,
+  wechaty : WechatyDuck,
 })
 
 const compose = composeWithDevTools({
@@ -32,21 +39,32 @@ const compose = composeWithDevTools({
 const ducksEnhancer = ducks.enhancer()
 
 const store = createStore(
-  noopReducer,
+  state => state,
   compose(
     ducksEnhancer,
   ) as typeof ducksEnhancer,
 )
 void store
 
+const mocker1 = new Mocker()
+const mocker2 = new Mocker()
+
+const puppet1 = new PuppetMock({ mocker: mocker1 })
+const puppet2 = new PuppetMock({ mocker: mocker2 })
+
+const wechaty1 = new Wechaty({ name: 'wechaty1', puppet: puppet1 })
+const wechaty2 = new Wechaty({ name: 'wechaty2', puppet: puppet2 })
+
+const [ user1, mary, mike ] = mocker1.createContacts(3)
+// const [ user2, tom, jerry ] = mocker2.createContacts(5)
+
+const filehelper1 = mocker1.createContact({ id: 'filehelper' })
+// const filehelper2 = mocker2.createContact({ id: 'filehelper' })
+
 const haWechaty = new HAWechaty({
   ducks,
   name: 'ha-wechaty',
 })
-
-const options = { puppet: 'wechaty-puppet-mock' as const }
-const wechaty1 = new Wechaty({ name: 'wechaty1', ...options })
-const wechaty2 = new Wechaty({ name: 'wechaty2', ...options })
 
 haWechaty.add(wechaty1, wechaty2)
 
@@ -54,5 +72,35 @@ haWechaty.add(wechaty1, wechaty2)
 
 console.info('nodes: ', haWechaty.nodes().length)
 
-haWechaty.start()
-  .catch(console.error)
+haWechaty.use(
+  EventLogger(),
+  QRCodeTerminal(),
+  DingDong(),
+)
+
+haWechaty.once('login', () => setInterval(
+  async () => {
+    const filehelper = await haWechaty.Contact.load('filehelper')
+    if (!filehelper) {
+      throw new Error('filehelper not found')
+    }
+    await filehelper.say('HA Wechaty')
+  },
+  5 * 1000,
+))
+
+async function main () {
+  await haWechaty.start()
+
+  mocker1.scan('qrcode')
+  mocker1.login(user1)
+
+  mary.say('how are you?').to(user1)
+  user1.say('fine thank you.').to(mary)
+  void mike
+  void filehelper1
+
+  // mocker1.logout()
+}
+
+main().catch(console.error)

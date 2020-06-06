@@ -49,6 +49,8 @@ export class HAWechaty extends EventEmitter {
       .filter(this.bundle.selectors.isWechatyAvailable)
       .map(wechaty => wechaty.Contact.load(id))
 
+    log.verbose('HAWechaty', 'contactLoad() found %s contact(s)', contactList.length)
+
     let okList = [] as Contact[]
     for (const contact of contactList) {
       try {
@@ -60,8 +62,8 @@ export class HAWechaty extends EventEmitter {
     }
 
     if (okList.length > 0) {
-      const pick = Math.floor(Math.random() * okList.length)
-      return okList[pick]
+      const index = Math.floor(Math.random() * okList.length)
+      return okList[index]
     }
 
     return null
@@ -169,6 +171,7 @@ export class HAWechaty extends EventEmitter {
     const store = this.bundle.store
 
     wechatyList.forEach(async wechaty => {
+      log.verbose('HAWechaty', 'add() installing  WechatyRedux to %s ...', wechaty)
       wechaty.use(WechatyRedux({ store }))
       // this.emit('wechaty', wechaty)
       if (this.state.on() && wechaty.state.off()) {
