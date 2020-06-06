@@ -33,7 +33,9 @@ import {
   Duck as WechatyDuck,
 }                       from 'wechaty-redux'
 
-import * as HaDuck      from '../../'
+import {
+  milliAroundSeconds,
+}                         from '../../utils'
 
 import {
   takeUntilDong,
@@ -42,7 +44,7 @@ import {
 
 import { wechatyMessage$$ } from './wechaty-message'
 
-const RESET_WAIT_MILLISECONDS = HaDuck.utils.milliAroundSeconds(300)
+const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
 
 // https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
 type Extract<P> = P extends Observable<infer T> ? T : never;

@@ -35,8 +35,13 @@ import {
   CHATIE_OA_ID,
 }                       from '../../../config'
 
-import * as HaDuck      from '../../'
-import * as utils from '../../utils'
+import {
+  milliAroundSeconds,
+}                       from '../../utils'
+import {
+  failureWechaty,
+  ding,
+}                       from '../../actions'
 
 import {
   takeUntilDong,
@@ -45,7 +50,7 @@ import {
 
 import { wechatyMessage$$ } from './wechaty-message'
 
-const DING_WAIT_MILLISECONDS  = utils.milliAroundSeconds(60)
+const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
 
 // https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
 type Extract<P> = P extends Observable<infer T> ? T : never;
@@ -63,9 +68,9 @@ const dingEmitterPerWechaty$ = (
 ) => wechatyMessage$.pipe(
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
   switchMap(action => merge(
-    of(HaDuck.actions.failureWechaty(action.payload.wechatyId)),
+    of(failureWechaty(action.payload.wechatyId)),
     interval(DING_WAIT_MILLISECONDS).pipe(
-      mapTo(HaDuck.actions.ding(
+      mapTo(ding(
         action.payload.wechatyId,
         CHATIE_OA_ID,
       )),
