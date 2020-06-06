@@ -17,25 +17,31 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
+import {
+  isActionOf,
+}                 from 'typesafe-actions'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import {
+  filter,
+  mergeMap,
+}                   from 'rxjs/operators'
 
-import { setDucks } from './ducks'
+import { Epic }     from 'redux-observable'
+
+import * as actions     from '../actions'
+import * as rxAsync     from '../rx-async'
+
+/**
+ * In:  actions.ding
+ * Out: void
+ *
+ * Side Effect: call contact.say(ding)
+ */
+const dingEvokerEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf(actions.ding)),
+  mergeMap(rxAsync.ding$),
+)
 
 export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
+  dingEvokerEpic,
 }
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>

@@ -17,25 +17,30 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
+import {
+  isActionOf,
+}                 from 'typesafe-actions'
+import {
+  filter,
+  takeUntil,
+}                   from 'rxjs/operators'
+import { Epic }     from 'redux-observable'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import * as HaDuck from '../../'
 
-import { setDucks } from './ducks'
+/**
+ * Huan(202004):
+ *  We are using `messageEvent` at here, not `heartbeatEvent` for reasons.
+ *
+ *  e.g.:
+ *    `heartbeatEvent` is not suitable at here,
+ *    because the hostie server will emit heartbeat no matter than WeChat protocol available or not.
+ */
+const takeUntilDong = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
+  action$.pipe(
+    filter(isActionOf(HaDuck.actions.dong)),
+    filter(action => action.payload.wechatyId === wechatyId),
+  ),
+)
 
-export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
-}
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>
+export { takeUntilDong }

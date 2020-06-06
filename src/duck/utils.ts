@@ -143,10 +143,10 @@ interface PayloadWechatyId { wechatyId: string }
 // type PayloadAllId = PayloadWechatyId | PayloadMessageId | PayloadContactId
 
 const toWechaty = <T extends { payload: PayloadWechatyId }>(action: T) => getWechaty(action.payload.wechatyId)
-const toHA      = <T extends { payload: PayloadHAId      }>(action: T) => getHa(action.payload.haId)
+const toHa      = <T extends { payload: PayloadHAId      }>(action: T) => getHa(action.payload.haId)
 
 export {
   milliAroundSeconds,
   toWechaty,
-  toHA,
+  toHa,
 }

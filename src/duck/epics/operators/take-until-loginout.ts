@@ -17,25 +17,27 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
+import {
+  isActionOf,
+}                 from 'typesafe-actions'
+import {
+  filter,
+  takeUntil,
+}                   from 'rxjs/operators'
+import { Epic }     from 'redux-observable'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import {
+  Duck as WechatyDuck,
+}                       from 'wechaty-redux'
 
-import { setDucks } from './ducks'
+const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
+  action$.pipe(
+    filter(isActionOf([
+      WechatyDuck.actions.loginEvent,
+      WechatyDuck.actions.logoutEvent,
+    ])),
+    filter(action => action.payload.wechatyId === wechatyId),
+  ),
+)
 
-export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
-}
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>
+export { takeUntilLoginout }

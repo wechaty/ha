@@ -17,25 +17,38 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
+import {
+  isActionOf,
+}                 from 'typesafe-actions'
+import {
+  filter,
+  map,
+  mergeMap,
+}                   from 'rxjs/operators'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import { Epic }     from 'redux-observable'
 
-import { setDucks } from './ducks'
+import {
+  Duck as WechatyDuck,
+}                       from 'wechaty-redux'
+
+import {
+  DONG,
+}                       from '../../config'
+
+import * as actions     from '../actions'
+
+/**
+ * In:  WechatyDuck.actions.messageEvent
+ * Out: actions.dongHA
+ */
+const dongEmitterEpic: Epic = action$ => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.messageEvent)),
+  mergeMap(WechatyDuck.utils.toMessage$),
+  filter(WechatyDuck.utils.isTextMessage(DONG)),
+  map(message => actions.dong(message.wechaty.id, message.id)),
+)
 
 export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
+  dongEmitterEpic,
 }
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>

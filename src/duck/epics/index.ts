@@ -17,25 +17,16 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
-
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
-
-import { setDucks } from './ducks'
+import { dingEvokerEpic }             from './ding-evoker-epic'
+import { dongEmitterEpic }            from './dong-emitter-epic'
+import { failureHaEmitterEpic }       from './failure-ha-emitter-epic'
+import { mainEpic }                   from './main-epic'
+import { recoverWechatyEmitterEpic }  from './recover-wechaty-emitter-epic'
 
 export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
+  dingEvokerEpic,
+  dongEmitterEpic,
+  failureHaEmitterEpic,
+  recoverWechatyEmitterEpic,
+  mainEpic,
 }
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>

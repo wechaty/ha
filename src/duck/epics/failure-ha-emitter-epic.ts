@@ -17,25 +17,34 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
+import {
+  isActionOf,
+}                 from 'typesafe-actions'
+import {
+  filter,
+  map,
+}                   from 'rxjs/operators'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import { Epic }     from 'redux-observable'
 
-import { setDucks } from './ducks'
+import * as actions     from '../actions'
+
+import { getBundle } from '../ducks'
+
+/**
+ * In:  actions.failureWechaty
+ * Out: actions.failureHA
+ */
+const failureHaEmitterEpic: Epic = (action$, _state$) => action$.pipe(
+  filter(isActionOf(actions.failureWechaty)),
+  filter(action => !getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)),
+  map(action => actions.failureHA(
+    getBundle().selectors.getHaByWechaty(
+      action.payload.wechatyId
+    ),
+  )),
+)
 
 export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
+  failureHaEmitterEpic,
 }
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>

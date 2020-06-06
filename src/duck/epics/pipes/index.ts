@@ -17,25 +17,12 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
-
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
-
-import { setDucks } from './ducks'
+import { dingEmitterPerWechaty$ }   from './ding-emitter-per-wechaty'
+import { resetEmitterPerWechaty$ }  from './reset-emitter-per-wechaty'
+import { wechatyMessage$$ }         from './wechaty-message'
 
 export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
+  dingEmitterPerWechaty$,
+  resetEmitterPerWechaty$,
+  wechatyMessage$$,
 }
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>

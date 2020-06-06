@@ -17,25 +17,37 @@
  *   limitations under the License.
  *
  */
-import reducer from './reducers'
+import {
+  merge,
+}                 from 'rxjs'
+import {
+  mergeMap,
+}                   from 'rxjs/operators'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import { Epic }     from 'redux-observable'
 
-import { setDucks } from './ducks'
+import {
+  wechatyMessage$$,
+  dingEmitterPerWechaty$,
+  resetEmitterPerWechaty$,
+}                           from './pipes/'
+
+/**
+ * Main Epic at here:
+ *
+ *  Out:
+ *    actions.failureWechaty
+ *    actions.ding
+ *
+ *    WechatyDuck.actions.reset
+ */
+const mainEpic: Epic = action$ => wechatyMessage$$(action$).pipe(
+  mergeMap(wechatyMessage$ => merge(
+    dingEmitterPerWechaty$(action$, wechatyMessage$),
+    resetEmitterPerWechaty$(action$, wechatyMessage$),
+  )),
+)
 
 export {
-  actions,
-  epics,
-  selectors,
-  setDucks,
-  types,
-  utils,
+  mainEpic,
 }
-
-export default reducer
-
-export type State = ReturnType<typeof reducer>
