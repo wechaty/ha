@@ -10,14 +10,14 @@ const getHa = (id: string) => {
   return ha
 }
 
-const setHa = (haWechaty: HAWechaty) => {
+const addHa = (haWechaty: HAWechaty) => {
   if (instances.has(haWechaty.id)) {
-    throw new Error('HAWechaty with id: ' + haWechaty.id + ' has been already set before, and can not be set twice.')
+    throw new Error('HAWechaty with id: ' + haWechaty.id + ' has been already set before, and can not be added twice.')
   }
   instances.set(haWechaty.id, haWechaty)
 }
 
 export {
   getHa,
-  setHa,
+  addHa,
 }

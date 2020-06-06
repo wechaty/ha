@@ -110,10 +110,7 @@ export class HAWechaty extends EventEmitter {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
-      .filter(
-        this.bundle.selectors.isWechatyAvailable
-        // haApi.selectors.isWechatyAvailable(this.duckState())
-      )
+      .filter(this.bundle.selectors.isWechatyAvailable)
       .map(wechaty => wechaty.Room.load(id))
 
     for (const room of roomList) {
@@ -142,7 +139,7 @@ export class HAWechaty extends EventEmitter {
 
     this.bundle = options.ducks.ducksify(haDuck)
 
-    instances.setHa(this)
+    instances.addHa(this)
   }
 
   public name (): string {
@@ -164,16 +161,14 @@ export class HAWechaty extends EventEmitter {
         .join(', ')
     )
 
-    this.wechatyList.push(
-      ...wechatyList
-    )
-
     const store = this.bundle.store
 
     wechatyList.forEach(async wechaty => {
-      log.verbose('HAWechaty', 'add() installing  WechatyRedux to %s ...', wechaty)
+      log.verbose('HAWechaty', 'add() installing WechatyRedux to %s ...', wechaty)
+
       wechaty.use(WechatyRedux({ store }))
-      // this.emit('wechaty', wechaty)
+      this.emit('wechaty', wechaty)
+
       if (this.state.on() && wechaty.state.off()) {
         log.silly('HAWechaty', 'add() %s is starting', wechaty)
         await wechaty.start()
@@ -181,6 +176,10 @@ export class HAWechaty extends EventEmitter {
         log.verbose('HAWechaty', 'add() skip starting for %s', wechaty)
       }
     })
+
+    this.wechatyList.push(
+      ...wechatyList
+    )
 
     return this
   }
@@ -195,11 +194,16 @@ export class HAWechaty extends EventEmitter {
   }
 
   public nodes (): Wechaty[] {
+    log.verbose('HAWechaty', 'nodes() total %s wechaty instances are under management', this.wechatyList.length)
     return this.wechatyList
   }
 
   public async start () {
     log.verbose('HAWechaty', 'start()')
+
+    if (this.state.on()) {
+      await this.state.ready()
+    }
 
     try {
       this.state.on('pending')
@@ -208,7 +212,7 @@ export class HAWechaty extends EventEmitter {
         throw new Error('no wechaty puppet found')
       }
 
-      log.verbose('HAWechaty', 'start() %s wechaty initialized', this.wechatyList.length)
+      log.verbose('HAWechaty', 'start() %s wechaty instance found. Initializing ...', this.wechatyList.length)
 
       for (const wechaty of this.wechatyList) {
         log.silly('HAWechaty', 'start() %s starting', wechaty)
