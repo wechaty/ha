@@ -18,6 +18,9 @@
  *
  */
 import { Dispatch } from 'redux'
+import { Wechaty } from 'wechaty'
+
+import { HAWechaty } from '../ha-wechaty'
 
 import * as actions from './actions'
 
@@ -25,6 +28,16 @@ const ding = (dispatch: Dispatch) => (haId: string, data: string) => {
   return dispatch(actions.ding(haId, data))
 }
 
+const add = (dispatch: Dispatch) => (haWechaty: HAWechaty, wechaty: Wechaty) => {
+  dispatch(actions.addWechaty(haWechaty.id, wechaty.id))
+}
+
+const recoverWechaty = (dispatch: Dispatch) => (wechaty: Wechaty) => {
+  dispatch(actions.recoverWechaty(wechaty.id))
+}
+
 export {
+  add,
   ding,
+  recoverWechaty,
 }

@@ -19,17 +19,19 @@
  */
 import reducer from './reducers'
 
-import * as epics     from './epics'
-import * as actions   from './actions'
-import * as selectors from './selectors'
-import * as types     from './types'
-import * as utils     from './utils'
+import * as actions     from './actions'
+import * as epics       from './epics'
+import * as operations  from './operations'
+import * as selectors   from './selectors'
+import * as types       from './types'
+import * as utils       from './utils'
 
 import { setDucks } from './ducks'
 
 export {
   actions,
   epics,
+  operations,
   selectors,
   setDucks,
   types,

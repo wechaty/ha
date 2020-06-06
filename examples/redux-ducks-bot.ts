@@ -74,12 +74,6 @@ const puppet2 = new PuppetMock({ mocker: mocker2 })
 const wechaty1 = new Wechaty({ name: 'wechaty1', puppet: puppet1 })
 const wechaty2 = new Wechaty({ name: 'wechaty2', puppet: puppet2 })
 
-const [ user1, mary, mike ] = mocker1.createContacts(3)
-// const [ user2, tom, jerry ] = mocker2.createContacts(5)
-
-const filehelper1 = mocker1.createContact({ id: 'filehelper' })
-// const filehelper2 = mocker2.createContact({ id: 'filehelper' })
-
 const haWechaty = new HAWechaty({
   ducks,
   name: 'ha-wechaty',
@@ -110,6 +104,12 @@ haWechaty.once('login', () => setInterval(
 
 async function main () {
   await haWechaty.start()
+
+  const [ user1, mary, mike ] = mocker1.createContacts(3)
+  // const [ user2, tom, jerry ] = mocker2.createContacts(5)
+
+  const filehelper1 = mocker1.createContact({ id: 'filehelper' })
+  // const filehelper2 = mocker2.createContact({ id: 'filehelper' })
 
   mocker1.scan('qrcode')
   mocker1.login(user1)
