@@ -42,6 +42,7 @@ import {
   HAWechaty,
   Duck as HaDuck,
 }                             from '../src/'
+import { CHATIE_OA_ID }      from '../src/config'
 
 const ducks = new Ducks({
   counter : CounterDuck,
@@ -94,10 +95,11 @@ haWechaty.use(
 haWechaty.once('login', () => setInterval(
   async () => {
     const filehelper = await haWechaty.Contact.load('filehelper')
-    if (!filehelper) {
-      throw new Error('filehelper not found')
+    if (filehelper) {
+      await filehelper.say('HA Wechaty')
+    } else {
+      console.error('filehelper not found')
     }
-    await filehelper.say('HA Wechaty')
   },
   5 * 1000,
 ))
@@ -106,18 +108,39 @@ async function main () {
   await haWechaty.start()
 
   const [ user1, mary, mike ] = mocker1.createContacts(3)
-  // const [ user2, tom, jerry ] = mocker2.createContacts(5)
+  const [ user2, tom, jerry ] = mocker2.createContacts(5)
 
   const filehelper1 = mocker1.createContact({ id: 'filehelper' })
-  // const filehelper2 = mocker2.createContact({ id: 'filehelper' })
+  const filehelper2 = mocker2.createContact({ id: 'filehelper' })
+  void filehelper1
+  void filehelper2
+
+  const chatieio1 = mocker1.createContact({ id: CHATIE_OA_ID })
+  const chatieio2 = mocker2.createContact({ id: CHATIE_OA_ID })
+  void chatieio1
+  void chatieio2
+
+  // chatieio.on('message', msg => {
+  //   if (msg.type() === MessageType.Text && /^ding$/i.test(msg.text())) {
+  //     msg.say('dong')
+  //   }
+  // })
 
   mocker1.scan('qrcode')
   mocker1.login(user1)
 
+  mocker2.scan('qrcode')
+  mocker2.login(user2)
+
   mary.say('how are you?').to(user1)
   user1.say('fine thank you.').to(mary)
   void mike
-  void filehelper1
+
+  user2.say('good to see you!').to(tom)
+  tom.say('me too!').to(user2)
+  void jerry
+
+  setInterval(() => jerry.say('testing 123').to(user2), 10 * 1000)
 
   // mocker1.logout()
 }

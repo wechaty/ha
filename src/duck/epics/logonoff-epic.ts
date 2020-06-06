@@ -17,22 +17,32 @@
  *   limitations under the License.
  *
  */
-import { dingEvokerEpic }             from './ding-evoker-epic'
-import { dongEmitterEpic }            from './dong-emitter-epic'
-import { failureHaEmitterEpic }       from './failure-ha-emitter-epic'
-import { mainEpic }                   from './main-epic'
-import { recoverWechatyEmitterEpic }  from './recover-wechaty-emitter-epic'
 import {
-  logonEpic,
-  logoutEpic,
-}                                     from './logonoff-epic'
+  isActionOf,
+}                 from 'typesafe-actions'
+
+import {
+  filter,
+  mergeMap,
+}                   from 'rxjs/operators'
+import { of }       from 'rxjs'
+import { Epic }     from 'redux-observable'
+
+import { Duck as WechatyDuck } from 'wechaty-redux'
+
+import * as actions     from '../actions'
+
+const logonEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.loginEvent)),
+  mergeMap(action => of((actions.recoverWechaty(action.payload.wechatyId))))
+)
+
+const logoutEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.logoutEvent)),
+  mergeMap(action => of((actions.failureWechaty(action.payload.wechatyId))))
+)
 
 export {
-  dingEvokerEpic,
-  dongEmitterEpic,
-  failureHaEmitterEpic,
   logonEpic,
   logoutEpic,
-  recoverWechatyEmitterEpic,
-  mainEpic,
 }

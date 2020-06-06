@@ -37,7 +37,10 @@ const initialState: DeepReadonly<{
   cluster      : {},   // map wechaty id to ha id
 }
 
-const reducer = createReducer<typeof initialState, ActionType<typeof actions>>(initialState)
+const reducer = createReducer<
+  typeof initialState,
+  ActionType<typeof actions>
+>(initialState)
   .handleAction(actions.failureWechaty, (state, action) => ({
     ...state,
     availability: {

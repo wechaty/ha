@@ -193,11 +193,14 @@ export class HAWechaty extends EventEmitter {
       if (this.state.on() && wechaty.state.off()) {
         log.silly('HAWechaty', 'add() %s is starting', wechaty)
         await wechaty.start()
-        this.bundle.operations.recoverWechaty(wechaty)
-
       } else {
         log.verbose('HAWechaty', 'add() skip starting for %s', wechaty)
       }
+
+      if (wechaty.logonoff()) {
+        this.bundle.operations.recoverWechaty(wechaty)
+      }
+
     })
 
     this.wechatyList.push(
@@ -241,10 +244,14 @@ export class HAWechaty extends EventEmitter {
         log.silly('HAWechaty', 'start() %s starting', wechaty)
         if (wechaty.state.off()) {
           await wechaty.start()
-          this.bundle.operations.recoverWechaty(wechaty)
         } else {
           log.verbose('HAWechaty', 'start() %s skip starting: its already started.', wechaty)
         }
+
+        if (wechaty.logonoff()) {
+          this.bundle.operations.recoverWechaty(wechaty)
+        }
+
       }
 
       this.state.on(true)
