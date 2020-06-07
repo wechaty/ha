@@ -9,6 +9,7 @@
 HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.
 
 [![Powered by Wechaty](https://img.shields.io/badge/Powered%20By-Wechaty-brightgreen.svg)](https://github.com/Wechaty/wechaty)
+[![Powered by Ducks](https://img.shields.io/badge/Powered%20by-Ducks-yellowgreen)](https://github.com/huan/ducks#3-ducksify-extension-currying--ducksify-interface)
 
 One two three, chatbots team up!
 
