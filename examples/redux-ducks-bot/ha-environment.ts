@@ -23,12 +23,13 @@ const HaEnvironment = (): MockEnvironment => {
     const chatieio = mocker.createContact({ id: CHATIE_OA_ID })
 
     chatieio.on('message', msg => {
-      console.info('chatieio1.on(message): ', msg.text())
+      console.info('chatieio.on(message): ', msg.text())
       if (msg.self()) {
         return
       }
       if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
-        msg.listener()?.say('dong').to(msg.talker())
+        // msg.listener()?.say('dong').to(msg.talker())
+        console.info('no dong any more!')
       }
     })
 
@@ -36,13 +37,17 @@ const HaEnvironment = (): MockEnvironment => {
     mocker.login(user)
 
     mary.say('how are you?').to(user)
-    user.say('fine thank you.').to(mary)
+    user.say('fine, thank you.').to(mary)
     void mike
 
-    const timer = setInterval(() => mike.say().to(user), 10 * 1000)
+    let timer: undefined | NodeJS.Timer
+    // timer = setInterval(() => mike.say().to(user), 10 * 1000)
 
     return function HaEnvironmentStop () {
-      clearInterval(timer)
+      if (timer) {
+        clearInterval(timer)
+        timer = undefined
+      }
     }
   }
 }

@@ -20,7 +20,7 @@
  */
 import {
   VERSION,
-  HAWechaty,
+  configureHa,
 }                       from 'ha-wechaty'
 
 async function main () {
@@ -28,19 +28,9 @@ async function main () {
     throw new Error('version should be set before publishing')
   }
 
-  const ha = new HAWechaty()
+  const ha = configureHa()
   const version = ha.version()
 
-  // try {
-  //   await bot.start()
-  //   console.info(`Wechaty v${bot.version()} smoking test passed.`)
-  // } catch (e) {
-  //   console.error(e)
-  //   // Error!
-  //   return 1
-  // } finally {
-  //   await bot.stop()
-  // }
   return 0
 }
 

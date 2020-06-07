@@ -141,6 +141,14 @@ npm run redux-devtools
 
 ### master
 
+### v0.4 (Jun 7, 2020)
+
+[![Ducksify Extension](https://img.shields.io/badge/Redux-Ducksify%202020-yellowgreen)](https://github.com/huan/ducks#3-ducksify-extension-currying--ducksify-interface)
+
+1. Work with [Ducks](https://github.com/huan/ducks)
+1. High-available logics managed by RxJS (redux-observable epics)
+1. Redux example at [examples/redux-ducks-bot/](examples/redux-ducks-bot/)
+
 ### v0.0.1 (Apr 2020)
 
 This module was originally design for the project [OSSChat](https://github.com/kaiyuanshe/osschat) [#58](https://github.com/kaiyuanshe/osschat/issues/58)

@@ -46,7 +46,7 @@ import {
 }                             from '../../src/'
 
 import { HaEnvironment } from './ha-environment'
-import { CHATIE_OA_ID } from '../../src/config'
+// import { CHATIE_OA_ID } from '../../src/config'
 
 const ducks = new Ducks({
   counter : CounterDuck,
@@ -56,6 +56,7 @@ const ducks = new Ducks({
 
 const compose = composeWithDevTools({
   hostname : 'localhost',
+  maxAge   : 500,
   port     : 8000,
   realtime : true,
 })
@@ -95,20 +96,20 @@ console.info('nodes: ', haWechaty.nodes().length)
 haWechaty.use(
   EventLogger(),
   QRCodeTerminal(),
-  DingDong(),
+  DingDong({ self: false }),
 )
 
-haWechaty.once('login', () => setInterval(
-  async () => {
-    const filehelper = await haWechaty.Contact.load(CHATIE_OA_ID)
-    if (filehelper) {
-      await filehelper.say('ding')
-    } else {
-      console.error('filehelper not found')
-    }
-  },
-  5 * 1000,
-))
+// haWechaty.once('login', () => setInterval(
+//   async () => {
+//     const filehelper = await haWechaty.Contact.load(CHATIE_OA_ID)
+//     if (filehelper) {
+//       await filehelper.say('ding')
+//     } else {
+//       console.error('filehelper not found')
+//     }
+//   },
+//   5 * 1000,
+// ))
 
 haWechaty.start()
   .catch(console.error)

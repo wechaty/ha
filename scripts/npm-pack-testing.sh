@@ -23,7 +23,6 @@ npm install *-*.*.*.tgz \
   @chatie/tsconfig \
   "wechaty@$NPM_TAG" \
 
-
 ./node_modules/.bin/tsc \
   --esModuleInterop \
   --lib esnext \
