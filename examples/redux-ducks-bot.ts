@@ -17,7 +17,10 @@
  *   limitations under the License.
  *
  */
-import { Wechaty } from 'wechaty'
+import {
+  Wechaty,
+  Message,
+}             from 'wechaty'
 import {
   PuppetMock,
   Mocker,
@@ -120,11 +123,18 @@ async function main () {
   void chatieio1
   void chatieio2
 
-  // chatieio.on('message', msg => {
-  //   if (msg.type() === MessageType.Text && /^ding$/i.test(msg.text())) {
-  //     msg.say('dong')
-  //   }
-  // })
+  chatieio1.on('message', msg => {
+    console.info('chatieio1.on(message): ', msg.text())
+    if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
+      msg.listener()?.say('dong').to(msg.talker())
+    }
+  })
+  chatieio2.on('message', msg => {
+    console.info('chatieio2.on(message): ', msg.text())
+    if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
+      msg.listener()?.say('dong').to(msg.talker())
+    }
+  })
 
   mocker1.scan('qrcode')
   mocker1.login(user1)

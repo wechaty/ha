@@ -61,7 +61,7 @@
     "wechaty": "^0.40.4",
     "wechaty-ducks-contrib": "^0.2.2",
     "wechaty-plugin-contrib": "^0.2.19",
-    "wechaty-puppet-mock": "^0.22.22"
+    "wechaty-puppet-mock": "^0.22.24"
   },
   "repository": {
     "type": "git",
