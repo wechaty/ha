@@ -18,11 +18,15 @@
  *
  */
 import { dingEmitterPerWechaty$ }   from './ding-emitter-per-wechaty'
+import { recoverHa$ }               from './recover-ha'
+import { recoverWechaty$ }          from './recover-wechaty'
 import { resetEmitterPerWechaty$ }  from './reset-emitter-per-wechaty'
 import { wechatyMessage$$ }         from './wechaty-message'
 
 export {
   dingEmitterPerWechaty$,
+  recoverHa$,
+  recoverWechaty$,
   resetEmitterPerWechaty$,
   wechatyMessage$$,
 }

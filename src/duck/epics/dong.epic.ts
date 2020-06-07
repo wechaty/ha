@@ -17,29 +17,37 @@
  *   limitations under the License.
  *
  */
-import {
-  isActionOf,
-}                 from 'typesafe-actions'
-
+import { Message }    from 'wechaty'
+import { isActionOf } from 'typesafe-actions'
 import {
   filter,
   map,
-}                   from 'rxjs/operators'
-import { Epic }     from 'redux-observable'
+  mergeMap,
+}                     from 'rxjs/operators'
 
-import { Duck as WechatyDuck } from 'wechaty-redux'
+import { Epic }       from 'redux-observable'
+
+import {
+  Duck as WechatyDuck,
+}                       from 'wechaty-redux'
+
+import {
+  DONG,
+}                       from '../../config'
 
 import * as actions     from '../actions'
 
+const messageToDong = (message: Message) => actions.dongHa(message.wechaty.id, message.id)
+
 /**
- *
- *  Input:  loginEvent
- *  Output: recoverWechaty
- *
+ * In:  WechatyDuck.actions.messageEvent
+ * Out: actions.dongHA
  */
-const loginRecoverEpic: Epic = (action$) => action$.pipe(
-  filter(isActionOf(WechatyDuck.actions.loginEvent)),
-  map(action => actions.recoverWechaty(action.payload.wechatyId))
+const dongEpic: Epic = action$ => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.messageEvent)),
+  mergeMap(WechatyDuck.utils.toMessage$),
+  filter(WechatyDuck.utils.isTextMessage(DONG)),
+  map(messageToDong),
 )
 
-export { loginRecoverEpic }
+export { dongEpic }

@@ -19,17 +19,22 @@
  */
 import { isActionOf } from 'typesafe-actions'
 import {
-  of,
+  merge,
 }                     from 'rxjs'
 import {
   mergeMap,
   filter,
 }                     from 'rxjs/operators'
 import { Epic }       from 'redux-observable'
-import { AnyAction }  from 'redux'
 
-import { getBundle }  from '../ducks'
+import { Duck as WechatyDuck } from 'wechaty-redux'
+
 import * as actions   from '../actions'
+
+import {
+  recoverWechaty$,
+  recoverHa$,
+}                     from './pipes/'
 
 /**
  * In: actions.dongHA
@@ -37,27 +42,15 @@ import * as actions   from '../actions'
  *  actions.recoverWechaty
  *  actions.recoverHa
  */
-const dongRecoverWechatyHaEpic: Epic = action$ => action$.pipe(
-  filter(isActionOf(actions.dongHa)),
-  mergeMap(action => {
-    const actionList = [] as AnyAction[]
-
-    if (!getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)) {
-      /**
-       * Recover Wechaty
-       */
-      actionList.push(actions.recoverWechaty(action.payload.wechatyId))
-
-      if (!getBundle().selectors.isHaAvailable(action.payload.wechatyId)) {
-        const haId = getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
-        /**
-         * Recover HA
-         */
-        actionList.push(actions.recoverHa(haId))
-      }
-    }
-    return of(...actionList)
-  })
+const recoverEpic: Epic = action$ => action$.pipe(
+  filter(isActionOf([
+    actions.dongHa,
+    WechatyDuck.actions.loginEvent,
+  ])),
+  mergeMap(action => merge(
+    recoverWechaty$(action),
+    recoverHa$(action),
+  ))
 )
 
-export { dongRecoverWechatyHaEpic }
+export { recoverEpic }

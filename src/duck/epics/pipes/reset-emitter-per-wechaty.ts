@@ -21,6 +21,7 @@ import {
   merge,
   interval,
   of,
+  timer,
 }                 from 'rxjs'
 import {
   debounce,
@@ -70,7 +71,7 @@ const resetEmitterPerWechaty$ = (
      */
     of(failureWechaty(action.payload.wechatyId)),
 
-    interval(RESET_WAIT_MILLISECONDS).pipe(
+    timer(0, RESET_WAIT_MILLISECONDS).pipe(
       mapTo(WechatyDuck.actions.reset(
         action.payload.wechatyId,
         'ha-wechaty',

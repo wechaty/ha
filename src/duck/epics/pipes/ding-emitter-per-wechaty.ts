@@ -20,11 +20,13 @@
 import {
   interval,
   merge,
+  timer,
 }                 from 'rxjs'
 import {
   debounce,
   mapTo,
   switchMap,
+  // startWith,
 }                   from 'rxjs/operators'
 
 import { Epic }     from 'redux-observable'
@@ -65,7 +67,7 @@ const dingEmitterPerWechaty$ = (
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
   switchMap(action => merge(
     // of(failureWechaty(action.payload.wechatyId)),
-    interval(DING_WAIT_MILLISECONDS).pipe(
+    timer(0, DING_WAIT_MILLISECONDS).pipe(
       mapTo(dingHa(
         action.payload.wechatyId,
         CHATIE_OA_ID,

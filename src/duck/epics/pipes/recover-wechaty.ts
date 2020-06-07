@@ -18,28 +18,28 @@
  *
  */
 import {
-  isActionOf,
-}                 from 'typesafe-actions'
-
-import {
-  filter,
-  map,
-}                   from 'rxjs/operators'
-import { Epic }     from 'redux-observable'
-
+  of,
+  empty,
+}                     from 'rxjs'
 import { Duck as WechatyDuck } from 'wechaty-redux'
 
-import * as actions     from '../actions'
+import { getBundle }  from '../../ducks'
+import * as actions   from '../../actions'
 
-/**
- *
- *  Input:  LogoutEvent
- *  Output: failureWechaty
- *
- */
-const logoutFailureEpic: Epic = (action$) => action$.pipe(
-  filter(isActionOf(WechatyDuck.actions.logoutEvent)),
-  map(action => actions.failureWechaty(action.payload.wechatyId))
-)
+type RecoverAction = ReturnType<typeof actions.dongHa> | ReturnType<typeof WechatyDuck.actions.loginEvent>
 
-export { logoutFailureEpic }
+const recoverWechaty$ = (action: RecoverAction) => {
+  /**
+   * Need not recovery because it's available
+   */
+  if (getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)) {
+    return empty()
+  }
+
+  /**
+   * Recover Wechaty
+   */
+  return of(actions.recoverWechaty(action.payload.wechatyId))
+}
+
+export { recoverWechaty$ }

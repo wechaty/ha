@@ -62,8 +62,14 @@ const getHaByWechaty = (state: State) => (wechatyOrId: string | Wechaty): string
   return haId
 }
 
+const isHaAvailableByWechaty = (state: State) => (wechatyOrId: string | Wechaty): boolean => {
+  const haId = getHaByWechaty(state)(wechatyOrId)
+  return isHaAvailable(state)(haId)
+}
+
 export {
   getHaByWechaty,
   isHaAvailable,
+  isHaAvailableByWechaty,
   isWechatyAvailable,
 }

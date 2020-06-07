@@ -17,39 +17,31 @@
  *   limitations under the License.
  *
  */
-import { Message } from 'wechaty'
 import {
-  isActionOf,
-}                 from 'typesafe-actions'
-import {
-  filter,
-  map,
-  mergeMap,
-}                   from 'rxjs/operators'
+  of,
+  empty,
+}                     from 'rxjs'
 
-import { Epic }     from 'redux-observable'
+import { Duck as WechatyDuck } from 'wechaty-redux'
 
-import {
-  Duck as WechatyDuck,
-}                       from 'wechaty-redux'
+import { getBundle }  from '../../ducks'
+import * as actions   from '../../actions'
 
-import {
-  DONG,
-}                       from '../../config'
+type RecoverAction = ReturnType<typeof actions.dongHa> | ReturnType<typeof WechatyDuck.actions.loginEvent>
 
-import * as actions     from '../actions'
+const recoverHa$ = (action: RecoverAction) => {
+  /**
+   * Need not recovery because it's available
+   */
+  if (getBundle().selectors.isHaAvailableByWechaty(action.payload.wechatyId)) {
+    return empty()
+  }
 
-const messageToDong = (message: Message) => actions.dongHa(message.wechaty.id, message.id)
+  /**
+   * Recover Wechaty
+   */
+  const haId = getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
+  return of(actions.recoverHa(haId))
+}
 
-/**
- * In:  WechatyDuck.actions.messageEvent
- * Out: actions.dongHA
- */
-const messageDongEpic: Epic = action$ => action$.pipe(
-  filter(isActionOf(WechatyDuck.actions.messageEvent)),
-  mergeMap(WechatyDuck.utils.toMessage$),
-  filter(WechatyDuck.utils.isTextMessage(DONG)),
-  map(messageToDong),
-)
-
-export { messageDongEpic }
+export { recoverHa$ }
