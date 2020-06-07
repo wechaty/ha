@@ -60,7 +60,7 @@
     "utility-types": "^3.10.0",
     "wechaty": "^0.40.4",
     "wechaty-ducks-contrib": "^0.2.2",
-    "wechaty-plugin-contrib": "^0.2.19",
+    "wechaty-plugin-contrib": "^0.4.12",
     "wechaty-puppet-mock": "^0.22.27"
   },
   "repository": {
