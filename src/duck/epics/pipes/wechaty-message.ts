@@ -39,8 +39,8 @@ import {
   takeUntilLoginout,
 }                       from '../operators/'
 
-const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
-const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
+const DING_WAIT_MILLISECONDS  = milliAroundSeconds(20)
+const RESET_WAIT_MILLISECONDS = milliAroundSeconds(40)
 
 /**
  * High Available Stream Entrance

@@ -35,6 +35,7 @@ const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<Epic>) => t
     filter(isActionOf([
       WechatyDuck.actions.loginEvent,
       WechatyDuck.actions.logoutEvent,
+      WechatyDuck.actions.scanEvent,
     ])),
     filter(action => action.payload.wechatyId === wechatyId),
   ),

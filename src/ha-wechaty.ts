@@ -107,22 +107,23 @@ export class HAWechaty extends EventEmitter {
         )
     )
 
-    const roomList = [] as Room[]
+    // const roomList = [] as Room[]
 
     /**
      * allRoomList may contain one room for multiple times
      * because we have more than one bot in the same room
      */
     const allRoomList = roomListList.flat()
-    for (const room of allRoomList) {
-      const exist = roomList.some(r => r.id === room.id)
-      if (exist) {
-        // We have a room in our list, so skip this one
-        continue
-      }
-      roomList.push(room)
-    }
-    return roomList
+    // for (const room of allRoomList) {
+    //   const exist = roomList.some(r => r.id === room.id)
+    //   if (exist) {
+    //     // We have a room in our list, so skip this one
+    //     continue
+    //   }
+    //   roomList.push(room)
+    // }
+    // return roomList
+    return allRoomList
   }
 
   public async roomLoad (id: string): Promise<null | Room> {
@@ -132,16 +133,23 @@ export class HAWechaty extends EventEmitter {
       .filter(this.bundle.selectors.isWechatyAvailable)
       .map(wechaty => wechaty.Room.load(id))
 
+    const okList: Room[] = []
+
     for (const room of roomList) {
       try {
         await room.ready()
         if (room.isReady()) {
           log.verbose('HAWechaty', 'roomLoad() %s has room id %s', room.wechaty, room.id)
-          return room
+          okList.push(room)
         }
       } catch (e) {
         log.verbose('HAWechaty', 'roomLoad() %s has no room id %s', room.wechaty, room.id)
       }
+    }
+
+    if (okList.length > 0) {
+      const index = Math.floor(Math.random() * okList.length)
+      return okList[index]
     }
 
     return null

@@ -38,6 +38,7 @@ import * as actions     from '../actions'
 const failureWechatyEpic: Epic = (action$) => action$.pipe(
   filter(isActionOf([
     WechatyDuck.actions.logoutEvent,
+    WechatyDuck.actions.scanEvent,
     WechatyDuck.actions.turnOffSwitch,
   ])),
   map(action => actions.failureWechaty(action.payload.wechatyId))
