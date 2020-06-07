@@ -19,7 +19,6 @@
  */
 import {
   interval,
-  of,
   merge,
 }                 from 'rxjs'
 import {
@@ -59,8 +58,8 @@ const dingEmitterPerWechaty$ = (
   wechatyMessage$ : GroupedMessageByWechaty,
 ) => wechatyMessage$.pipe(
   /**
-   * Suppress the failure by processing the messages with debounce().
-   *  Failure will be emitted if there's no message
+   * Suppress the ding testing by processing the messages with debounce().
+   *  Ding testing will be emitted if there's no message
    *  for more than DING_WAIT_MILLISECONDS
    */
   debounce(() => interval(DING_WAIT_MILLISECONDS)),

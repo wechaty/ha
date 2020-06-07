@@ -19,11 +19,12 @@
  */
 import {
   interval,
-  Observable,
+  of,
 }                 from 'rxjs'
 import {
   debounce,
   mapTo,
+  merge,
   switchMap,
 }                   from 'rxjs/operators'
 
@@ -32,6 +33,10 @@ import { Epic }     from 'redux-observable'
 import {
   Duck as WechatyDuck,
 }                       from 'wechaty-redux'
+
+import {
+  failureWechaty,
+}                     from '../../actions'
 
 import {
   takeUntilDong,
@@ -52,14 +57,22 @@ const resetEmitterPerWechaty$ = (
   action$         : ReturnType<Epic>,
   wechatyMessage$ : GroupedMessageByWechaty,
 ) => wechatyMessage$.pipe(
+  /**
+   * Suppress the failure by processing the messages with debounce().
+   *  Failure will be emitted if there's no message
+   *  for more than RESET_WAIT_MILLISECONDS
+   */
   debounce(() => interval(RESET_WAIT_MILLISECONDS)),
-  switchMap(action => interval(RESET_WAIT_MILLISECONDS).pipe(
-    mapTo(WechatyDuck.actions.reset(
-      action.payload.wechatyId,
-      'ha-wechaty/duck/epics.ts/resetEmitterEpicPerWechaty$(action)',
-    )),
-    takeUntilDong(action.payload.wechatyId, action$),
-    takeUntilLoginout(action.payload.wechatyId, action$),
+  switchMap(action => merge(
+    of(failureWechaty(action.payload.wechatyId)),
+    interval(RESET_WAIT_MILLISECONDS).pipe(
+      mapTo(WechatyDuck.actions.reset(
+        action.payload.wechatyId,
+        'ha-wechaty',
+      )),
+      takeUntilDong(action.payload.wechatyId, action$),
+      takeUntilLoginout(action.payload.wechatyId, action$),
+    )
   )),
 )
 
