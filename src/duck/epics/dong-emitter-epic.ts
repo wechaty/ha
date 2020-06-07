@@ -46,7 +46,7 @@ const dongEmitterEpic: Epic = action$ => action$.pipe(
   filter(isActionOf(WechatyDuck.actions.messageEvent)),
   mergeMap(WechatyDuck.utils.toMessage$),
   filter(WechatyDuck.utils.isTextMessage(DONG)),
-  map(message => actions.dong(message.wechaty.id, message.id)),
+  map(message => actions.dongHa(message.wechaty.id, message.id)),
 )
 
 export {

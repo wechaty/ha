@@ -38,7 +38,7 @@ import { getBundle } from '../ducks'
 const failureHaEmitterEpic: Epic = (action$, _state$) => action$.pipe(
   filter(isActionOf(actions.failureWechaty)),
   filter(action => !getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)),
-  map(action => actions.failureHA(
+  map(action => actions.failureHa(
     getBundle().selectors.getHaByWechaty(
       action.payload.wechatyId
     ),

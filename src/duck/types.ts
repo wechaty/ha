@@ -26,8 +26,8 @@ const WECHATY_RECOVER = 'ha-wechaty/WECHATY_RECOVER'
 const HA_FAILURE = 'ha-wechaty/FAILURE'
 const HA_RECOVER = 'ha-wechaty/RESTORE'
 
-const DING = 'ha-wechaty/DING'
-const DONG = 'ha-wechaty/DONG'
+const HA_DING = 'ha-wechaty/DING'
+const HA_DONG = 'ha-wechaty/DONG'
 
 const NOOP = 'ha-wechaty/NOOP'
 
@@ -41,8 +41,8 @@ export {
   HA_FAILURE,
   HA_RECOVER,
 
-  DING,
-  DONG,
+  HA_DING,
+  HA_DONG,
 
   NOOP,
 }

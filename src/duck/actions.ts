@@ -17,34 +17,32 @@
  *   limitations under the License.
  *
  */
-import {
-  createAction,
-}                       from 'typesafe-actions'
+import { createAction } from 'typesafe-actions'
 
 import * as types from './types'
 
-const prepareHA         = (haId: string)      => ({ haId })
+const prepareHa         = (haId: string)      => ({ haId })
 const prepareWechaty    = (wechatyId: string) => ({ wechatyId })
 
 const prepareContact    = (wechatyId: string, contactId: string)  => ({ contactId, wechatyId })
-const prepareHAWechaty  = (haId: string, wechatyId: string)  => ({ haId, wechatyId })
+const prepareHaWechaty  = (haId: string, wechatyId: string)  => ({ haId, wechatyId })
 
 const prepareDong = (wechatyId: string, messageId: string) => ({ messageId, wechatyId })
 
 /**
  * Actions
  */
-const addWechaty = createAction(types.WECHATY_ADD, prepareHAWechaty)()
-const delWechaty = createAction(types.WECHATY_DEL, prepareHAWechaty)()
+const addWechaty = createAction(types.WECHATY_ADD, prepareHaWechaty)()
+const delWechaty = createAction(types.WECHATY_DEL, prepareHaWechaty)()
 
-const failureHA = createAction(types.HA_FAILURE, prepareHA)()
-const recoverHA = createAction(types.HA_RECOVER, prepareHA)()
+const failureHa = createAction(types.HA_FAILURE, prepareHa)()
+const recoverHa = createAction(types.HA_RECOVER, prepareHa)()
 
 const failureWechaty = createAction(types.WECHATY_FAILURE, prepareWechaty)()
 const recoverWechaty = createAction(types.WECHATY_RECOVER, prepareWechaty)()
 
-const ding = createAction(types.DING, prepareContact)()
-const dong = createAction(types.DONG, prepareDong)()
+const dingHa = createAction(types.HA_DING, prepareContact)()
+const dongHa = createAction(types.HA_DONG, prepareDong)()
 
 const noop = createAction(types.NOOP)()
 
@@ -52,11 +50,11 @@ export {
   addWechaty,
   delWechaty,
 
-  ding,
-  dong,
+  dingHa,
+  dongHa,
 
-  failureHA,
-  recoverHA,
+  failureHa,
+  recoverHa,
 
   failureWechaty,
   recoverWechaty,

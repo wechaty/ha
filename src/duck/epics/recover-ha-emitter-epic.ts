@@ -20,29 +20,36 @@
 import {
   isActionOf,
 }                 from 'typesafe-actions'
-
 import {
-  filter,
+  of,
+  empty,
+}                 from 'rxjs'
+import {
   mergeMap,
+  filter,
 }                   from 'rxjs/operators'
 
 import { Epic }     from 'redux-observable'
 
-import * as actions     from '../actions'
+import { getBundle } from '../ducks'
 
-import { ding$ }     from './tasks/ding'
+import * as actions from '../actions'
 
 /**
- * In:  actions.ding
- * Out: void
- *
- * Side Effect: call contact.say(ding)
+ * In: actions.recoverWechaty
+ * Out:
+ *  actions.recoverHA
  */
-const dingEvokerEpic: Epic = (action$) => action$.pipe(
-  filter(isActionOf(actions.dingHa)),
-  mergeMap(ding$),
+const recoverHaEmitterEpic: Epic = (action$, _state$) => action$.pipe(
+  filter(isActionOf(actions.recoverWechaty)),
+  mergeMap(action => {
+    const available = getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)
+    if (available) {
+      return empty()
+    }
+    const haId = getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
+    return of(actions.recoverHa(haId))
+  })
 )
 
-export {
-  dingEvokerEpic,
-}
+export { recoverHaEmitterEpic }

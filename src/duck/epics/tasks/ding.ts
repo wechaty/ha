@@ -27,20 +27,12 @@ import {
 }                   from 'rxjs/operators'
 
 import {
-  DING,
-}             from '../config'
-
-import {
   getWechaty,
   Duck as WechatyDuck,
 }                       from 'wechaty-redux'
 
-// import {
-//   State,
-// }               from './reducers'
-
 // import * as selectors from './selectors'
-import * as actions   from './actions'
+import * as actions   from '../../actions'
 
 // import {
 //   PayloadAllId,
@@ -54,7 +46,9 @@ import * as actions   from './actions'
 //   return EMPTY
 // }
 
-const ding$ = (action: ReturnType<typeof actions.ding>) => from(
+const DING = 'ding'
+
+const ding$ = (action: ReturnType<typeof actions.dingHa>) => from(
   getWechaty(action.payload.wechatyId)
     .Contact.load(action.payload.contactId)
     .say(DING)

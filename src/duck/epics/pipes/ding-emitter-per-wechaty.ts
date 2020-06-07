@@ -40,7 +40,7 @@ import {
 }                       from '../../utils'
 import {
   failureWechaty,
-  ding,
+  dingHa,
 }                       from '../../actions'
 
 import {
@@ -70,7 +70,7 @@ const dingEmitterPerWechaty$ = (
   switchMap(action => merge(
     of(failureWechaty(action.payload.wechatyId)),
     interval(DING_WAIT_MILLISECONDS).pipe(
-      mapTo(ding(
+      mapTo(dingHa(
         action.payload.wechatyId,
         CHATIE_OA_ID,
       )),

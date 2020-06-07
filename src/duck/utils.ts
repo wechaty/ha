@@ -39,9 +39,15 @@ import {
   log,
 }             from '../config'
 
-import {
-  PayloadMessageId,
-}                   from './config'
+// import {
+//   PayloadMessageId,
+// }                   from './schema'
+
+interface PayloadMessageId { wechatyId: string, messageId: string }
+interface PayloadHaId { haId: string }
+interface PayloadWechatyId { wechatyId: string }
+
+// type PayloadAllId = PayloadWechatyId | PayloadMessageId | PayloadContactId
 
 /**
  * Increase or Decrease a random time on the target seconds
@@ -120,6 +126,15 @@ const toChatieOA = (wechatyId: string): Contact => {
   return contact
 }
 
+const toWechaty = <T extends { payload: PayloadWechatyId }>(action: T) => getWechaty(action.payload.wechatyId)
+const toHa      = <T extends { payload: PayloadHaId      }>(action: T) => getHa(action.payload.haId)
+
+export {
+  milliAroundSeconds,
+  toWechaty,
+  toHa,
+}
+
 export {
   belongsToWechaty,
   // isChatieOA,
@@ -133,20 +148,4 @@ export {
 
   isMessageTextDong,
   isMessageTypeText,
-}
-
-interface PayloadHAId { haId: string }
-interface PayloadWechatyId { wechatyId: string }
-// interface PayloadMessageId { wechatyId: string, messageId: string }
-// interface PayloadContactId { wechatyId: string, contactId: string }
-
-// type PayloadAllId = PayloadWechatyId | PayloadMessageId | PayloadContactId
-
-const toWechaty = <T extends { payload: PayloadWechatyId }>(action: T) => getWechaty(action.payload.wechatyId)
-const toHa      = <T extends { payload: PayloadHAId      }>(action: T) => getHa(action.payload.haId)
-
-export {
-  milliAroundSeconds,
-  toWechaty,
-  toHa,
 }

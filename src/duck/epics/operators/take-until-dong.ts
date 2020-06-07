@@ -38,7 +38,7 @@ import * as HaDuck from '../../'
  */
 const takeUntilDong = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
   action$.pipe(
-    filter(isActionOf(HaDuck.actions.dong)),
+    filter(isActionOf(HaDuck.actions.dongHa)),
     filter(action => action.payload.wechatyId === wechatyId),
   ),
 )

@@ -31,27 +31,18 @@ import {
 
 import { Epic }     from 'redux-observable'
 
-import { getBundle } from '../ducks'
-
 import * as actions from '../actions'
 
 /**
  * In: actions.dongHA
  * Out:
  *  actions.recoverWechaty
- *  actions.recoverHA
  */
 const recoverWechatyEmitterEpic: Epic = (action$, _state$) => action$.pipe(
-  filter(isActionOf(actions.dong)),
+  filter(isActionOf(actions.dongHa)),
   mergeMap(action => merge(
     // Recover Wechaty
     of(actions.recoverWechaty(action.payload.wechatyId)),
-    // Recover HA
-    of(actions.recoverHA(
-      getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
-    )).pipe(
-      filter(_ => !getBundle().selectors.isWechatyAvailable(action.payload.wechatyId))
-    ),
   )),
 )
 
