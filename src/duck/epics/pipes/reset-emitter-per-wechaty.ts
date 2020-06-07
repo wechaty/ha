@@ -34,21 +34,14 @@ import {
 }                       from 'wechaty-redux'
 
 import {
-  milliAroundSeconds,
-}                         from '../../utils'
-
-import {
   takeUntilDong,
   takeUntilLoginout,
 }                     from '../operators/'
 
-import { wechatyMessage$$ } from './wechaty-message'
-
-const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
-
-// https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
-type Extract<P> = P extends Observable<infer T> ? T : never;
-type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
+import {
+  GroupedMessageByWechaty,
+  RESET_WAIT_MILLISECONDS,
+}                           from './wechaty-message'
 
 /**
  * In:  wechatyMessage$

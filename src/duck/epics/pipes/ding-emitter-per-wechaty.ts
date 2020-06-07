@@ -21,7 +21,6 @@ import {
   interval,
   of,
   merge,
-  Observable,
 }                 from 'rxjs'
 import {
   debounce,
@@ -36,10 +35,6 @@ import {
 }                       from '../../../config'
 
 import {
-  milliAroundSeconds,
-}                       from '../../utils'
-import {
-  failureWechaty,
   dingHa,
 }                       from '../../actions'
 
@@ -48,16 +43,13 @@ import {
   takeUntilLoginout,
 }                     from '../operators/'
 
-import { wechatyMessage$$ } from './wechaty-message'
-
-const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
-
-// https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
-type Extract<P> = P extends Observable<infer T> ? T : never;
-type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
+import {
+  GroupedMessageByWechaty,
+  DING_WAIT_MILLISECONDS,
+}                             from './wechaty-message'
 
 /**
- * In:  ha$
+ * In:  wechatyMessage
  * Out:
  *  actions.failureWechaty
  *  actions.ding
@@ -66,9 +58,14 @@ const dingEmitterPerWechaty$ = (
   action$         : ReturnType<Epic>,
   wechatyMessage$ : GroupedMessageByWechaty,
 ) => wechatyMessage$.pipe(
+  /**
+   * Suppress the failure by processing the messages with debounce().
+   *  Failure will be emitted if there's no message
+   *  for more than DING_WAIT_MILLISECONDS
+   */
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
   switchMap(action => merge(
-    of(failureWechaty(action.payload.wechatyId)),
+    // of(failureWechaty(action.payload.wechatyId)),
     interval(DING_WAIT_MILLISECONDS).pipe(
       mapTo(dingHa(
         action.payload.wechatyId,

@@ -23,32 +23,28 @@ import {
 import {
   filter,
   map,
-  mergeMap,
 }                   from 'rxjs/operators'
 
 import { Epic }     from 'redux-observable'
 
-import {
-  Duck as WechatyDuck,
-}                       from 'wechaty-redux'
-
-import {
-  DONG,
-}                       from '../../config'
-
 import * as actions     from '../actions'
 
+import { getBundle } from '../ducks'
+
+type FailureWechatyAction = ReturnType<typeof actions.failureWechaty>
+
+const isHaNotAvailable  = (action: FailureWechatyAction) => !getBundle().selectors.isHaAvailable(action.payload.wechatyId)
+const toHaId            = (action: FailureWechatyAction) => getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
+
 /**
- * In:  WechatyDuck.actions.messageEvent
- * Out: actions.dongHA
+ * In:  actions.failureWechaty
+ * Out: actions.failureHA
  */
-const dongEmitterEpic: Epic = action$ => action$.pipe(
-  filter(isActionOf(WechatyDuck.actions.messageEvent)),
-  mergeMap(WechatyDuck.utils.toMessage$),
-  filter(WechatyDuck.utils.isTextMessage(DONG)),
-  map(message => actions.dongHa(message.wechaty.id, message.id)),
+const failureWechatyFailureHaEpic: Epic = action$ => action$.pipe(
+  filter(isActionOf(actions.failureWechaty)),
+  filter(isHaNotAvailable),
+  map(toHaId),
+  map(actions.failureHa),
 )
 
-export {
-  dongEmitterEpic,
-}
+export { failureWechatyFailureHaEpic }

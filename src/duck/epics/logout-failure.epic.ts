@@ -23,26 +23,23 @@ import {
 
 import {
   filter,
-  mergeMap,
+  map,
 }                   from 'rxjs/operators'
-
 import { Epic }     from 'redux-observable'
+
+import { Duck as WechatyDuck } from 'wechaty-redux'
 
 import * as actions     from '../actions'
 
-import { ding$ }     from './tasks/ding'
-
 /**
- * In:  actions.ding
- * Out: void
  *
- * Side Effect: call contact.say(ding)
+ *  Input:  LogoutEvent
+ *  Output: failureWechaty
+ *
  */
-const dingEvokerEpic: Epic = (action$) => action$.pipe(
-  filter(isActionOf(actions.dingHa)),
-  mergeMap(ding$),
+const logoutFailureEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.logoutEvent)),
+  map(action => actions.failureWechaty(action.payload.wechatyId))
 )
 
-export {
-  dingEvokerEpic,
-}
+export { logoutFailureEpic }

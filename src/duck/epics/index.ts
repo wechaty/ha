@@ -17,22 +17,20 @@
  *   limitations under the License.
  *
  */
-import { dingEvokerEpic }             from './ding-evoker-epic'
-import { dongEmitterEpic }            from './dong-emitter-epic'
-import { failureHaEmitterEpic }       from './failure-ha-emitter-epic'
-import { mainEpic }                   from './main-epic'
-import { recoverWechatyEmitterEpic }  from './recover-wechaty-emitter-epic'
-import {
-  logonEpic,
-  logoutEpic,
-}                                     from './logonoff-epic'
+import { dingEpic }                     from './ding.epic'
+import { dongRecoverWechatyHaEpic }     from './dong-recover-wechaty-ha.epic'
+import { failureWechatyFailureHaEpic }  from './failure-wechaty-failure-ha.epic'
+import { mainEpic }                     from './main.epic'
+import { messageDongEpic }              from './message-dong.epic'
+import { loginRecoverEpic }             from './login-recover.epic'
+import { logoutFailureEpic }            from './logout-failure.epic'
 
 export {
-  dingEvokerEpic,
-  dongEmitterEpic,
-  failureHaEmitterEpic,
-  logonEpic,
-  logoutEpic,
-  recoverWechatyEmitterEpic,
+  dingEpic,
+  dongRecoverWechatyHaEpic,
+  failureWechatyFailureHaEpic,
+  loginRecoverEpic,
+  logoutFailureEpic,
   mainEpic,
+  messageDongEpic,
 }

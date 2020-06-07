@@ -17,32 +17,37 @@
  *   limitations under the License.
  *
  */
-import {
-  isActionOf,
-}                 from 'typesafe-actions'
+import { isActionOf }   from 'typesafe-actions'
 import {
   filter,
   map,
   mergeMap,
   groupBy,
-}                   from 'rxjs/operators'
-
-import { Epic }     from 'redux-observable'
+}                       from 'rxjs/operators'
+import { Observable }   from 'rxjs'
+import { Epic }         from 'redux-observable'
 
 import {
   Duck as WechatyDuck,
 }                       from 'wechaty-redux'
 
 import {
+  milliAroundSeconds,
+}                       from '../../utils'
+
+import {
   takeUntilLoginout,
-}                     from '../operators/'
+}                       from '../operators/'
+
+const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
+const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
 
 /**
  * High Available Stream Entrance
  *  emit all messages that come from the logged in wechaty(s)
  *
- * In:  RootAction
- * Out: WechatyDuck.actions.messageEvent groupBy wechatyId
+ *  In:  RootAction
+ *  Out: WechatyDuck.actions.messageEvent groupBy wechatyId
  */
 const wechatyMessage$$ = (action$: ReturnType<Epic>) => action$.pipe(
   filter(isActionOf(WechatyDuck.actions.loginEvent)),
@@ -54,10 +59,24 @@ const wechatyMessage$$ = (action$: ReturnType<Epic>) => action$.pipe(
   mergeMap(wechatyId => action$.pipe(
     filter(isActionOf(WechatyDuck.actions.messageEvent)),
     filter(WechatyDuck.utils.isWechaty(wechatyId)),
+
+    /**
+     * use mergeMap:
+     *  `message.self()` need to perform async task
+     */
     mergeMap(WechatyDuck.utils.skipSelfMessage$),
+
     takeUntilLoginout(wechatyId, action$),
   )),
   groupBy(action => action.payload.wechatyId),
 )
 
-export { wechatyMessage$$ }
+// https://itnext.io/typescript-extract-unpack-a-type-from-a-generic-baca7af14e51
+type Extract<P> = P extends Observable<infer T> ? T : never;
+export type GroupedMessageByWechaty = Extract<ReturnType<typeof wechatyMessage$$>>
+
+export {
+  DING_WAIT_MILLISECONDS,
+  RESET_WAIT_MILLISECONDS,
+  wechatyMessage$$,
+}

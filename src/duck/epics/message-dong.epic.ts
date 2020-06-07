@@ -17,39 +17,39 @@
  *   limitations under the License.
  *
  */
+import { Message } from 'wechaty'
 import {
   isActionOf,
 }                 from 'typesafe-actions'
 import {
-  of,
-  empty,
-}                 from 'rxjs'
-import {
-  mergeMap,
   filter,
+  map,
+  mergeMap,
 }                   from 'rxjs/operators'
 
 import { Epic }     from 'redux-observable'
 
-import { getBundle } from '../ducks'
+import {
+  Duck as WechatyDuck,
+}                       from 'wechaty-redux'
 
-import * as actions from '../actions'
+import {
+  DONG,
+}                       from '../../config'
+
+import * as actions     from '../actions'
+
+const messageToDong = (message: Message) => actions.dongHa(message.wechaty.id, message.id)
 
 /**
- * In: actions.recoverWechaty
- * Out:
- *  actions.recoverHA
+ * In:  WechatyDuck.actions.messageEvent
+ * Out: actions.dongHA
  */
-const recoverHaEmitterEpic: Epic = (action$, _state$) => action$.pipe(
-  filter(isActionOf(actions.recoverWechaty)),
-  mergeMap(action => {
-    const available = getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)
-    if (available) {
-      return empty()
-    }
-    const haId = getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
-    return of(actions.recoverHa(haId))
-  })
+const messageDongEpic: Epic = action$ => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.messageEvent)),
+  mergeMap(WechatyDuck.utils.toMessage$),
+  filter(WechatyDuck.utils.isTextMessage(DONG)),
+  map(messageToDong),
 )
 
-export { recoverHaEmitterEpic }
+export { messageDongEpic }

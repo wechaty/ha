@@ -20,31 +20,26 @@
 import {
   isActionOf,
 }                 from 'typesafe-actions'
+
 import {
   filter,
   map,
 }                   from 'rxjs/operators'
-
 import { Epic }     from 'redux-observable'
+
+import { Duck as WechatyDuck } from 'wechaty-redux'
 
 import * as actions     from '../actions'
 
-import { getBundle } from '../ducks'
-
 /**
- * In:  actions.failureWechaty
- * Out: actions.failureHA
+ *
+ *  Input:  loginEvent
+ *  Output: recoverWechaty
+ *
  */
-const failureHaEmitterEpic: Epic = (action$, _state$) => action$.pipe(
-  filter(isActionOf(actions.failureWechaty)),
-  filter(action => !getBundle().selectors.isWechatyAvailable(action.payload.wechatyId)),
-  map(action => actions.failureHa(
-    getBundle().selectors.getHaByWechaty(
-      action.payload.wechatyId
-    ),
-  )),
+const loginRecoverEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.loginEvent)),
+  map(action => actions.recoverWechaty(action.payload.wechatyId))
 )
 
-export {
-  failureHaEmitterEpic,
-}
+export { loginRecoverEpic }

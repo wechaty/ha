@@ -21,29 +21,50 @@ import {
   isActionOf,
 }                 from 'typesafe-actions'
 import {
-  merge,
+  from,
   of,
 }                 from 'rxjs'
 import {
-  mergeMap,
+  catchError,
+  ignoreElements,
   filter,
+  mergeMap,
 }                   from 'rxjs/operators'
-
 import { Epic }     from 'redux-observable'
+import {
+  getWechaty,
+  Duck as WechatyDuck,
+}                       from 'wechaty-redux'
 
 import * as actions from '../actions'
 
-/**
- * In: actions.dongHA
- * Out:
- *  actions.recoverWechaty
- */
-const recoverWechatyEmitterEpic: Epic = (action$, _state$) => action$.pipe(
-  filter(isActionOf(actions.dongHa)),
-  mergeMap(action => merge(
-    // Recover Wechaty
-    of(actions.recoverWechaty(action.payload.wechatyId)),
+const DING = 'ding'
+
+const ding$ = (action: ReturnType<typeof actions.dingHa>) => from(
+  getWechaty(action.payload.wechatyId)
+    .Contact.load(action.payload.contactId)
+    .say(DING)
+).pipe(
+  ignoreElements(),
+  catchError(e => of(
+    WechatyDuck.actions.errorEvent(
+      action.payload.wechatyId,
+      { data: String(e) },
+    )
   )),
 )
 
-export { recoverWechatyEmitterEpic }
+/**
+ * In:  actions.ding
+ * Out: void
+ *
+ * Side Effect: call contact.say(ding)
+ */
+const dingEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf(actions.dingHa)),
+  mergeMap(ding$),
+)
+
+export {
+  dingEpic,
+}
