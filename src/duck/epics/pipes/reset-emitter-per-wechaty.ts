@@ -18,13 +18,13 @@
  *
  */
 import {
+  merge,
   interval,
   of,
 }                 from 'rxjs'
 import {
   debounce,
   mapTo,
-  merge,
   switchMap,
 }                   from 'rxjs/operators'
 
