@@ -19,7 +19,6 @@
  */
 import {
   Wechaty,
-  Message,
 }             from 'wechaty'
 import {
   PuppetMock,
@@ -44,8 +43,10 @@ import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
 import {
   HAWechaty,
   Duck as HaDuck,
-}                             from '../src/'
-import { CHATIE_OA_ID }      from '../src/config'
+}                             from '../../src/'
+
+import { HaEnvironment } from './ha-environment'
+import { CHATIE_OA_ID } from '../../src/config'
 
 const ducks = new Ducks({
   counter : CounterDuck,
@@ -72,6 +73,9 @@ void store
 const mocker1 = new Mocker()
 const mocker2 = new Mocker()
 
+mocker1.use(HaEnvironment())
+mocker2.use(HaEnvironment())
+
 const puppet1 = new PuppetMock({ mocker: mocker1 })
 const puppet2 = new PuppetMock({ mocker: mocker2 })
 
@@ -84,8 +88,7 @@ const haWechaty = new HAWechaty({
 })
 
 haWechaty.add(wechaty1, wechaty2)
-
-// haWechaty.remove(wechaty2, wechaty1)
+// haWechaty.del(wechaty2, wechaty1)
 
 console.info('nodes: ', haWechaty.nodes().length)
 
@@ -97,9 +100,9 @@ haWechaty.use(
 
 haWechaty.once('login', () => setInterval(
   async () => {
-    const filehelper = await haWechaty.Contact.load('filehelper')
+    const filehelper = await haWechaty.Contact.load(CHATIE_OA_ID)
     if (filehelper) {
-      await filehelper.say('HA Wechaty')
+      await filehelper.say('ding')
     } else {
       console.error('filehelper not found')
     }
@@ -107,52 +110,5 @@ haWechaty.once('login', () => setInterval(
   5 * 1000,
 ))
 
-async function main () {
-  await haWechaty.start()
-
-  const [ user1, mary, mike ] = mocker1.createContacts(3)
-  const [ user2, tom, jerry ] = mocker2.createContacts(5)
-
-  const filehelper1 = mocker1.createContact({ id: 'filehelper' })
-  const filehelper2 = mocker2.createContact({ id: 'filehelper' })
-  void filehelper1
-  void filehelper2
-
-  const chatieio1 = mocker1.createContact({ id: CHATIE_OA_ID })
-  const chatieio2 = mocker2.createContact({ id: CHATIE_OA_ID })
-  void chatieio1
-  void chatieio2
-
-  chatieio1.on('message', msg => {
-    console.info('chatieio1.on(message): ', msg.text())
-    if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
-      msg.listener()?.say('dong').to(msg.talker())
-    }
-  })
-  chatieio2.on('message', msg => {
-    console.info('chatieio2.on(message): ', msg.text())
-    if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
-      msg.listener()?.say('dong').to(msg.talker())
-    }
-  })
-
-  mocker1.scan('qrcode')
-  mocker1.login(user1)
-
-  mocker2.scan('qrcode')
-  mocker2.login(user2)
-
-  mary.say('how are you?').to(user1)
-  user1.say('fine thank you.').to(mary)
-  void mike
-
-  user2.say('good to see you!').to(tom)
-  tom.say('me too!').to(user2)
-  void jerry
-
-  setInterval(() => jerry.say('testing 123').to(user2), 10 * 1000)
-
-  // mocker1.logout()
-}
-
-main().catch(console.error)
+haWechaty.start()
+  .catch(console.error)

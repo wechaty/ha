@@ -22,7 +22,7 @@
     "lint:ts": "tsc --noEmit",
     "redux-devtools": "redux-devtools --hostname=localhost --port=8000",
     "start": "ts-node --files examples/ding-dong-bot.ts",
-    "redux": "ts-node --files examples/redux-ducks-bot.ts",
+    "redux": "ts-node --files examples/redux-ducks-bot/redux-ducks-bot.ts",
     "test": "npm run lint && npm run test:unit",
     "test:pack": "bash -x scripts/npm-pack-testing.sh",
     "test:unit": "blue-tape -r ts-node/register \"src/**/*.spec.ts\" \"src/*.spec.ts\" \"tests/*.spec.ts\" \"tests/**/*.spec.ts\"",
@@ -61,7 +61,7 @@
     "wechaty": "^0.40.4",
     "wechaty-ducks-contrib": "^0.2.2",
     "wechaty-plugin-contrib": "^0.2.19",
-    "wechaty-puppet-mock": "^0.22.24"
+    "wechaty-puppet-mock": "^0.22.27"
   },
   "repository": {
     "type": "git",

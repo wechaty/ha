@@ -49,7 +49,7 @@ ha.once('login', () => setInterval(
     if (!filehelper) {
       throw new Error('filehelper not found')
     }
-    await filehelper.say('HA Wechaty')
+    await filehelper.say('Hello from HA Wechaty ding-dong-bot')
   },
   5 * 1000,
 ))
