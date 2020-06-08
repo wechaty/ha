@@ -91,8 +91,14 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
       if (!options.remoteReduxDevToolsOptions) {
         throw new Error('redux remote dev tools need options.')
       }
-      const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
-      devCompose = composeWithDevTools(options)
+
+      try {
+        const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
+        devCompose = composeWithDevTools(options)
+      } catch (e) {
+        log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
+        console.error(e)
+      }
 
     } else {
       // return configureDevtools()
