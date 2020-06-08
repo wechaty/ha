@@ -66,36 +66,36 @@ If you want to use HAProxy, please make sure every bot account has followed the 
 ## Usage
 
 ```ts
-import {
-  HAWechaty,
-}                   from 'ha-wechaty'
-import {
-  WechatyOptions,
-}                   from 'wechaty'
+import { HAWechaty } from 'ha-wechaty'
+import { Wechaty } from 'wechaty'
 
-const hostieWechatyOptions: WechatyOptions = {
+const wechaty1 = new Wechaty({
   puppet: 'wechaty-puppet-hostie',
   puppetOptions: {
     token: 'hostie-token'
   }
-}
+})
 
-const padplusWechatyOptions: WechatyOptions = {
+const wechaty2 = new Wechaty({
   puppet: 'wechaty-puppet-padplus',
   puppetOptions: {
     token: 'padplus-token'
   }
-}
-
-const haWechaty = new HAWechaty({
-  name: 'high-available-wechaty',
-  wechatyOptionsList: [
-    hostieWechathyOptions,
-    padplusWechatyOptions,
-  ]
 })
 
+// 1. Configure HAWechaty
+const haWechaty = configureHa()
+// 2. Add Wechaty instances to HA
+haWechaty.add(wechaty1, wechaty2)
+// 3. Start HA
 await haWechaty.start()
+
+// 4. Find room by our bots
+const room = await haWechaty.Room.find({ topic: 'ding room' })
+if (room) {
+  // 5. Send message to room with load balancing and high availabilities
+  await room.say('ding')
+}
 ```
 
 ## Environment Variables
@@ -120,11 +120,10 @@ For example:
 | :--- | :--- | :--- |
 | wechaty-puppet-hostie  | hostie  | HA_WECHATY_PUPPET_HOSTIE_TOKEN |
 | wechaty-puppet-padplus | padplus | HA_WECHATY_PUPPET_PADPLUS_TOKEN |
-| wechaty-puppet-macpro  | macpro  | HA_WECHATY_PUPPET_MACPRO_TOKEN |
 
-The token set to this environment variable will become the default value of `puppetOptions.token` when instanciating Wechaty.
+The token set to this environment variable will become the default value of `puppetOptions.token` when instantiating Wechaty.
 
-To specify more tokens for a specific puppet, use a colon (`:`) to seprate them, for example:
+To specify more tokens for a specific puppet, use a colon (`:`) to separate them, for example:
 
 ```sh
 export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_token_1:hostie_token_2
@@ -192,6 +191,6 @@ This module was originally design for the project [OSSChat](https://github.com/k
 
 ## Copyright & License
 
-* Code & Docs © 2020-now Huan LI \<zixia@zixia.net\>
+* Code & Docs © 2020 Huan LI \<zixia@zixia.net\>
 * Code released under the Apache-2.0 License
 * Docs released under Creative Commons

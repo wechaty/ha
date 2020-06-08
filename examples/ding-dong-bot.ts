@@ -34,11 +34,14 @@ dotenv.config()
  * 1. Declare your Bot!
  *
  */
-const ha = configureHa('remote', {
-  hostname : 'localhost',
-  maxAge   : 500,
-  port     : 8000,
-  realtime : true,
+const ha = configureHa({
+  reduxDevTools: 'remote',
+  remoteReduxDevToolsOptions: {
+    hostname : 'localhost',
+    maxAge   : 500,
+    port     : 8000,
+    realtime : true,
+  },
 })
 
 ha.use(

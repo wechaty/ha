@@ -18,71 +18,72 @@
  *
  */
 import {
-  Wechaty,
   WechatyOptions,
   log,
+  MemoryCard,
+  PuppetModuleName,
 }                   from 'wechaty'
 
-export function envWechaty (
-  options: WechatyOptions,
-) {
-  log.verbose('HAWechaty', 'envWechaty(%s)', JSON.stringify(options))
+interface HaWechatyEnv {
+  HA_WECHATY_PUPPET: string,
+  HA_WECHATY_PUPPET_HOSTIE_TOKEN?  : string
+  HA_WECHATY_PUPPET_PADPLUS_TOKEN? : string
+}
 
-  const wechatyList: Wechaty[] = []
+const toSnakeUpperCase = (str: string) => str.toUpperCase().replace(/-/g, '_')
 
-  const haWechatyPuppet = process.env.HA_WECHATY_PUPPET || ''
+function envWechaty (
+  env     : HaWechatyEnv,
+  name?   : string,
+  memory? : MemoryCard,
+): WechatyOptions[] {
+  log.verbose('HAWechaty', 'envWechaty(%s, %s, %s)', JSON.stringify(env), name, memory)
 
-  const wechatyPuppetList = haWechatyPuppet
-    .split(':')
-    .filter(v => !!v)
-    .map(v => v.toUpperCase())
-    .map(v => v.replace(/-/g, '_'))
+  if (!name) {
+    name = 'ha-wechaty'
+  }
+  if (!memory) {
+    memory = new MemoryCard(name)
+  }
 
-  log.verbose('HAWechaty', 'envWechaty() HA_WECHATY_PUPPET="%s"', haWechatyPuppet)
+  const wechatyOptionsList: WechatyOptions[] = []
+
+  const puppetList = env.HA_WECHATY_PUPPET.split(':') as PuppetModuleName[]
   log.verbose('HAWechaty', 'envWechaty() found %s puppet(s): %s',
-    wechatyPuppetList.length,
-    wechatyPuppetList.join(', '),
+    puppetList.length,
+    puppetList.join(','),
   )
 
-  if (wechatyPuppetList.includes('WECHATY_PUPPET_MOCK')) {
-    wechatyList.push(
-      new Wechaty({
-        ...options,
-        puppet: 'wechaty-puppet-mock',
-      }),
-    )
-  }
+  for (const puppet of puppetList) {
+    log.verbose('HAWechaty', 'envWechaty() preparing puppet %s ...', puppet)
 
-  if (wechatyPuppetList.includes('WECHATY_PUPPET_HOSTIE')
-      && process.env.HA_WECHATY_PUPPET_HOSTIE_TOKEN
-  ) {
-    wechatyList.push(
-      new Wechaty({
-        ...options,
-        puppet: 'wechaty-puppet-hostie',
-        puppetOptions: {
-          token: process.env.HA_WECHATY_PUPPET_HOSTIE_TOKEN,
+    const puppetName = `${name}<${puppet}>`
+    const puppetMemory = memory.multiplex(puppetName)
+
+    // wechaty-puppet-hostie -> HA_ WECHATY_PUPPET_HOSTIE _TOKEN
+    const haPuppetTokenName = [
+      'HA_',
+      toSnakeUpperCase(puppet),
+      '_TOKEN',
+    ].join('')
+
+    const haPuppetToken = env[haPuppetTokenName as keyof HaWechatyEnv]
+    const puppetTokenList = haPuppetToken?.split(':') || []
+
+    for (let i = 0; i < puppetTokenList.length; i++) {
+      const options: WechatyOptions = {
+        memory : puppetMemory.multiplex(String(i)),
+        name   : puppetName + '#' + i,
+        puppet,
+        puppetOptions : {
+          token: puppetTokenList[i],
         },
-      }),
-    )
+      }
+      wechatyOptionsList.push(options)
+    }
   }
 
-  if (wechatyPuppetList.includes('WECHATY_PUPPET_PADPLUS')
-      && process.env.HA_WECHATY_PUPPET_PADPLUS_TOKEN
-  ) {
-    // https://github.com/wechaty/wechaty-puppet-padplus#how-to-emit-the-message-that-you-sent
-    process.env.PADPLUS_REPLAY_MESSAGE = 'true'
-
-    wechatyList.push(
-      new Wechaty({
-        ...options,
-        puppet: 'wechaty-puppet-padplus',
-        puppetOptions: {
-          token: process.env.HA_WECHATY_PUPPET_PADPLUS_TOKEN,
-        },
-      }),
-    )
-  }
-
-  return wechatyList
+  return wechatyOptionsList
 }
+
+export { envWechaty }
