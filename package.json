@@ -1,6 +1,6 @@
 {
   "name": "ha-wechaty",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
