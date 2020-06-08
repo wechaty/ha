@@ -34,21 +34,28 @@ import {
 import * as HaDuck    from './duck/'
 import { HAWechaty }  from './ha-wechaty'
 import { envWechaty } from './env-wechaty'
+import { DucksMapObject } from 'ducks/dist/src/duck'
 
 let initialized = false
 
-interface ConfigureHaOptions {
+type DefaultDuckery = {
+  ha      : typeof HaDuck
+  wechaty : typeof WechatyDuck
+}
+
+interface ConfigureHaOptions<T extends DucksMapObject> {
   name?   : string,
   memory? : MemoryCard,
 
-  ducks?: Ducks<any>,
+  ducks?: Ducks<T>,
+
   reduxDevTools?              : boolean | 'remote',
   remoteReduxDevToolsOptions? : RemoteReduxDevToolsOptions
 }
 
-function configureHa (
-  options: ConfigureHaOptions = {},
-): HAWechaty {
+function configureHa <T extends DucksMapObject = DefaultDuckery> (
+  options: ConfigureHaOptions<T> = {},
+): HAWechaty<T> {
   log.verbose('HAWechaty', 'configureHa(%s)', JSON.stringify(options))
 
   if (initialized) {
@@ -68,10 +75,10 @@ function configureHa (
     options.ducks = new Ducks({
       ha      : HaDuck,
       wechaty : WechatyDuck,
-    })
+    }) as any as Ducks<any>
   } else {
-    const haBundle      = options.ducks.ducksify(HaDuck)
-    const wechatyBundle = options.ducks.ducksify(WechatyDuck)
+    const haBundle      = options.ducks.ducksify(HaDuck as any)
+    const wechatyBundle = options.ducks.ducksify(WechatyDuck as any)
     if (!haBundle || !wechatyBundle) {
       throw new Error('Ducks must at least contains HaDuck and WechatyDuck!')
     }
