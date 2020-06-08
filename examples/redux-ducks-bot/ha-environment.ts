@@ -24,12 +24,12 @@ const HaEnvironment = (): MockEnvironment => {
 
     chatieio.on('message', msg => {
       console.info('chatieio.on(message): ', msg.text())
-      if (msg.self()) {
+      if (msg.talker().id === chatieio.id) {
         return
       }
       if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
-        // msg.listener()?.say('dong').to(msg.talker())
-        console.info('no dong any more!')
+        msg.listener()?.say('dong').to(msg.talker())
+        // console.info('no dong any more!')
       }
     })
 

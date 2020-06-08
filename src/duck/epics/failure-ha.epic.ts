@@ -22,23 +22,29 @@ import {
 }                 from 'typesafe-actions'
 import {
   filter,
-  takeUntil,
+  map,
 }                   from 'rxjs/operators'
+
 import { Epic }     from 'redux-observable'
 
-import {
-  Duck as WechatyDuck,
-}                       from 'wechaty-redux'
+import * as actions     from '../actions'
 
-const takeUntilLoginout = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
-  action$.pipe(
-    filter(isActionOf([
-      WechatyDuck.actions.loginEvent,
-      WechatyDuck.actions.logoutEvent,
-      WechatyDuck.actions.scanEvent,
-    ])),
-    filter(action => action.payload.wechatyId === wechatyId),
-  ),
+import { getBundle } from '../ducks'
+
+type FailureWechatyAction = ReturnType<typeof actions.failureWechaty>
+
+const toHaId            = (action: FailureWechatyAction) => getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
+const isHaNotAvailable  = (action: FailureWechatyAction) => !getBundle().selectors.isHaAvailableByWechaty(action.payload.wechatyId)
+
+/**
+ * In:  actions.failureWechaty
+ * Out: actions.failureHA
+ */
+const failureHaEpic: Epic = action$ => action$.pipe(
+  filter(isActionOf(actions.failureWechaty)),
+  filter(isHaNotAvailable),
+  map(toHaId),
+  map(actions.failureHa),
 )
 
-export { takeUntilLoginout }
+export { failureHaEpic }

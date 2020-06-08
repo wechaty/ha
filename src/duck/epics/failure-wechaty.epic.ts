@@ -17,34 +17,31 @@
  *   limitations under the License.
  *
  */
-import {
-  isActionOf,
-}                 from 'typesafe-actions'
+import { isActionOf } from 'typesafe-actions'
+
 import {
   filter,
   map,
 }                   from 'rxjs/operators'
-
 import { Epic }     from 'redux-observable'
+
+import { Duck as WechatyDuck } from 'wechaty-redux'
 
 import * as actions     from '../actions'
 
-import { getBundle } from '../ducks'
-
-type FailureWechatyAction = ReturnType<typeof actions.failureWechaty>
-
-const isHaNotAvailable  = (action: FailureWechatyAction) => !getBundle().selectors.isHaAvailable(action.payload.wechatyId)
-const toHaId            = (action: FailureWechatyAction) => getBundle().selectors.getHaByWechaty(action.payload.wechatyId)
-
 /**
- * In:  actions.failureWechaty
- * Out: actions.failureHA
+ *
+ *  Input:  LogoutEvent
+ *  Output: failureWechaty
+ *
  */
-const failureWechatyFailureHaEpic: Epic = action$ => action$.pipe(
-  filter(isActionOf(actions.failureWechaty)),
-  filter(isHaNotAvailable),
-  map(toHaId),
-  map(actions.failureHa),
+const failureWechatyEpic: Epic = (action$) => action$.pipe(
+  filter(isActionOf([
+    WechatyDuck.actions.logoutEvent,
+    WechatyDuck.actions.scanEvent,
+    WechatyDuck.actions.turnOffSwitch,
+  ])),
+  map(action => actions.failureWechaty(action.payload.wechatyId))
 )
 
-export { failureWechatyFailureHaEpic }
+export { failureWechatyEpic }

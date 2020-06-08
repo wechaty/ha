@@ -20,6 +20,7 @@
 import {
   interval,
   merge,
+  timer,
 }                 from 'rxjs'
 import {
   debounce,
@@ -65,7 +66,7 @@ const dingEmitterPerWechaty$ = (
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
   switchMap(action => merge(
     // of(failureWechaty(action.payload.wechatyId)),
-    interval(DING_WAIT_MILLISECONDS).pipe(
+    timer(0, Math.floor(DING_WAIT_MILLISECONDS / 3)).pipe(
       mapTo(dingHa(
         action.payload.wechatyId,
         CHATIE_OA_ID,

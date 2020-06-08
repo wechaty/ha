@@ -21,11 +21,10 @@ import {
   QRCodeTerminal,
   EventLogger,
   DingDong,
-}                   from 'wechaty-plugin-contrib'
+}                  from 'wechaty-plugin-contrib'
+import { log }      from 'wechaty'
 
-import {
-  configureHa,
-}                 from '../src/'
+import { configureHa } from '../src/'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -35,7 +34,12 @@ dotenv.config()
  * 1. Declare your Bot!
  *
  */
-const ha = configureHa()
+const ha = configureHa('remote', {
+  hostname : 'localhost',
+  maxAge   : 500,
+  port     : 8000,
+  realtime : true,
+})
 
 ha.use(
   EventLogger(),
@@ -43,13 +47,17 @@ ha.use(
   DingDong(),
 )
 
+const ROOM_ID = '17376996519@chatroom'
+let counter = 0
+
 ha.once('login', () => setInterval(
   async () => {
-    const filehelper = await ha.Contact.load('filehelper')
-    if (!filehelper) {
-      throw new Error('filehelper not found')
+    const room = await ha.Room.load(ROOM_ID)
+    if (room) {
+      await room.say('ding #' + counter++ + ' from HA Wechaty ding-dong-bot')
+    } else {
+      log.error('ding-dong-bot', 'Room.load(%s) not found', ROOM_ID)
     }
-    await filehelper.say('Hello from HA Wechaty ding-dong-bot')
   },
   5 * 1000,
 ))

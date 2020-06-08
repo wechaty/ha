@@ -20,11 +20,14 @@
 import { isActionOf }   from 'typesafe-actions'
 import {
   filter,
-  map,
   mergeMap,
   groupBy,
 }                       from 'rxjs/operators'
-import { Observable }   from 'rxjs'
+import {
+  Observable,
+  merge,
+  of,
+}                       from 'rxjs'
 import { Epic }         from 'redux-observable'
 
 import {
@@ -40,7 +43,20 @@ import {
 }                       from '../operators/'
 
 const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
-const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
+const RESET_WAIT_MILLISECONDS = milliAroundSeconds(120)
+
+const wechatyMessageFilter$ = (action$: ReturnType<Epic>, wechatyId: string) => action$.pipe(
+  filter(isActionOf(WechatyDuck.actions.messageEvent)),
+  filter(WechatyDuck.utils.isWechaty(wechatyId)),
+
+  /**
+   * use mergeMap:
+   *  `message.self()` need to perform async task
+   */
+  mergeMap(WechatyDuck.utils.skipSelfMessage$),
+
+  takeUntilLoginout(wechatyId, action$),
+)
 
 /**
  * High Available Stream Entrance
@@ -51,22 +67,13 @@ const RESET_WAIT_MILLISECONDS = milliAroundSeconds(300)
  */
 const wechatyMessage$$ = (action$: ReturnType<Epic>) => action$.pipe(
   filter(isActionOf(WechatyDuck.actions.loginEvent)),
-  map(action => action.payload.wechatyId),
   /**
    * mergeMap instead of switchMap:
    *  there might be multiple Wechaty instance passed to here
    */
-  mergeMap(wechatyId => action$.pipe(
-    filter(isActionOf(WechatyDuck.actions.messageEvent)),
-    filter(WechatyDuck.utils.isWechaty(wechatyId)),
-
-    /**
-     * use mergeMap:
-     *  `message.self()` need to perform async task
-     */
-    mergeMap(WechatyDuck.utils.skipSelfMessage$),
-
-    takeUntilLoginout(wechatyId, action$),
+  mergeMap(action => merge(
+    of(action),
+    wechatyMessageFilter$(action$, action.payload.wechatyId),
   )),
   groupBy(action => action.payload.wechatyId),
 )

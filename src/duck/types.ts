@@ -24,7 +24,7 @@ const WECHATY_FAILURE = 'ha-wechaty/WECHATY_FAILURE'
 const WECHATY_RECOVER = 'ha-wechaty/WECHATY_RECOVER'
 
 const HA_FAILURE = 'ha-wechaty/FAILURE'
-const HA_RECOVER = 'ha-wechaty/RESTORE'
+const HA_RECOVER = 'ha-wechaty/RECOVER'
 
 const HA_DING = 'ha-wechaty/DING'
 const HA_DONG = 'ha-wechaty/DONG'
