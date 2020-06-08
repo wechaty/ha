@@ -17,104 +17,123 @@
  *   limitations under the License.
  *
  */
-import { Ducks }                      from 'ducks'
-import { createStore }                from 'redux'
-import { Duck as WechatyDuck }        from 'wechaty-redux'
+import {
+  createStore,
+  compose,
+}                from 'redux'
 import { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 
-import * as HaDuck from './duck/'
+import { Ducks }                      from 'ducks'
+import { Duck as WechatyDuck }        from 'wechaty-redux'
+import {
+  log,
+  MemoryCard,
+  Wechaty,
+}                     from 'wechaty'
 
+import * as HaDuck    from './duck/'
 import { HAWechaty }  from './ha-wechaty'
 import { envWechaty } from './env-wechaty'
+import { DucksMapObject } from 'ducks/dist/src/duck'
 
 let initialized = false
 
-function configureHa ()                                                        : HAWechaty
-function configureHa (devtools: true)                                          : HAWechaty
-function configureHa (devtools: 'remote', options: RemoteReduxDevToolsOptions) : HAWechaty
+type DefaultDuckery = {
+  ha      : typeof HaDuck
+  wechaty : typeof WechatyDuck
+}
 
-function configureHa (
-  devtools: boolean | 'remote' = false,
-  options?: RemoteReduxDevToolsOptions,
-): HAWechaty {
+interface ConfigureHaOptions<T extends DucksMapObject> {
+  name?   : string,
+  memory? : MemoryCard,
+
+  ducks?: Ducks<T>,
+
+  reduxDevTools?              : boolean | 'remote',
+  remoteReduxDevToolsOptions? : RemoteReduxDevToolsOptions
+}
+
+function configureHa <T extends DucksMapObject = DefaultDuckery> (
+  options: ConfigureHaOptions<T> = {},
+): HAWechaty<T> {
+  log.verbose('HAWechaty', 'configureHa(%s)', JSON.stringify(options))
+
   if (initialized) {
     throw new Error('configureHa() can not be called twice: it has already been called before.')
   }
   initialized = true
 
-  let ha: HAWechaty
+  if (!options.name) {
+    options.name = 'ha-wechaty'
+  }
 
-  if (devtools) {
-    if (devtools === 'remote') {
-      if (!options) {
+  if (!options.memory) {
+    options.memory = new MemoryCard(options.name)
+  }
+
+  if (!options.ducks) {
+    options.ducks = new Ducks({
+      ha      : HaDuck,
+      wechaty : WechatyDuck,
+    }) as any as Ducks<any>
+  } else {
+    const haBundle      = options.ducks.ducksify(HaDuck as any)
+    const wechatyBundle = options.ducks.ducksify(WechatyDuck as any)
+    if (!haBundle || !wechatyBundle) {
+      throw new Error('Ducks must at least contains HaDuck and WechatyDuck!')
+    }
+  }
+
+  let devCompose = compose
+
+  if (options.reduxDevTools) {
+    if (options.reduxDevTools === 'remote') {
+      if (!options.remoteReduxDevToolsOptions) {
         throw new Error('redux remote dev tools need options.')
       }
-      ha = configureRemoteDevTools(options)
+
+      try {
+        const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
+        devCompose = composeWithDevTools(options)
+      } catch (e) {
+        log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
+        console.error(e)
+      }
+
     } else {
       // return configureDevtools()
       throw new Error('TODO: redux devtools')
     }
-  } else {
-    ha =  configureDucks()
   }
 
-  const wechatyList = envWechaty({
-    name: 'env-wechaty',
-  })
-
-  ha.add(
-    ...wechatyList
-  )
-
-  return ha
-}
-
-function configureRemoteDevTools (options: RemoteReduxDevToolsOptions) {
-  const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
-  const compose = composeWithDevTools(options)
-
-  const ducks = new Ducks({
-    ha      : HaDuck,
-    wechaty : WechatyDuck,
-  })
-
-  const ducksEnhancer = ducks.enhancer()
+  const ducksEnhancer = options.ducks.enhancer()
 
   createStore(
     state => state,
-    compose(
+    devCompose(
       ducksEnhancer,
-    ) as typeof ducksEnhancer,
+    ),
   )
 
   const haWechaty = new HAWechaty({
-    ducks,
-    name: 'ha-wechaty',
+    ducks  : options.ducks,
+    memory : options.memory,
+    name   : options.name,
   })
+
+  const wechatyOptionsList = envWechaty(
+    process.env as any,
+    options.name,
+    options.memory,
+  )
+
+  const wechatyList = wechatyOptionsList.map(opt => new Wechaty(opt))
+
+  haWechaty.add(
+    ...wechatyList
+  )
 
   return haWechaty
-}
-
-// function configureDevtools () {
-//   throw new Error('tod')
-// }
-
-function configureDucks () {
-  const ducks = new Ducks({
-    ha      : HaDuck,
-    wechaty : WechatyDuck,
-  })
-
-  ducks.configureStore()
-
-  const name = 'ha-wechaty'
-
-  const ha = new HAWechaty({
-    ducks,
-    name,
-  })
-
-  return ha
 }
 
 export {

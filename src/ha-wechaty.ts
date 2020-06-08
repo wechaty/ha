@@ -41,19 +41,21 @@ import {
 }                     from './config'
 import * as haDuck    from './duck/'
 import * as instances from './manager'
+import { DucksMapObject } from 'ducks/dist/src/duck'
 
-export interface HAWechatyOptions {
+export interface HAWechatyOptions<T extends DucksMapObject> {
   name?   : string,
   memory? : MemoryCard,
-  ducks   : Ducks<any>,
+  ducks   : Ducks<T>,
 }
 
-export class HAWechaty extends EventEmitter {
+export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
 
   public id: string
   public state: StateSwitch
 
   public bundle: Bundle<typeof haDuck>
+  public ducks: Ducks<T>
 
   protected wechatyList: Wechaty[]
 
@@ -156,7 +158,7 @@ export class HAWechaty extends EventEmitter {
   }
 
   constructor (
-    public options: HAWechatyOptions,
+    public options: HAWechatyOptions<T>,
   ) {
     super()
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
@@ -164,7 +166,8 @@ export class HAWechaty extends EventEmitter {
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
-    this.bundle = options.ducks.ducksify(haDuck)
+    this.bundle = options.ducks.ducksify(haDuck as any) as any
+    this.ducks = options.ducks
 
     instances.addHa(this)
   }
