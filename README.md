@@ -66,36 +66,31 @@ If you want to use HAProxy, please make sure every bot account has followed the 
 ## Usage
 
 ```ts
-import {
-  HAWechaty,
-}                   from 'ha-wechaty'
-import {
-  WechatyOptions,
-}                   from 'wechaty'
+import { configureHa } from 'ha-wechaty'
+import { Wechaty }     from 'wechaty'
 
-const hostieWechatyOptions: WechatyOptions = {
+const hostieWechaty = new Wechaty({
   puppet: 'wechaty-puppet-hostie',
   puppetOptions: {
     token: 'hostie-token'
   }
-}
+})
 
-const padplusWechatyOptions: WechatyOptions = {
+const padplusWechaty = new Wechaty({
   puppet: 'wechaty-puppet-padplus',
   puppetOptions: {
     token: 'padplus-token'
   }
-}
-
-const haWechaty = new HAWechaty({
-  name: 'high-available-wechaty',
-  wechatyOptionsList: [
-    hostieWechathyOptions,
-    padplusWechatyOptions,
-  ]
 })
 
+const haWechaty = configureHa()
+
 await haWechaty.start()
+
+const room = await haWechaty.Room.find({ topic: 'ding room' })
+if (room) {
+  await room.say('ding')
+}
 ```
 
 ## Environment Variables
@@ -149,6 +144,7 @@ npm run redux-devtools
 1. Work with [Ducks](https://github.com/huan/ducks)
 1. High-available logics managed by RxJS (redux-observable epics)
 1. Redux example at [examples/redux-ducks-bot/](examples/redux-ducks-bot/)
+1. Ding Dong Bot example at [examples/ding-dong-bot.ts](examples/ding-dong-bot.ts)
 
 ### v0.0.1 (Apr 2020)
 
@@ -192,6 +188,6 @@ This module was originally design for the project [OSSChat](https://github.com/k
 
 ## Copyright & License
 
-* Code & Docs © 2020-now Huan LI \<zixia@zixia.net\>
+* Code & Docs © 2020 Huan LI \<zixia@zixia.net\>
 * Code released under the Apache-2.0 License
 * Docs released under Creative Commons
