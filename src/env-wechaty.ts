@@ -48,7 +48,7 @@ function envWechaty (
 
   const wechatyOptionsList: WechatyOptions[] = []
 
-  const puppetList = env.HA_WECHATY_PUPPET?.split(':') || [] as PuppetModuleName[]
+  const puppetList = (env.HA_WECHATY_PUPPET?.split(':') || []) as PuppetModuleName[]
   log.verbose('HAWechaty', 'envWechaty() found %s puppet(s): %s',
     puppetList.length,
     puppetList.join(','),
