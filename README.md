@@ -137,24 +137,6 @@ export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_token_1:hostie_token_2
 npm run redux-devtools
 ```
 
-## History
-
-### master
-
-### v0.4 (Jun 7, 2020)
-
-[![Ducksify Extension](https://img.shields.io/badge/Redux-Ducksify%202020-yellowgreen)](https://github.com/huan/ducks#3-ducksify-extension-currying--ducksify-interface)
-
-1. Work with [Ducks](https://github.com/huan/ducks)
-1. High-available logics managed by RxJS (redux-observable epics)
-1. Redux example at [examples/redux-ducks-bot/](examples/redux-ducks-bot/)
-
-### v0.0.1 (Apr 2020)
-
-This module was originally design for the project [OSSChat](https://github.com/kaiyuanshe/osschat) [#58](https://github.com/kaiyuanshe/osschat/issues/58)
-
-1. Publish the NPM module [ha-wechaty](https://www.npmjs.com/package/ha-wechaty)
-
 ## Links
 
 ### Back Off Alghorithm
@@ -182,6 +164,25 @@ This module was originally design for the project [OSSChat](https://github.com/k
 1. [Handle multiple API requests in Angular using mergeMap and forkJoin to avoid nested subscriptions](https://levelup.gitconnected.com/handle-multiple-api-requests-in-angular-using-mergemap-and-forkjoin-to-avoid-nested-subscriptions-a20fb5040d0c)
 1. [Fun with RxJS's groupBy](dataquarium.io/blog/fun-with-rxjs-groupby/)
 1. [Here is what I’ve learn about groupBy operator by reading RxJS sources](https://medium.com/angular-in-depth/those-hidden-gotchas-within-rxjs-7d5c57406041)
+
+## History
+
+### master
+
+### v0.4 (Jun 7, 2020)
+
+[![Ducksify Extension](https://img.shields.io/badge/Redux-Ducksify%202020-yellowgreen)](https://github.com/huan/ducks#3-ducksify-extension-currying--ducksify-interface)
+
+1. Work with [Ducks](https://github.com/huan/ducks)
+1. High-available logics managed by RxJS (redux-observable epics)
+1. Redux example at [examples/redux-ducks-bot/](examples/redux-ducks-bot/)
+1. Ding Dong Bot example at [examples/ding-dong-bot.ts](examples/ding-dong-bot.ts)
+
+### v0.0.1 (Apr 2020)
+
+This module was originally design for the project [OSSChat](https://github.com/kaiyuanshe/osschat) [#58](https://github.com/kaiyuanshe/osschat/issues/58)
+
+1. Publish the NPM module [ha-wechaty](https://www.npmjs.com/package/ha-wechaty)
 
 ## Author
 
