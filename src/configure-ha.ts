@@ -24,6 +24,7 @@ import {
 import { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 
 import { Ducks }                      from 'ducks'
+import { DucksMapObject }             from 'ducks/dist/src/duck'
 import { Duck as WechatyDuck }        from 'wechaty-redux'
 import {
   log,
@@ -34,7 +35,6 @@ import {
 import * as HaDuck    from './duck/'
 import { HAWechaty }  from './ha-wechaty'
 import { envWechaty } from './env-wechaty'
-import { DucksMapObject } from 'ducks/dist/src/duck'
 
 let initialized = false
 
@@ -65,10 +65,12 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
 
   if (!options.name) {
     options.name = 'ha-wechaty'
+    log.verbose('HAWechaty', 'configureHa() name set to default: "%s"', options.name)
   }
 
   if (!options.memory) {
     options.memory = new MemoryCard(options.name)
+    log.verbose('HAWechaty', 'configureHa() memory set to default')
   }
 
   if (!options.ducks) {
@@ -76,6 +78,7 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
       ha      : HaDuck,
       wechaty : WechatyDuck,
     }) as any as Ducks<any>
+    log.verbose('HAWechaty', 'configureHa() ducks set to default')
   } else {
     const haBundle      = options.ducks.ducksify(HaDuck as any)
     const wechatyBundle = options.ducks.ducksify(WechatyDuck as any)
@@ -83,10 +86,14 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
       throw new Error('Ducks must at least contains HaDuck and WechatyDuck!')
     }
   }
+  const duckNameList = Object.keys(options.ducks.ducksify())
+  log.verbose('HAWechaty', 'configureHa() %s ducks in duckery: %s', duckNameList.length, duckNameList.join(','))
 
   let devCompose = compose
 
   if (options.reduxDevTools) {
+    log.verbose('HAWechaty', 'configureHa() reduxDevTools: %s', options.reduxDevTools)
+
     if (options.reduxDevTools === 'remote') {
       if (!options.remoteReduxDevToolsOptions) {
         throw new Error('redux remote dev tools need options.')
@@ -94,7 +101,11 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
 
       try {
         const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
-        devCompose = composeWithDevTools(options)
+        log.verbose('HAWechaty', 'configureHa() configure remote-redux-devtools with %s',
+          JSON.stringify(options.remoteReduxDevToolsOptions)
+        )
+        devCompose = composeWithDevTools(options.remoteReduxDevToolsOptions)
+
       } catch (e) {
         log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
         console.error(e)
