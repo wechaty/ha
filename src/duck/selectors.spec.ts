@@ -115,6 +115,6 @@ test('getHa()', async t => {
     },
   }
 
-  let result = selectors.getHaByWechaty(state)(WECHATY_ID)
+  const result = selectors.getHaByWechaty(state)(WECHATY_ID)
   t.equal(result, HAWECHATY_ID, 'should get haWechaty from wechaty')
 })

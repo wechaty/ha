@@ -22,7 +22,7 @@ import {
 }             from 'wechaty'
 import {
   PuppetMock,
-  Mocker,
+  mock,
 }                   from 'wechaty-puppet-mock'
 import {
   QRCodeTerminal,
@@ -64,8 +64,8 @@ const haWechaty = configureHa({
   },
 })
 
-const mocker1 = new Mocker()
-const mocker2 = new Mocker()
+const mocker1 = new mock.Mocker()
+const mocker2 = new mock.Mocker()
 
 mocker1.use(HaEnvironment())
 mocker2.use(HaEnvironment())

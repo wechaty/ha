@@ -72,7 +72,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
 
     log.verbose('HAWechaty', 'contactLoad() found %s contact(s)', contactList.length)
 
-    let okList = [] as Contact[]
+    const okList = [] as Contact[]
     for (const contact of contactList) {
       try {
         await contact.ready()

@@ -34,7 +34,7 @@ import * as HaDuck from '../../'
  *
  *  e.g.:
  *    `heartbeatEvent` is not suitable at here,
- *    because the hostie server will emit heartbeat no matter than WeChat protocol available or not.
+ *    because the puppet-service server will emit heartbeat no matter than WeChat protocol available or not.
  */
 const takeUntilDong = <T>(wechatyId: string, action$: ReturnType<Epic>) => takeUntil<T>(
   action$.pipe(

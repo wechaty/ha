@@ -26,8 +26,8 @@ import {
 
 interface HaWechatyEnv {
   HA_WECHATY_PUPPET?: string,
-  HA_WECHATY_PUPPET_HOSTIE_TOKEN?  : string
-  HA_WECHATY_PUPPET_PADPLUS_TOKEN? : string
+  HA_WECHATY_PUPPET_SERVICE_TOKEN?  : string
+  HA_WECHATY_PUPPET_PADLOCAL_TOKEN? : string
 }
 
 const toSnakeUpperCase = (str: string) => str.toUpperCase().replace(/-/g, '_')
@@ -60,7 +60,7 @@ function envWechaty (
     const puppetName = `${name}<${puppet}>`
     const puppetMemory = memory.multiplex(puppetName)
 
-    // wechaty-puppet-hostie -> HA_ WECHATY_PUPPET_HOSTIE _TOKEN
+    // wechaty-puppet-service -> HA_ WECHATY_PUPPET_SERVICE _TOKEN
     const haPuppetTokenName = [
       'HA_',
       toSnakeUpperCase(puppet),
