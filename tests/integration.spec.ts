@@ -35,7 +35,7 @@
 //   const DING     = 'ding_data'
 
 //   /**
-//    * Puppet in Hostie
+//    * Puppet in Puppet Server
 //    */
 //   const PUPPET = new PuppetMock()
 //   const spyStart = sinon.spy(PUPPET, 'start')
@@ -43,7 +43,7 @@
 //   const spyDing  = sinon.spy(PUPPET, 'ding')
 
 //   /**
-//    * Hostie Server
+//    * Puppet Server Server
 //    */
 //   const serverOptions = {
 //     endpoint : ENDPOINT,
@@ -51,42 +51,42 @@
 //     token    : TOKEN,
 //   } as PuppetServerOptions
 
-//   const hostieServer = new PuppetServer(serverOptions)
-//   await hostieServer.start()
+//   const serviceServer = new PuppetServer(serverOptions)
+//   await serviceServer.start()
 
 //   /**
-//    * Puppet Hostie Client
+//    * Puppet Puppet Server Client
 //    */
 //   const puppetOptions = {
 //     endpoint: ENDPOINT,
 //     token: TOKEN,
 //   } as PuppetOptions
 
-//   const puppetHostie = new PuppetHostie(puppetOptions)
-//   await puppetHostie.start()
+//   const puppetService = new PuppetService(puppetOptions)
+//   await puppetService.start()
 
-//   t.ok(spyStart.called, 'should called the hostie server start() function')
+//   t.ok(spyStart.called, 'should called the puppet-service server start() function')
 
 //   const future = new Promise((resolve, reject) => {
-//     puppetHostie.on('dong', resolve)
-//     puppetHostie.on('error', reject)
+//     puppetService.on('dong', resolve)
+//     puppetService.on('error', reject)
 //   })
 
-//   puppetHostie.ding(DING)
+//   puppetService.ding(DING)
 //   const result = await future
 
-//   t.ok(spyOn.called,    'should called the hostie server on() function')
-//   t.ok(spyDing.called,  'should called the hostie server ding() function')
+//   t.ok(spyOn.called,    'should called the puppet-service server on() function')
+//   t.ok(spyDing.called,  'should called the puppet-service server ding() function')
 
 //   t.equal(result, DING, 'should get a successful roundtrip for ding')
 
 //   /**
 //    * Stop
-//    *  1. Puppet in Hostie
-//    *  2. Hostie Service
-//    *  3. Puppet Hostie Client
+//    *  1. Puppet in Puppet Server
+//    *  2. Puppet Server Service
+//    *  3. Puppet Puppet Server Client
 //    *
 //    */
-//   await puppetHostie.stop()
-//   await hostieServer.stop()
+//   await puppetService.stop()
+//   await serviceServer.stop()
 // })

@@ -24,8 +24,8 @@ import { envWechaty } from './env-wechaty'
 
 test('envWechaty() smoke testing', async t => {
   const ENV = {
-    HA_WECHATY_PUPPET: 'wechaty-puppet-hostie',
-    HA_WECHATY_PUPPET_HOSTIE_TOKEN: 'token',
+    HA_WECHATY_PUPPET: 'wechaty-puppet-service',
+    HA_WECHATY_PUPPET_SERVICE_TOKEN: 'token',
   }
 
   const options = envWechaty(ENV)[0]
@@ -34,8 +34,8 @@ test('envWechaty() smoke testing', async t => {
   delete options.memory
 
   const EXPECTED_PUPPET_OPTIONS = {
-    name: 'ha-wechaty<wechaty-puppet-hostie>#0',
-    puppet: 'wechaty-puppet-hostie',
+    name: 'ha-wechaty<wechaty-puppet-service>#0',
+    puppet: 'wechaty-puppet-service',
     puppetOptions: { token: 'token' },
   }
 
@@ -44,8 +44,8 @@ test('envWechaty() smoke testing', async t => {
 
 test('envWechaty() for 2 puppets and 1 token set', async t => {
   const ENV = {
-    HA_WECHATY_PUPPET: 'wechaty-puppet-hostie:wechaty-puppet-padplus',
-    HA_WECHATY_PUPPET_HOSTIE_TOKEN: 'token',
+    HA_WECHATY_PUPPET: 'wechaty-puppet-service:wechaty-puppet-padlocal',
+    HA_WECHATY_PUPPET_SERVICE_TOKEN: 'token',
   }
 
   const options = envWechaty(ENV)[0]
@@ -54,8 +54,8 @@ test('envWechaty() for 2 puppets and 1 token set', async t => {
   delete options.memory
 
   const EXPECTED_PUPPET_OPTIONS = {
-    name: 'ha-wechaty<wechaty-puppet-hostie>#0',
-    puppet: 'wechaty-puppet-hostie',
+    name: 'ha-wechaty<wechaty-puppet-service>#0',
+    puppet: 'wechaty-puppet-service',
     puppetOptions: { token: 'token' },
   }
 
@@ -64,9 +64,9 @@ test('envWechaty() for 2 puppets and 1 token set', async t => {
 
 test('envWechaty() for 2 puppets and 1 token for each', async t => {
   const ENV = {
-    HA_WECHATY_PUPPET: 'wechaty-puppet-hostie:wechaty-puppet-padplus',
-    HA_WECHATY_PUPPET_HOSTIE_TOKEN: 'hostie_token',
-    HA_WECHATY_PUPPET_PADPLUS_TOKEN: 'padplus_token',
+    HA_WECHATY_PUPPET: 'wechaty-puppet-service:wechaty-puppet-padlocal',
+    HA_WECHATY_PUPPET_PADLOCAL_TOKEN: 'padlocal_token',
+    HA_WECHATY_PUPPET_SERVICE_TOKEN: 'service_token',
   }
 
   const NAME = 'test-name'
@@ -81,14 +81,14 @@ test('envWechaty() for 2 puppets and 1 token for each', async t => {
 
   const EXPECTED_PUPPET_OPTIONS_LIST = [
     {
-      name: 'test-name<wechaty-puppet-hostie>#0',
-      puppet: 'wechaty-puppet-hostie',
-      puppetOptions: { token: 'hostie_token' },
+      name: 'test-name<wechaty-puppet-service>#0',
+      puppet: 'wechaty-puppet-service',
+      puppetOptions: { token: 'service_token' },
     },
     {
-      name: 'test-name<wechaty-puppet-padplus>#0',
-      puppet: 'wechaty-puppet-padplus',
-      puppetOptions: { token: 'padplus_token' },
+      name: 'test-name<wechaty-puppet-padlocal>#0',
+      puppet: 'wechaty-puppet-padlocal',
+      puppetOptions: { token: 'padlocal_token' },
     },
   ]
 
@@ -97,10 +97,10 @@ test('envWechaty() for 2 puppets and 1 token for each', async t => {
 
 test('envWechaty() for 2 puppets and 2 token for each', async t => {
   const ENV = {
-    HA_WECHATY_PUPPET: 'wechaty-puppet-hostie:wechaty-puppet-padplus',
+    HA_WECHATY_PUPPET: 'wechaty-puppet-service:wechaty-puppet-padlocal',
 
-    HA_WECHATY_PUPPET_HOSTIE_TOKEN: 'hostie_token0:hostie_token1',
-    HA_WECHATY_PUPPET_PADPLUS_TOKEN: 'padplus_token0:padplus_token1',
+    HA_WECHATY_PUPPET_PADLOCAL_TOKEN: 'padlocal_token0:padlocal_token1',
+    HA_WECHATY_PUPPET_SERVICE_TOKEN: 'service_token0:service_token1',
   }
 
   const NAME = 'test-name'
@@ -110,24 +110,24 @@ test('envWechaty() for 2 puppets and 2 token for each', async t => {
 
   const EXPECTED_PUPPET_OPTIONS_LIST = [
     {
-      name: 'test-name<wechaty-puppet-hostie>#0',
-      puppet: 'wechaty-puppet-hostie',
-      puppetOptions: { token: 'hostie_token0' },
+      name: 'test-name<wechaty-puppet-service>#0',
+      puppet: 'wechaty-puppet-service',
+      puppetOptions: { token: 'service_token0' },
     },
     {
-      name: 'test-name<wechaty-puppet-hostie>#1',
-      puppet: 'wechaty-puppet-hostie',
-      puppetOptions: { token: 'hostie_token1' },
+      name: 'test-name<wechaty-puppet-service>#1',
+      puppet: 'wechaty-puppet-service',
+      puppetOptions: { token: 'service_token1' },
     },
     {
-      name: 'test-name<wechaty-puppet-padplus>#0',
-      puppet: 'wechaty-puppet-padplus',
-      puppetOptions: { token: 'padplus_token0' },
+      name: 'test-name<wechaty-puppet-padlocal>#0',
+      puppet: 'wechaty-puppet-padlocal',
+      puppetOptions: { token: 'padlocal_token0' },
     },
     {
-      name: 'test-name<wechaty-puppet-padplus>#1',
-      puppet: 'wechaty-puppet-padplus',
-      puppetOptions: { token: 'padplus_token1' },
+      name: 'test-name<wechaty-puppet-padlocal>#1',
+      puppet: 'wechaty-puppet-padlocal',
+      puppetOptions: { token: 'padlocal_token1' },
     },
 
   ]

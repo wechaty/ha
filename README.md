@@ -32,7 +32,7 @@ Currently we have only one bot on WeChat, which means that if the bot was offlin
 
 #### The Solution #1
 
-Use two (3 or even 4 will be better) WeChat bot at the same time, with the different wechaty-puppet providers (for example: padplus + windows).
+Use two (3 or even 4 will be better) WeChat bot at the same time, with the different wechaty-puppet providers (for example: padlocal + windows).
 
 So when an issue event has come, we can use a RR (round robin) or other very easy to implementing algorithm to make our service both load-balancable and high-available.
 
@@ -70,16 +70,16 @@ import { HAWechaty } from 'ha-wechaty'
 import { Wechaty } from 'wechaty'
 
 const wechaty1 = new Wechaty({
-  puppet: 'wechaty-puppet-hostie',
+  puppet: 'wechaty-puppet-service',
   puppetOptions: {
-    token: 'hostie-token'
+    token: 'puppet-service-token'
   }
 })
 
 const wechaty2 = new Wechaty({
-  puppet: 'wechaty-puppet-padplus',
+  puppet: 'wechaty-puppet-padlocal',
   puppetOptions: {
-    token: 'padplus-token'
+    token: 'padlocal-token'
   }
 })
 
@@ -107,7 +107,7 @@ The wechaty puppet list, seprated by a colon (`:`).
 Examples:
 
 ```sh
-export HA_WECHATY_PUPPET=wechaty-puppet-hostie:wechaty-puppet-padplus
+export HA_WECHATY_PUPPET=wechaty-puppet-service:wechaty-puppet-padlocal
 ```
 
 ### 2 `HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN`
@@ -118,15 +118,15 @@ For example:
 
 | Puppet Provider | ${PROTOCOL} | HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN |
 | :--- | :--- | :--- |
-| wechaty-puppet-hostie  | hostie  | HA_WECHATY_PUPPET_HOSTIE_TOKEN |
-| wechaty-puppet-padplus | padplus | HA_WECHATY_PUPPET_PADPLUS_TOKEN |
+| wechaty-puppet-service  | puppet-service  | HA_WECHATY_PUPPET_SERVICE_TOKEN |
+| wechaty-puppet-padlocal | padlocal | HA_WECHATY_PUPPET_PADLOCAL_TOKEN |
 
 The token set to this environment variable will become the default value of `puppetOptions.token` when instantiating Wechaty.
 
 To specify more tokens for a specific puppet, use a colon (`:`) to separate them, for example:
 
 ```sh
-export HA_WECHATY_PUPPET_HOSTIE_TOKEN=hostie_token_1:hostie_token_2
+export HA_WECHATY_PUPPET_SERVICE_TOKEN=service_token_1:service_token_2
 ```
 
 ## Development

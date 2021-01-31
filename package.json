@@ -62,7 +62,7 @@
     "wechaty-ducks-contrib": "^0.2.2",
     "wechaty-plugin-contrib": "^0.4.12",
     "wechaty-puppet-mock": "^0.22.30",
-    "wechaty-puppet-padplus": "^0.7.20"
+    "wechaty-puppet-padlocal": "^0.2.29"
   },
   "repository": {
     "type": "git",
