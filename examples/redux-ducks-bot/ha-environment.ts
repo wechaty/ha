@@ -2,17 +2,16 @@ import {
   Message,
 }                     from 'wechaty'
 import {
-  MockEnvironment,
-  Mocker,
+  mock,
 }                     from 'wechaty-puppet-mock'
 
 import {
   CHATIE_OA_ID,
 }                     from '../../src/config'
 
-const HaEnvironment = (): MockEnvironment => {
+const HaEnvironment = (): mock.EnvironmentMock => {
 
-  return function HaEnvironmentStart (mocker: Mocker) {
+  return function HaEnvironmentStart (mocker: mock.Mocker) {
 
     const [ user, mary, mike ] = mocker.createContacts(3)
 
