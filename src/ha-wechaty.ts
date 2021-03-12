@@ -25,7 +25,7 @@ import {
   WechatyPlugin,
   Contact,
 }                           from 'wechaty'
-import { WechatyEventName } from 'wechaty/dist/src/wechaty'
+import { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
 import { StateSwitch }      from 'state-switch'
 import cuid                 from 'cuid'
 import {
