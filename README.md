@@ -139,10 +139,11 @@ npm run redux-devtools
 
 ## Links
 
-### Back Off Alghorithm
+### Backoff Alghorithm
 
 1. [Googl Cloud - Truncated exponential backoff](https://cloud.google.com/storage/docs/exponential-backoff)
 1. [Power of RxJS when using exponential backoff](https://medium.com/angular-in-depth/power-of-rxjs-when-using-exponential-backoff-a4b8bde276b0)
+1. [GRPC Connection Backoff Protocol](https://github.com/grpc/grpc/blob/master/doc/connection-backoff.md)
 
 ### Redux
 
