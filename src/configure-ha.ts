@@ -34,7 +34,7 @@ import {
 
 import * as HaDuck    from './duck/'
 import { HAWechaty }  from './ha-wechaty'
-import { envWechaty } from './env-wechaty'
+import { envWechaty as getWechatyOptionsListFromEnv } from './env-wechaty'
 
 let initialized = false
 
@@ -59,7 +59,11 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
   log.verbose('HAWechaty', 'configureHa(%s)', JSON.stringify(options))
 
   if (initialized) {
-    throw new Error('configureHa() can not be called twice: it has already been called before.')
+    throw new Error([
+      'configureHa() can not be called twice:',
+      'it has only one global configurable instance',
+      'and it has already been called before.',
+    ].join(' '))
   }
   initialized = true
 
@@ -132,13 +136,11 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
     name   : options.name,
   })
 
-  const wechatyOptionsList = envWechaty(
+  const wechatyList = getWechatyOptionsListFromEnv(
     process.env as any,
     options.name,
     options.memory,
-  )
-
-  const wechatyList = wechatyOptionsList.map(opt => new Wechaty(opt))
+  ).map(wechatyOptions => new Wechaty(wechatyOptions))
 
   haWechaty.add(
     ...wechatyList

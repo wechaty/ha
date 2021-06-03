@@ -43,7 +43,7 @@ import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
 import {
   HAWechaty,
   Duck as HaDuck,
-}                             from '../../src/'
+}                             from '../../src/mod'
 
 import { HaEnvironment } from './ha-environment'
 // import { CHATIE_OA_ID } from '../../src/config'

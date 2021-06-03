@@ -19,7 +19,7 @@
  */
 import { Wechaty }    from 'wechaty'
 
-import { HAWechaty }  from '../'
+import { HAWechaty }  from '../mod'
 
 import { State } from './reducers'
 

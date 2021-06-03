@@ -83,8 +83,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     }
 
     if (okList.length > 0) {
-      const index = Math.floor(Math.random() * okList.length)
-      return okList[index]
+      const randomIndex = Math.floor(Math.random() * okList.length)
+      return okList[randomIndex]
     }
 
     return null
@@ -239,7 +239,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     log.verbose('HAWechaty', 'start()')
 
     if (this.state.on()) {
-      await this.state.ready()
+      await this.state.ready('on')
+      return
     }
 
     try {
@@ -254,6 +255,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
       for (const wechaty of this.wechatyList) {
         log.silly('HAWechaty', 'start() %s starting', wechaty)
         if (wechaty.state.off()) {
+          await wechaty.state.off()
           await wechaty.start()
         } else {
           log.verbose('HAWechaty', 'start() %s skip starting: its already started.', wechaty)
@@ -277,6 +279,11 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
 
   public async stop () {
     log.verbose('HAWechaty', 'stop()')
+
+    if (this.state.off()) {
+      await this.state.ready('off')
+      return
+    }
 
     try {
       this.state.off('pending')

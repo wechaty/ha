@@ -32,7 +32,7 @@ import {
 
 import {
   getHa,
-}                   from '../'
+}                   from '../mod'
 import {
   CHATIE_OA_ID,
   DONG,

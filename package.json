@@ -2,10 +2,10 @@
   "name": "ha-wechaty",
   "version": "0.5.1",
   "description": "HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.",
-  "main": "dist/src/index.js",
-  "typings": "dist/src/index.d.ts",
+  "main": "dist/src/mod.js",
+  "typings": "dist/src/mod.d.ts",
   "engines": {
-    "wechaty": ">=0.60"
+    "node": ">=14"
   },
   "directories": {
     "doc": "docs",
@@ -38,7 +38,7 @@
     "wechaty-redux": "^0.3.1"
   },
   "peerDependencies": {
-    "wechaty": "*"
+    "wechaty": ">0.61.9"
   },
   "devDependencies": {
     "@chatie/eslint-config": "^0.12.3",
@@ -58,7 +58,7 @@
     "shx": "^0.3.3",
     "tstest": "^0.4.10",
     "utility-types": "^3.10.0",
-    "wechaty": "^0.61.2",
+    "wechaty": "^0.61.9",
     "wechaty-ducks-contrib": "^0.2.2",
     "wechaty-plugin-contrib": "^0.14.17",
     "wechaty-puppet-mock": "^0.29.2",

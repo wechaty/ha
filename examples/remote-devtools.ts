@@ -39,7 +39,7 @@ import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
 import {
   Duck as HaDuck,
   configureHa,
-}                             from '../src/'
+}                             from '../src/mod'
 
 import { HaEnvironment } from './redux-ducks-bot/ha-environment'
 // import { CHATIE_OA_ID } from '../../src/config'
