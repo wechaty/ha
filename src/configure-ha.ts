@@ -34,7 +34,7 @@ import {
 
 import * as HaDuck    from './duck/'
 import { HAWechaty }  from './ha-wechaty'
-import { getWechatyOptionsListFromEnv } from './env-wechaty'
+import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env'
 
 let initialized = false
 
