@@ -42,8 +42,8 @@ import {
   takeUntilLoginout,
 }                       from '../operators/mod'
 
-const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
-const RESET_WAIT_MILLISECONDS = milliAroundSeconds(120)
+const DING_WAIT_MILLISECONDS  = () => milliAroundSeconds(60)
+const RESET_WAIT_MILLISECONDS = () => milliAroundSeconds(120)
 
 const wechatyMessageFilter$ = (action$: ReturnType<Epic>, wechatyId: string) => action$.pipe(
   filter(isActionOf(WechatyDuck.actions.messageEvent)),

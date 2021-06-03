@@ -39,6 +39,9 @@ const isHaNotAvailable  = (action: FailureWechatyAction) => !getBundle().selecto
 /**
  * In:  actions.failureWechaty
  * Out: actions.failureHA
+ *
+ * Huan(202106): race condition for failureWechaty & failureHa:
+ *  When we got a action.failureWechaty, maybe the HA status is not updated yet
  */
 const failureHaEpic: Epic = action$ => action$.pipe(
   filter(isActionOf(actions.failureWechaty)),

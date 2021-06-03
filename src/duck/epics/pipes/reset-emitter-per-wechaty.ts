@@ -63,7 +63,7 @@ const resetEmitterPerWechaty$ = (
    *  Failure will be emitted if there's no message
    *  for more than RESET_WAIT_MILLISECONDS
    */
-  debounce(() => interval(RESET_WAIT_MILLISECONDS)),
+  debounce(() => interval(RESET_WAIT_MILLISECONDS())),
 
   switchMap(action => merge(
     /**
@@ -71,7 +71,7 @@ const resetEmitterPerWechaty$ = (
      */
     of(failureWechaty(action.payload.wechatyId)),
 
-    timer(0, RESET_WAIT_MILLISECONDS).pipe(
+    timer(0, RESET_WAIT_MILLISECONDS()).pipe(
       mapTo(WechatyDuck.actions.reset(
         action.payload.wechatyId,
         'ha-wechaty',

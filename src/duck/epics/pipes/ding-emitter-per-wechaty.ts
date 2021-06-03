@@ -65,10 +65,10 @@ const dingEmitterPerWechaty$ = (
    *  for more than DING_WAIT_MILLISECONDS
    */
   // Huan(202106): use debounceTime() instead
-  debounce(() => interval(DING_WAIT_MILLISECONDS)),
+  debounce(() => interval(DING_WAIT_MILLISECONDS())),
   switchMap(action => merge(
     // of(failureWechaty(action.payload.wechatyId)),
-    timer(0, Math.floor(DING_WAIT_MILLISECONDS / 3)).pipe(
+    timer(0, Math.floor(DING_WAIT_MILLISECONDS() / 3)).pipe(
       mapTo(dingHa(
         action.payload.wechatyId,
         CHATIE_OA_ID,
