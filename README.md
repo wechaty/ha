@@ -110,23 +110,20 @@ Examples:
 export HA_WECHATY_PUPPET=wechaty-puppet-service:wechaty-puppet-padlocal
 ```
 
-### 2 `HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN`
+### 2 `HA_WECHATY_PUPPET_TOKEN`
 
-The `${PROTOCOL}` could be the puppet name that the Wechaty supported.
+Wechaty Puppet Service Tokens that required by the puppets.
 
-For example:
+This is a token list, seprated by a colon (`:`), map to each puppet from `HA_WECHATY_PUPPET`.
 
-| Puppet Provider | ${PROTOCOL} | HA_WECHATY_PUPPET_${PROTOCOL}_TOKEN |
-| :--- | :--- | :--- |
-| wechaty-puppet-service  | puppet-service  | HA_WECHATY_PUPPET_SERVICE_TOKEN |
-| wechaty-puppet-padlocal | padlocal | HA_WECHATY_PUPPET_PADLOCAL_TOKEN |
+> Leave it empty if a puppet does not require a token.
 
 The token set to this environment variable will become the default value of `puppetOptions.token` when instantiating Wechaty.
 
 To specify more tokens for a specific puppet, use a colon (`:`) to separate them, for example:
 
 ```sh
-export HA_WECHATY_PUPPET_SERVICE_TOKEN=service_token_1:service_token_2
+export HA_WECHATY_PUPPET_TOKEN=token_1:token_2
 ```
 
 ## Development
@@ -170,7 +167,11 @@ See issue: Backoff straitegy [#2](https://github.com/wechaty/ha-wechaty/issues/2
 
 ## History
 
-### master
+### master (v0.7)
+
+#### BREAKING CHANGE
+
+1. Change `HA_WECHATY_PUPPET_`~~${PROTOCOL}_~~`TOKEN` to `HA_WECHATY_PUPPET_TOKEN` for easy understanding and prevent mis-configuration.
 
 ### v0.4 (Jun 7, 2020)
 

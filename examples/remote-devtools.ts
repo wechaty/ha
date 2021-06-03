@@ -50,7 +50,7 @@ const ducks = new Ducks({
   wechaty : WechatyDuck,
 })
 
-const name = process.env.WECHATY_NAME || 'heroku-wechaty'
+const name = process.env['WECHATY_NAME'] || 'heroku-wechaty'
 
 const haWechaty = configureHa({
   ducks,

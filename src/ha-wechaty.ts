@@ -84,7 +84,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
 
     if (okList.length > 0) {
       const randomIndex = Math.floor(Math.random() * okList.length)
-      return okList[randomIndex]
+      return okList[randomIndex]!
     }
 
     return null
@@ -150,8 +150,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     }
 
     if (okList.length > 0) {
-      const index = Math.floor(Math.random() * okList.length)
-      return okList[index]
+      const randomIndex = Math.floor(Math.random() * okList.length)
+      return okList[randomIndex]!
     }
 
     return null
@@ -335,7 +335,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
       .some(wechaty => wechaty.logonoff())
   }
 
-  public on (
+  override on (
     eventName     : WechatyEventName,
     handlerModule : string | Function,
   ): this {

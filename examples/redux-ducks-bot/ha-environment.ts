@@ -4,6 +4,7 @@ import {
 import {
   mock,
 }                     from 'wechaty-puppet-mock'
+import { ContactMock } from 'wechaty-puppet-mock/dist/src/mock/mod'
 
 import {
   CHATIE_OA_ID,
@@ -13,7 +14,7 @@ const HaEnvironment = (): mock.EnvironmentMock => {
 
   return function HaEnvironmentStart (mocker: mock.Mocker) {
 
-    const [ user, mary, mike ] = mocker.createContacts(3)
+    const [user, mary, mike] = mocker.createContacts(3) as [ContactMock, ContactMock, ContactMock]
 
     // Initialize WeChat system accounts
     mocker.createContact({ id: 'filehelper' })
