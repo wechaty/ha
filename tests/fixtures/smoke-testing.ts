@@ -30,6 +30,7 @@ async function main () {
 
   const ha = configureHa()
   const version = ha.version()
+  console.info('version:', version, 'passed smoke testing.')
 
   return 0
 }
