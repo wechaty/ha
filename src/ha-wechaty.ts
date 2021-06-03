@@ -39,8 +39,8 @@ import {
   VERSION,
   log,
 }                     from './config'
-import * as haDuck    from './duck/'
-import * as instances from './manager'
+import * as haDuck    from './duck/mod'
+import { addHa } from './global-instance-manager'
 import { DucksMapObject } from 'ducks/dist/src/duck'
 
 export interface HAWechatyOptions<T extends DucksMapObject> {
@@ -169,7 +169,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     this.bundle = options.ducks.ducksify(haDuck as any) as any
     this.ducks = options.ducks
 
-    instances.addHa(this)
+    addHa(this)
   }
 
   public name (): string {

@@ -20,7 +20,7 @@
 import {
   createStore,
   compose,
-}                from 'redux'
+}                                     from 'redux'
 import { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 
 import { Ducks }                      from 'ducks'
@@ -32,7 +32,7 @@ import {
   Wechaty,
 }                     from 'wechaty'
 
-import * as HaDuck    from './duck/'
+import * as HaDuck    from './duck/mod'
 import { HAWechaty }  from './ha-wechaty'
 import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env'
 

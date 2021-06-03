@@ -40,7 +40,7 @@ import {
 
 import {
   takeUntilLoginout,
-}                       from '../operators/'
+}                       from '../operators/mod'
 
 const DING_WAIT_MILLISECONDS  = milliAroundSeconds(60)
 const RESET_WAIT_MILLISECONDS = milliAroundSeconds(120)

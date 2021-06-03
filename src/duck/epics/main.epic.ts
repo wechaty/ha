@@ -30,7 +30,7 @@ import {
   wechatyMessage$$,
   dingEmitterPerWechaty$,
   resetEmitterPerWechaty$,
-}                           from './pipes/'
+}                           from './pipes/mod'
 
 /**
  * Main Epic at here:

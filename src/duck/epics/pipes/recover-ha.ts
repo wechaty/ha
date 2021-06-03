@@ -19,7 +19,7 @@
  */
 import {
   of,
-  empty,
+  EMPTY,
 }                     from 'rxjs'
 
 import { Duck as WechatyDuck } from 'wechaty-redux'
@@ -34,7 +34,7 @@ const recoverHa$ = (action: RecoverAction) => {
    * Need not recovery because it's available
    */
   if (getBundle().selectors.isHaAvailableByWechaty(action.payload.wechatyId)) {
-    return empty()
+    return EMPTY
   }
 
   /**

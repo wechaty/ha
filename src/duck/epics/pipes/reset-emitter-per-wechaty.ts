@@ -42,7 +42,7 @@ import {
 import {
   takeUntilDong,
   takeUntilLoginout,
-}                     from '../operators/'
+}                     from '../operators/mod'
 
 import {
   GroupedMessageByWechaty,

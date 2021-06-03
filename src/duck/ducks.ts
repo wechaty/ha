@@ -3,7 +3,7 @@ import {
   Ducks,
 }           from 'ducks'
 
-import * as haDuck from './'
+import * as haDuck from './mod'
 
 let instance: Ducks<any>
 const getBundle = () => instance.ducksify(haDuck) as Bundle<typeof haDuck>

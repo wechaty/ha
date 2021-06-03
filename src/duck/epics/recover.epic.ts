@@ -34,7 +34,7 @@ import * as actions   from '../actions'
 import {
   recoverWechaty$,
   recoverHa$,
-}                     from './pipes/'
+}                     from './pipes/mod'
 
 /**
  * In: actions.dongHA

@@ -24,6 +24,7 @@ import {
 }                 from 'rxjs'
 import {
   debounce,
+  // debounceTime,
   mapTo,
   switchMap,
 }                   from 'rxjs/operators'
@@ -41,7 +42,7 @@ import {
 import {
   takeUntilDong,
   takeUntilLoginout,
-}                     from '../operators/'
+}                     from '../operators/mod'
 
 import {
   GroupedMessageByWechaty,
@@ -63,6 +64,7 @@ const dingEmitterPerWechaty$ = (
    *  Ding testing will be emitted if there's no message
    *  for more than DING_WAIT_MILLISECONDS
    */
+  // Huan(202106): use debounceTime() instead
   debounce(() => interval(DING_WAIT_MILLISECONDS)),
   switchMap(action => merge(
     // of(failureWechaty(action.payload.wechatyId)),

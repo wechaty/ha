@@ -26,7 +26,7 @@ import {
 }                   from 'rxjs/operators'
 import { Epic }     from 'redux-observable'
 
-import * as HaDuck from '../../'
+import * as HaDuck from '../../mod'
 
 /**
  * Huan(202004):
