@@ -167,7 +167,7 @@ See issue: Backoff straitegy [#2](https://github.com/wechaty/ha-wechaty/issues/2
 
 ## History
 
-### master (v0.7)
+### main (v0.7)
 
 #### BREAKING CHANGE
 
