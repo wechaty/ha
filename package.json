@@ -40,14 +40,14 @@
   "dependencies": {
     "cuid": "^2.1.8",
     "ducks": "^0.10.2",
-    "redux": "^4.1.0",
-    "redux-observable": "^2.0.0-rc.2",
-    "rxjs": "^7.1.0",
+    "redux": "^4.1.1",
+    "redux-observable": "^2.0.0",
+    "rxjs": "^7.3.0",
     "typesafe-actions": "^5.1.0",
     "wechaty-redux": "^0.3.1"
   },
   "peerDependencies": {
-    "wechaty": ">=0.61.9"
+    "wechaty": ">=0.62.3"
   },
   "devDependencies": {
     "@chatie/eslint-config": "^0.14.1",
@@ -71,9 +71,9 @@
     "utility-types": "^3.10.0",
     "wechaty": "^0.61.9",
     "wechaty-ducks-contrib": "^0.2.2",
-    "wechaty-plugin-contrib": "^0.14.17",
+    "wechaty-plugin-contrib": "^0.14.23",
     "wechaty-puppet-mock": "^0.29.2",
-    "wechaty-puppet-padlocal": "^0.3.0"
+    "wechaty-puppet-padlocal": "^0.4.2"
   },
   "repository": {
     "type": "git",

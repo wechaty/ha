@@ -35,9 +35,7 @@ import {
   Duck as WechatyDuck,
 }                       from 'wechaty-redux'
 
-import {
-  failureWechaty,
-}                     from '../../actions.js'
+import * as actions      from '../../actions.js'
 
 import {
   takeUntilDong,
@@ -69,12 +67,12 @@ const resetEmitterPerWechaty$ = (
     /**
      * Fail the Wechaty first
      */
-    of(failureWechaty(action.payload.wechatyId)),
+    of(actions.failureWechaty(action.payload.wechatyId)),
 
     timer(0, RESET_WAIT_MILLISECONDS()).pipe(
       mapTo(WechatyDuck.actions.reset(
         action.payload.wechatyId,
-        'ha-wechaty',
+        'ha-wechaty dong timeout for ' + action.payload.wechatyId,
       )),
       takeUntilDong(action.payload.wechatyId, action$),
       takeUntilLoginout(action.payload.wechatyId, action$),
