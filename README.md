@@ -2,6 +2,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/ha-wechaty?color=brightgreen)](https://www.npmjs.com/package/ha-wechaty)
 [![NPM](https://github.com/wechaty/ha-wechaty/workflows/NPM/badge.svg)](https://github.com/wechaty/ha-wechaty/actions?query=workflow%3ANPM)
+[![ES Modules](https://img.shields.io/badge/ES-Modules-brightgreen)](https://github.com/Chatie/tsconfig/issues/16)
 
 ![HAWechaty](https://wechaty.github.io/ha-wechaty/images/ha-wechaty.png)
 
