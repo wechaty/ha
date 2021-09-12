@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 
 /**
  *   Wechaty Open Source Software - https://github.com/wechaty
@@ -21,8 +21,8 @@
  */
 import { test } from 'tstest'
 
-import { State } from './reducers'
-import * as selectors from './selectors'
+import type { State } from './reducers.js'
+import * as selectors from './selectors.js'
 
 test('isHaAvailable() for empty state', async t => {
   const state: State = {

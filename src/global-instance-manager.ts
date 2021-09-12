@@ -17,7 +17,7 @@
  *   limitations under the License.
  *
  */
-import { HAWechaty } from './ha-wechaty'
+import type { HAWechaty } from './ha-wechaty.js'
 
 const instances = new Map<string, HAWechaty>()
 

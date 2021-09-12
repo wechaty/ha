@@ -24,13 +24,13 @@ import {
   mergeMap,
 }                   from 'rxjs/operators'
 
-import { Epic }     from 'redux-observable'
+import type { Epic }     from 'redux-observable'
 
 import {
   wechatyMessage$$,
   dingEmitterPerWechaty$,
   resetEmitterPerWechaty$,
-}                           from './pipes/mod'
+}                           from './pipes/mod.js'
 
 /**
  * Main Epic at here:

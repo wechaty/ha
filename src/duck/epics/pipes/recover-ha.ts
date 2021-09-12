@@ -22,10 +22,10 @@ import {
   EMPTY,
 }                     from 'rxjs'
 
-import { Duck as WechatyDuck } from 'wechaty-redux'
+import type { Duck as WechatyDuck } from 'wechaty-redux'
 
-import { getBundle }  from '../../ducks'
-import * as actions   from '../../actions'
+import { getBundle }  from '../../ducks.js'
+import * as actions   from '../../actions.js'
 
 type RecoverAction = ReturnType<typeof actions.dongHa> | ReturnType<typeof WechatyDuck.actions.loginEvent>
 

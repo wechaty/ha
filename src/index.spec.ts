@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 
 /**
  *   Wechaty Open Source Software - https://github.com/wechaty
@@ -21,8 +21,8 @@
  */
 import { test }  from 'tstest'
 
-// import * as index from './index'
+// import * as index from './index.js'
 
-test('tbw', async (t) => {
-  t.skip('tbw')
+test('tbw', async t => {
+  await t.skip('tbw')
 })

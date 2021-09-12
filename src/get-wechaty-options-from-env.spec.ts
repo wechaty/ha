@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 /**
  *   Wechaty Open Source Software - https://github.com/wechaty
  *
@@ -18,9 +18,9 @@
  *   limitations under the License.
  *
  */
-import test  from 'tstest'
+import { test } from 'tstest'
 
-import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env'
+import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env.js'
 
 test('envWechaty() smoke testing', async t => {
   const ENV = {

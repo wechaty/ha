@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 
 /**
  *   Wechaty Open Source Software - https://github.com/wechaty
@@ -19,13 +19,13 @@
  *   limitations under the License.
  *
  */
-import test  from 'tstest'
+import { test } from 'tstest'
 
 import {
   HAWechaty,
-}               from './ha-wechaty'
+}               from './ha-wechaty.js'
 
-test('tbw', async (t) => {
+test('tbw', async t => {
   const ha = new HAWechaty({
     ducks: {
       ducksify: (..._: any[]) => ({} as any),

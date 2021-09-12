@@ -23,11 +23,11 @@ import {
   filter,
   map,
 }                   from 'rxjs/operators'
-import { Epic }     from 'redux-observable'
+import type { Epic }     from 'redux-observable'
 
 import { Duck as WechatyDuck } from 'wechaty-redux'
 
-import * as actions     from '../actions'
+import * as actions     from '../actions.js'
 
 /**
  *

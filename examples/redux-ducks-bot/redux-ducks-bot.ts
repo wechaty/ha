@@ -43,10 +43,10 @@ import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
 import {
   HAWechaty,
   Duck as HaDuck,
-}                             from '../../src/mod'
+}                             from '../../src/mod.js'
 
-import { HaEnvironment } from './ha-environment'
-// import { CHATIE_OA_ID } from '../../src/config'
+import { HaEnvironment } from './ha-environment.js'
+// import { CHATIE_OA_ID } from '../../src/config.js'
 
 const ducks = new Ducks({
   counter : CounterDuck,

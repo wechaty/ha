@@ -28,7 +28,7 @@ import {
   merge,
   of,
 }                       from 'rxjs'
-import { Epic }         from 'redux-observable'
+import type { Epic }         from 'redux-observable'
 
 import {
   Duck as WechatyDuck,
@@ -36,11 +36,11 @@ import {
 
 import {
   milliAroundSeconds,
-}                       from '../../utils'
+}                       from '../../utils.js'
 
 import {
   takeUntilLoginout,
-}                       from '../operators/mod'
+}                       from '../operators/mod.js'
 
 const DING_WAIT_MILLISECONDS  = () => milliAroundSeconds(60)
 const RESET_WAIT_MILLISECONDS = () => milliAroundSeconds(120)

@@ -17,12 +17,12 @@
  *   limitations under the License.
  *
  */
-import { Dispatch } from 'redux'
-import { Wechaty } from 'wechaty'
+import type { Dispatch } from 'redux'
+import type { Wechaty } from 'wechaty'
 
-import { HAWechaty } from '../ha-wechaty'
+import type { HAWechaty } from '../ha-wechaty.js'
 
-import * as actions from './actions'
+import * as actions from './actions.js'
 
 const ding = (dispatch: Dispatch) => (haId: string, data: string) => {
   return dispatch(actions.dingHa(haId, data))

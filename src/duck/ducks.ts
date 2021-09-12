@@ -1,9 +1,9 @@
-import {
+import type {
   Bundle,
   Ducks,
 }           from 'ducks'
 
-import * as haDuck from './mod'
+import * as haDuck from './mod.js'
 
 let instance: Ducks<any>
 const getBundle = () => instance.ducksify(haDuck) as Bundle<typeof haDuck>

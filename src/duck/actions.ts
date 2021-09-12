@@ -19,7 +19,7 @@
  */
 import { createAction } from 'typesafe-actions'
 
-import * as types from './types'
+import * as types from './types.js'
 
 const prepareHa         = (haId: string)      => ({ haId })
 const prepareWechaty    = (wechatyId: string) => ({ wechatyId })

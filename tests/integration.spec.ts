@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 
 /**
  *   Wechaty Open Source Software - https://github.com/wechaty
@@ -27,9 +27,9 @@
 // import {
 //   HAWechaty,
 //   // HAWechatyOptions,
-// }                               from '../src/'
+// }                               from '../src/.js'
 
-// test('integration testing', async (t) => {
+// test('integration testing', async t => {
 //   const TOKEN    = 'test_token'
 //   const ENDPOINT = '0.0.0.0:8788'
 //   const DING     = 'ding_data'
@@ -90,3 +90,5 @@
 //   await puppetService.stop()
 //   await serviceServer.stop()
 // })
+
+export {}

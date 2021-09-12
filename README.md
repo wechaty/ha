@@ -167,7 +167,11 @@ See issue: Backoff straitegy [#2](https://github.com/wechaty/ha-wechaty/issues/2
 
 ## History
 
-### main (v0.7)
+### master v0.9 (Sep 12, 2021)
+
+1. ES Modules supported
+  
+### v0.7 (Jun 4, 2021)
 
 #### BREAKING CHANGE
 

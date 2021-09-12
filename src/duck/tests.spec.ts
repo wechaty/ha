@@ -27,8 +27,8 @@
 // import rxjs       from 'rxjs'
 // import operators  from 'rxjs/operators'
 
-// import actions  from './actions'
-// import epics    from './epics'
+// import actions  from './actions.js'
+// import epics    from './epics.js'
 
 // // void TestScheduler
 // // void Wechaty
@@ -148,3 +148,5 @@
 //     t.deepEqual(actions, [expectedPayload], 'actions should be expected')
 //   })
 // })
+
+export {}

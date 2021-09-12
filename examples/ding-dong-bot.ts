@@ -24,7 +24,7 @@ import {
 }                  from 'wechaty-plugin-contrib'
 import { log }      from 'wechaty'
 
-import { configureHa } from '../src/mod'
+import { configureHa } from '../src/mod.js'
 
 import dotenv from 'dotenv'
 dotenv.config()

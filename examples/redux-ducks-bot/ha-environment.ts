@@ -1,14 +1,14 @@
 import {
   Message,
 }                     from 'wechaty'
-import {
+import type {
   mock,
 }                     from 'wechaty-puppet-mock'
-import { ContactMock } from 'wechaty-puppet-mock/dist/src/mock/mod'
+import type { ContactMock } from 'wechaty-puppet-mock/dist/src/mock/mod'
 
 import {
   CHATIE_OA_ID,
-}                     from '../../src/config'
+}                     from '../../src/config.js'
 
 const HaEnvironment = (): mock.EnvironmentMock => {
 

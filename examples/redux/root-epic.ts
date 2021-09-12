@@ -22,7 +22,7 @@ import { combineEpics } from 'redux-observable'
 import { Duck as WechatyDuck }    from 'wechaty-redux'
 import { Counter as CounterDuck } from 'wechaty-ducks-contrib'
 
-import * as HaDuck                from '../../src/duck/mod'
+import * as HaDuck                from '../../src/duck/mod.js'
 
 export default combineEpics(
   ...Object.values(HaDuck.epics),

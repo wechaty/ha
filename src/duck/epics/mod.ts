@@ -17,12 +17,12 @@
  *   limitations under the License.
  *
  */
-import { dingEpic }             from './ding.epic'
-import { dongEpic }             from './dong.epic'
-import { failureHaEpic }        from './failure-ha.epic'
-import { failureWechatyEpic }   from './failure-wechaty.epic'
-import { mainEpic }             from './main.epic'
-import { recoverEpic }          from './recover.epic'
+import { dingEpic }             from './ding.epic.js'
+import { dongEpic }             from './dong.epic.js'
+import { failureHaEpic }        from './failure-ha.epic.js'
+import { failureWechatyEpic }   from './failure-wechaty.epic.js'
+import { mainEpic }             from './main.epic.js'
+import { recoverEpic }          from './recover.epic.js'
 
 export {
   dingEpic,

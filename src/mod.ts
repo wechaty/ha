@@ -17,11 +17,11 @@
  *   limitations under the License.
  *
  */
-import * as Duck        from './duck/mod'
-import { VERSION }      from './config'
-import { HAWechaty }    from './ha-wechaty'
-import { configureHa }  from './configure-ha'
-import { getHa }        from './global-instance-manager'
+import * as Duck        from './duck/mod.js'
+import { VERSION }      from './config.js'
+import { HAWechaty }    from './ha-wechaty.js'
+import { configureHa }  from './configure-ha.js'
+import { getHa }        from './global-instance-manager.js'
 
 export {
   configureHa,
