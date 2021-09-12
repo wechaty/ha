@@ -17,10 +17,16 @@
  *   limitations under the License.
  *
  */
-export { log } from 'wechaty'
+import { packageJson } from './package-json.js'
 
-export { VERSION } from './version'
+const VERSION = packageJson.version || '0.0.0'
+
+export { log } from 'wechaty'
 
 export const CHATIE_OA_ID = 'gh_051c89260e5d'  // chatieio official account
 export const DING = 'ding'
 export const DONG = 'dong'
+
+export {
+  VERSION,
+}

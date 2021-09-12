@@ -21,10 +21,10 @@ import {
   createStore,
   compose,
 }                                     from 'redux'
-import { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
+import type { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 
 import { Ducks }                      from 'ducks'
-import { DucksMapObject }             from 'ducks/dist/src/duck'
+import type { DucksMapObject }             from 'ducks/dist/src/duck'
 import { Duck as WechatyDuck }        from 'wechaty-redux'
 import {
   log,
@@ -32,9 +32,9 @@ import {
   Wechaty,
 }                     from 'wechaty'
 
-import * as HaDuck    from './duck/mod'
-import { HAWechaty }  from './ha-wechaty'
-import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env'
+import * as HaDuck    from './duck/mod.js'
+import { HAWechaty }  from './ha-wechaty.js'
+import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env.js'
 
 let initialized = false
 

@@ -17,8 +17,8 @@
  *   limitations under the License.
  *
  */
-import { takeUntilDong } from './take-until-dong'
-import { takeUntilLoginout } from './take-until-loginout'
+import { takeUntilDong } from './take-until-dong.js'
+import { takeUntilLoginout } from './take-until-loginout.js'
 
 export {
   takeUntilDong,

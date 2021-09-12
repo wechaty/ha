@@ -17,11 +17,11 @@
  *   limitations under the License.
  *
  */
-import { dingEmitterPerWechaty$ }   from './ding-emitter-per-wechaty'
-import { recoverHa$ }               from './recover-ha'
-import { recoverWechaty$ }          from './recover-wechaty'
-import { resetEmitterPerWechaty$ }  from './reset-emitter-per-wechaty'
-import { wechatyMessage$$ }         from './wechaty-message'
+import { dingEmitterPerWechaty$ }   from './ding-emitter-per-wechaty.js'
+import { recoverHa$ }               from './recover-ha.js'
+import { recoverWechaty$ }          from './recover-wechaty.js'
+import { resetEmitterPerWechaty$ }  from './reset-emitter-per-wechaty.js'
+import { wechatyMessage$$ }         from './wechaty-message.js'
 
 export {
   dingEmitterPerWechaty$,

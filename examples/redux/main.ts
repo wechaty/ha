@@ -31,7 +31,7 @@ import {
   createEpicMiddleware,
   Epic,
 }                           from 'redux-observable'
-import {
+import type {
   // ActionType,
   // StateType,
   RootState,
@@ -39,9 +39,9 @@ import {
   // createAsyncAction,
 }                           from 'typesafe-actions'
 
-// import rootAction   from './root-action'
-import rootReducer  from './root-reducer'
-import rootEpic     from './root-epic'
+// import rootAction   from './root-action.js'
+import rootReducer  from './root-reducer.js'
+import rootEpic     from './root-epic.js'
 
 export interface Dependency {}
 const dependencies = {} as Dependency

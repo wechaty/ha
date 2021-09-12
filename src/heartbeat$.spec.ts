@@ -17,7 +17,7 @@
  *   limitations under the License.
  *
  */
-// #!/usr/bin/env ts-node
+// #!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 
 // import {
 //   test,
@@ -43,7 +43,7 @@
 //   switchSuccess,
 //   isChatieOA,
 //   message$,
-// }                   from './heartbeat$'
+// }                   from './heartbeat$.js'
 
 // test('switchSuccess()', async t => {
 //   const TRUE = true
@@ -104,3 +104,5 @@
 //     m.expectObservable(result$).toBe(expected, values)
 //   })
 // })
+
+export {}

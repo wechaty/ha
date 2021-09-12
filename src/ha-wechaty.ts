@@ -18,17 +18,17 @@
  *
  */
 import { EventEmitter }     from 'events'
-import {
+import type {
   MemoryCard,
   Room,
   Wechaty,
   WechatyPlugin,
   Contact,
 }                           from 'wechaty'
-import { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
+import type { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
 import { StateSwitch }      from 'state-switch'
 import cuid                 from 'cuid'
-import {
+import type {
   Bundle,
   Ducks,
 }                           from 'ducks'
@@ -38,10 +38,10 @@ import { WechatyRedux } from 'wechaty-redux'
 import {
   VERSION,
   log,
-}                     from './config'
-import * as haDuck    from './duck/mod'
-import { addHa } from './global-instance-manager'
-import { DucksMapObject } from 'ducks/dist/src/duck'
+}                     from './config.js'
+import * as haDuck    from './duck/mod.js'
+import { addHa } from './global-instance-manager.js'
+import type { DucksMapObject } from 'ducks/dist/src/duck'
 
 export interface HAWechatyOptions<T extends DucksMapObject> {
   name?   : string,

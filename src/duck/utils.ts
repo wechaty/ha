@@ -22,7 +22,7 @@ import {
   Message,
 }             from 'wechaty'
 
-import {
+import type {
   MessageType,
 }               from 'wechaty-puppet'
 import {
@@ -32,16 +32,16 @@ import {
 
 import {
   getHa,
-}                   from '../mod'
+}                   from '../mod.js'
 import {
   CHATIE_OA_ID,
   DONG,
   log,
-}             from '../config'
+}             from '../config.js'
 
 // import {
 //   PayloadMessageId,
-// }                   from './schema'
+// }                   from './schema.js'
 
 interface PayloadMessageId { wechatyId: string, messageId: string }
 interface PayloadHaId { haId: string }

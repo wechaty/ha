@@ -17,7 +17,7 @@
  *   limitations under the License.
  *
  */
-import { Message }    from 'wechaty'
+import type { Message }    from 'wechaty'
 import { isActionOf } from 'typesafe-actions'
 import {
   filter,
@@ -25,7 +25,7 @@ import {
   mergeMap,
 }                     from 'rxjs/operators'
 
-import { Epic }       from 'redux-observable'
+import type { Epic }       from 'redux-observable'
 
 import {
   Duck as WechatyDuck,
@@ -33,9 +33,9 @@ import {
 
 import {
   DONG,
-}                       from '../../config'
+}                       from '../../config.js'
 
-import * as actions     from '../actions'
+import * as actions     from '../actions.js'
 
 const messageToDong = (message: Message) => actions.dongHa(message.wechaty.id, message.id)
 

@@ -29,7 +29,7 @@ import {
   switchMap,
 }                   from 'rxjs/operators'
 
-import { Epic }     from 'redux-observable'
+import type { Epic }     from 'redux-observable'
 
 import {
   Duck as WechatyDuck,
@@ -37,17 +37,17 @@ import {
 
 import {
   failureWechaty,
-}                     from '../../actions'
+}                     from '../../actions.js'
 
 import {
   takeUntilDong,
   takeUntilLoginout,
-}                     from '../operators/mod'
+}                     from '../operators/mod.js'
 
 import {
   GroupedMessageByWechaty,
   RESET_WAIT_MILLISECONDS,
-}                           from './wechaty-message'
+}                           from './wechaty-message.js'
 
 /**
  * In:  wechatyMessage$

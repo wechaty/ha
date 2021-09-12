@@ -24,9 +24,9 @@ import {
   filter,
   takeUntil,
 }                   from 'rxjs/operators'
-import { Epic }     from 'redux-observable'
+import type { Epic }     from 'redux-observable'
 
-import * as HaDuck from '../../mod'
+import * as HaDuck from '../../mod.js'
 
 /**
  * Huan(202004):

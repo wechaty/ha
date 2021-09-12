@@ -19,9 +19,9 @@
  */
 import { Wechaty }    from 'wechaty'
 
-import { HAWechaty }  from '../mod'
+import { HAWechaty }  from '../mod.js'
 
-import { State } from './reducers'
+import type { State } from './reducers.js'
 
 const isWechatyAvailable = (state: State) => (wechatyOrId: string | Wechaty): boolean => {
   if (wechatyOrId instanceof Wechaty) {
