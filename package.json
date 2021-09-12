@@ -44,7 +44,7 @@
     "redux-observable": "^2.0.0",
     "rxjs": "^7.3.0",
     "typesafe-actions": "^5.1.0",
-    "wechaty-redux": "^0.3.1"
+    "wechaty-redux": "^0.5.3"
   },
   "peerDependencies": {
     "wechaty": ">=0.62.3"
