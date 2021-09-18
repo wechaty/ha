@@ -25,7 +25,7 @@ import type {
   WechatyPlugin,
   Contact,
 }                           from 'wechaty'
-import type { WechatyEventName } from 'wechaty/dist/esm/src/events/wechaty-events'
+import type { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
 import { StateSwitch }      from 'state-switch'
 import cuid                 from 'cuid'
 import type {
