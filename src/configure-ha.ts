@@ -24,7 +24,7 @@ import {
 import type { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 
 import { Ducks }                      from 'ducks'
-import type { DucksMapObject }             from 'ducks/dist/src/duck'
+import type { DucksMapObject }        from 'ducks/dist/esm/src/duck'
 import { Duck as WechatyDuck }        from 'wechaty-redux'
 import {
   log,

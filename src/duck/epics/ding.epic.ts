@@ -49,7 +49,7 @@ const ding$ = (action: ReturnType<typeof actions.dingHa>) => from(
   catchError(e => of(
     WechatyDuck.actions.errorEvent(
       action.payload.wechatyId,
-      { data: String(e) },
+      { ...e },
     )
   )),
 )

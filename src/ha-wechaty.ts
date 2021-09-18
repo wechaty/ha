@@ -25,7 +25,7 @@ import type {
   WechatyPlugin,
   Contact,
 }                           from 'wechaty'
-import type { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
+import type { WechatyEventName } from 'wechaty/dist/esm/src/events/wechaty-events'
 import { StateSwitch }      from 'state-switch'
 import cuid                 from 'cuid'
 import type {
@@ -41,7 +41,7 @@ import {
 }                     from './config.js'
 import * as haDuck    from './duck/mod.js'
 import { addHa } from './global-instance-manager.js'
-import type { DucksMapObject } from 'ducks/dist/src/duck'
+import type { DucksMapObject } from 'ducks/dist/esm/src/duck'
 
 export interface HAWechatyOptions<T extends DucksMapObject> {
   name?   : string,
