@@ -39,15 +39,15 @@
   },
   "dependencies": {
     "cuid": "^2.1.8",
-    "ducks": "^0.11.6",
-    "redux": "^4.1.1",
-    "redux-observable": "^2.0.0",
-    "rxjs": "^7.3.0",
-    "typesafe-actions": "^5.1.0",
-    "wechaty-redux": "^0.5.3"
+    "typesafe-actions": "^5.1.0"
   },
   "peerDependencies": {
-    "wechaty": ">=0.62.3"
+    "ducks": ">=0.11.6",
+    "redux-observable": "^2.0.0",
+    "redux": "^4.1.1",
+    "rxjs": "^7.3.0",
+    "wechaty-redux": "^0.5.3",
+    "wechaty": ">=0.69.54"
   },
   "devDependencies": {
     "@chatie/eslint-config": "^0.14.1",
@@ -69,7 +69,6 @@
     "tstest": "^0.5.16",
     "typescript": "^4.4.3",
     "utility-types": "^3.10.0",
-    "wechaty": "^0.69.54",
     "wechaty-ducks-contrib": "^0.2.2",
     "wechaty-plugin-contrib": "^0.14.23",
     "wechaty-puppet-mock": "^0.29.2",
