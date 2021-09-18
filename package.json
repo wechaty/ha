@@ -13,7 +13,8 @@
   "engines": {
     "wechaty": ">=0.69",
     "wechaty-puppet": ">=0.43",
-    "node": ">=14"
+    "node": ">=16",
+    "npm": ">=7"
   },
   "directories": {
     "doc": "docs",
@@ -42,11 +43,11 @@
     "typesafe-actions": "^5.1.0"
   },
   "peerDependencies": {
-    "ducks": "^0.11.6",
+    "ducks": "^0.11.10",
     "redux-observable": "^2.0.0",
     "redux": "^4.1.1",
     "rxjs": "^7.3.0",
-    "wechaty-redux": "^0.5.5",
+    "wechaty-redux": "^0.5.6",
     "wechaty": "^0.69.54"
   },
   "devDependencies": {
@@ -69,7 +70,7 @@
     "tstest": "^0.5.16",
     "typescript": "^4.4.3",
     "utility-types": "^3.10.0",
-    "wechaty-ducks-contrib": "^0.2.2",
+    "wechaty-ducks-contrib": "^0.3.4",
     "wechaty-plugin-contrib": "^0.14.23",
     "wechaty-puppet-mock": "^0.29.2",
     "wechaty-puppet-padlocal": "^0.4.2"
