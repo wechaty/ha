@@ -42,12 +42,12 @@
     "typesafe-actions": "^5.1.0"
   },
   "peerDependencies": {
-    "ducks": ">=0.11.6",
+    "ducks": "^0.11.6",
     "redux-observable": "^2.0.0",
     "redux": "^4.1.1",
     "rxjs": "^7.3.0",
-    "wechaty-redux": "^0.5.3",
-    "wechaty": ">=0.69.54"
+    "wechaty-redux": "^0.5.5",
+    "wechaty": "^0.69.54"
   },
   "devDependencies": {
     "@chatie/eslint-config": "^0.14.1",
