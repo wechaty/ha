@@ -19,13 +19,18 @@
  */
 import { EventEmitter }     from 'events'
 import type {
-  MemoryCard,
-  Room,
-  Wechaty,
-  WechatyPlugin,
   Contact,
+  MemoryCard,
+  Message,
+  Room,
+  SayableMessage,
+  Wechaty,
+  WechatyEventName,
+  WechatyPlugin,
 }                           from 'wechaty'
-import type { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
+import {
+  log,
+}                           from 'wechaty'
 import { StateSwitch }      from 'state-switch'
 import cuid                 from 'cuid'
 import type {
@@ -37,7 +42,6 @@ import { WechatyRedux } from 'wechaty-redux'
 
 import {
   VERSION,
-  log,
 }                     from './config.js'
 import * as haDuck    from './duck/mod.js'
 import { addHa } from './global-instance-manager.js'
@@ -49,17 +53,17 @@ export interface HAWechatyOptions<T extends DucksMapObject> {
   ducks   : Ducks<T>,
 }
 
-export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
+export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter implements Wechaty {
 
-  public id: string
-  public state: StateSwitch
+  id: string
+  state: StateSwitch
 
-  public bundle: Bundle<typeof haDuck>
-  public ducks: Ducks<T>
+  bundle: Bundle<typeof haDuck>
+  ducks: Ducks<T>
 
   protected wechatyList: Wechaty[]
 
-  public Contact = {
+  Contact = {
     load : this.contactLoad.bind(this),
   }
 
@@ -90,12 +94,12 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     return null
   }
 
-  public Room = {
+  Room = {
     findAll : this.roomFindAll.bind(this),
     load    : this.roomLoad.bind(this),
   }
 
-  public async roomFindAll (): Promise<Room[]> {
+  async roomFindAll (): Promise<Room[]> {
     log.verbose('HAWechaty', 'roomFindAll()')
     const roomListList = await Promise.all(
       this.wechatyList
@@ -128,7 +132,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     return allRoomList
   }
 
-  public async roomLoad (id: string): Promise<null | Room> {
+  async roomLoad (id: string): Promise<null | Room> {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
     const roomList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
@@ -158,7 +162,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
   }
 
   constructor (
-    public options: HAWechatyOptions<T>,
+    options: HAWechatyOptions<T>,
   ) {
     super()
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
@@ -172,7 +176,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     addHa(this)
   }
 
-  public name (): string {
+  name (): string {
     return this.wechatyList
       // .filter(wechaty => wechaty.logonoff())
       // .filter(wechaty => availableState[wechaty.id])
@@ -180,11 +184,11 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
       .join(',')
   }
 
-  public version () {
+  version () {
     return VERSION
   }
 
-  public add (...wechatyList: Wechaty[]): this {
+  add (...wechatyList: Wechaty[]): this {
     log.verbose('HAWechaty', 'add(%s)',
       wechatyList
         .map(wechaty => wechaty.name())
@@ -221,7 +225,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     return this
   }
 
-  public del (...wechatyList: Wechaty[]): this {
+  del (...wechatyList: Wechaty[]): this {
     log.verbose('HAWechaty', 'del(%s)',
       wechatyList
         .map(wechaty => wechaty.name())
@@ -230,12 +234,12 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     throw new Error('to be implemented')
   }
 
-  public nodes (): Wechaty[] {
+  nodes (): Wechaty[] {
     log.verbose('HAWechaty', 'nodes() total %s wechaty instances are under management', this.wechatyList.length)
     return this.wechatyList
   }
 
-  public async start () {
+  async start () {
     log.verbose('HAWechaty', 'start()')
 
     if (this.state.on()) {
@@ -277,7 +281,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
 
   }
 
-  public async stop () {
+  async stop () {
     log.verbose('HAWechaty', 'stop()')
 
     if (this.state.off()) {
@@ -308,7 +312,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     }
   }
 
-  public use (...pluginList: WechatyPlugin[]): void {
+  use (...pluginList: WechatyPlugin[]): this {
     log.verbose('HAWechaty', 'use(%s)',
       pluginList.map(
         plugin => plugin.name
@@ -323,9 +327,11 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     if (this.wechatyList.length > 0) {
       this.wechatyList.forEach(wechaty => wechaty.use(...pluginList))
     }
+
+    return this
   }
 
-  public logonoff (): boolean {
+  logonoff (): boolean {
     log.verbose('HAWechaty', 'logonoff()')
     return this.wechatyList
       .filter(
@@ -343,7 +349,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     return this
   }
 
-  public async logout (): Promise<void> {
+  async logout (): Promise<void> {
     log.verbose('HAWechaty', 'logout()')
 
     await Promise.all(
@@ -353,15 +359,15 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     )
   }
 
-  public async say (text: string): Promise<void> {
-    log.verbose('HAWechaty', 'say(%s)', text)
+  async say (sayableMsg: SayableMessage): Promise<void> {
+    log.verbose('HAWechaty', 'say(%s)', sayableMsg)
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
         this.bundle.selectors.isWechatyAvailable
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
-      .forEach(wechaty => wechaty.say(text))
+      .forEach(wechaty => wechaty.say(sayableMsg))
   }
 
 }

@@ -39,7 +39,7 @@ test('envWechaty() smoke testing', async t => {
     puppetOptions: { token: 'token' },
   }
 
-  t.deepEqual(options, EXPECTED_PUPPET_OPTIONS, 'should parse the env to expected options')
+  t.same(options, EXPECTED_PUPPET_OPTIONS, 'should parse the env to expected options')
 })
 
 test('envWechaty() for 2 puppets and 1 token set', async t => {
@@ -78,5 +78,5 @@ test('envWechaty() for 2 puppets and 2 token for each', async t => {
     },
   ]
 
-  t.deepEqual(optionsList, EXPECTED_PUPPET_OPTIONS_LIST, 'should parse the env to expected options list')
+  t.same(optionsList, EXPECTED_PUPPET_OPTIONS_LIST, 'should parse the env to expected options list')
 })
