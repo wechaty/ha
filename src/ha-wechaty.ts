@@ -32,7 +32,7 @@ import {
   log,
 }                           from 'wechaty'
 import { StateSwitch }      from 'state-switch'
-import cuid                 from 'cuid'
+import * as uuid            from 'uuid'
 import type {
   Bundle,
   Ducks,
@@ -47,13 +47,15 @@ import * as haDuck    from './duck/mod.js'
 import { addHa } from './global-instance-manager.js'
 import type { DucksMapObject } from 'ducks/dist/esm/src/duck'
 
+import type { WechatyInterface } from './wechaty-interface.js'
+
 export interface HAWechatyOptions<T extends DucksMapObject> {
   name?   : string,
   memory? : MemoryCard,
   ducks   : Ducks<T>,
 }
 
-export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter implements Wechaty {
+export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter implements WechatyInterface {
 
   id: string
   state: StateSwitch
@@ -105,12 +107,12 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
       this.wechatyList
         .filter(wechaty => wechaty.logonoff())
         .filter(
-          this.bundle.selectors.isWechatyAvailable
+          this.bundle.selectors.isWechatyAvailable,
           // haApi.selectors.isWechatyAvailable(this.duckState())
         )
         .map(
-          wechaty => wechaty.Room.findAll()
-        )
+          wechaty => wechaty.Room.findAll(),
+        ),
     )
 
     // const roomList = [] as Room[]
@@ -166,7 +168,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
   ) {
     super()
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
-    this.id = cuid()
+    this.id = uuid.v4()
     this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
@@ -192,7 +194,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
     log.verbose('HAWechaty', 'add(%s)',
       wechatyList
         .map(wechaty => wechaty.name())
-        .join(', ')
+        .join(', '),
     )
 
     const store = this.bundle.store
@@ -219,7 +221,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
     })
 
     this.wechatyList.push(
-      ...wechatyList
+      ...wechatyList,
     )
 
     return this
@@ -229,7 +231,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
     log.verbose('HAWechaty', 'del(%s)',
       wechatyList
         .map(wechaty => wechaty.name())
-        .join(', ')
+        .join(', '),
     )
     throw new Error('to be implemented')
   }
@@ -294,8 +296,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
 
       await Promise.all(
         this.wechatyList.map(
-          wechaty => wechaty.stop()
-        )
+          wechaty => wechaty.stop(),
+        ),
       )
 
       /**
@@ -312,10 +314,10 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
     }
   }
 
-  use (...pluginList: WechatyPlugin[]): this {
+  use (...pluginList: WechatyPlugin[]): WechatyInterface {
     log.verbose('HAWechaty', 'use(%s)',
       pluginList.map(
-        plugin => plugin.name
+        plugin => plugin.name,
       ).join(','),
     )
 
@@ -354,8 +356,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
 
     await Promise.all(
       this.wechatyList.map(
-        wechaty => wechaty.logout()
-      )
+        wechaty => wechaty.logout(),
+      ),
     )
   }
 
@@ -364,10 +366,10 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter imp
     this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
-        this.bundle.selectors.isWechatyAvailable
+        this.bundle.selectors.isWechatyAvailable,
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
-      .forEach(wechaty => wechaty.say(sayableMsg))
+      .forEach(wechaty => wechaty.say(sayableMsg as any))
   }
 
 }
