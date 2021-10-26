@@ -50,7 +50,7 @@ test('envWechaty() for 2 puppets and 1 token set', async t => {
 
   t.throws(
     () => getWechatyOptionsListFromEnv(ENV),
-    'should throw if the number of puppet and token is not match'
+    'should throw if the number of puppet and token is not match',
   )
 })
 
