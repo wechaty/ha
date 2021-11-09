@@ -1,4 +1,4 @@
-# HAWechaty
+# High Available (HA) Wechaty
 
 [![NPM Version](https://img.shields.io/npm/v/ha-wechaty?color=brightgreen)](https://www.npmjs.com/package/ha-wechaty)
 [![NPM](https://github.com/wechaty/ha-wechaty/workflows/NPM/badge.svg)](https://github.com/wechaty/ha-wechaty/actions?query=workflow%3ANPM)
@@ -7,7 +7,7 @@
 ![HAWechaty](https://wechaty.github.io/ha-wechaty/images/ha-wechaty.png)
 
 <!-- markdownlint-disable MD013 -->
-HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.
+HA Wechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.
 
 [![Powered by Wechaty](https://img.shields.io/badge/Powered%20By-Wechaty-brightgreen.svg)](https://github.com/Wechaty/wechaty)
 [![Powered by Ducks](https://img.shields.io/badge/Powered%20by-Ducks-yellowgreen)](https://github.com/huan/ducks#3-ducksify-extension-currying--ducksify-interface)
