@@ -20,23 +20,26 @@
 import { EventEmitter }     from 'events'
 import type {
   Contact,
-  MemoryCard,
   // Message,
   Room,
-  SayableMessage,
+  Sayable,
   Wechaty,
   WechatyEventName,
   WechatyPlugin,
   impl,
   ContactSelf,
 }                           from 'wechaty'
+import type { MemoryCard } from 'memory-card'
+
 import {
-  log,
 }                           from 'wechaty'
 import {
   GError,
+}                   from 'gerror'
+import type * as PUPPET from 'wechaty-puppet'
+import {
+  log,
   throwUnsupportedError,
-  PuppetInterface,
 }                           from 'wechaty-puppet'
 import {
   StateSwitch,
@@ -69,7 +72,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
 
   id: string
 
-  state: StateSwitch
+  // state: StateSwitch
   bundle: Bundle<typeof haDuck>
   ducks: Ducks<T>
 
@@ -101,31 +104,25 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
   get UrlLink ()        : impl.UrlLinkConstructor        { return guardWechatify(this._wechatifiedUrlLink)        }
   get Location ()       : impl.LocationConstructor       { return guardWechatify(this._wechatifiedLocation)       }
 
-  protected async contactLoad (id: string): Promise<null | Contact> {
+  protected async contactLoad (id: string): Promise<undefined | Contact> {
     log.verbose('HAWechaty', 'contactLoad(%s)', id)
-    const contactList = this.wechatyList
-      .filter(wechaty => wechaty.logonoff())
-      .filter(this.bundle.selectors.isWechatyAvailable)
-      .map(wechaty => wechaty.Contact.load(id))
+    const contactListAll = await Promise.all(
+      this.wechatyList
+        .filter(wechaty => wechaty.logonoff())
+        .filter(this.bundle.selectors.isWechatyAvailable)
+        .map(wechaty => wechaty.Contact.find({ id })),
+    )
 
-    log.verbose('HAWechaty', 'contactLoad() found %s contact(s)', contactList.length)
+    log.verbose('HAWechaty', 'contactLoad() found %s contact(s) total', contactListAll.length)
+    const contactList = contactListAll.filter(Boolean) as Contact[] // filter out undefined
+    log.verbose('HAWechaty', 'contactLoad() found %s contact(s) valid', contactList.length)
 
-    const okList = [] as Contact[]
-    for (const contact of contactList) {
-      try {
-        await contact.ready()
-        okList.push(contact)
-      } catch (e) {
-        log.verbose('HAWechaty', 'contactLoad() %s has no contact id %s', contact.wechaty, contact.id)
-      }
+    if (contactList.length > 0) {
+      const randomIndex = Math.floor(Math.random() * contactList.length)
+      return contactList[randomIndex]!
     }
 
-    if (okList.length > 0) {
-      const randomIndex = Math.floor(Math.random() * okList.length)
-      return okList[randomIndex]!
-    }
-
-    return null
+    return undefined
   }
 
   async roomFindAll (): Promise<Room[]> {
@@ -161,33 +158,26 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
     return allRoomList
   }
 
-  async roomLoad (id: string): Promise<null | Room> {
+  async roomLoad (id: string): Promise<undefined | Room> {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
-    const roomList = this.wechatyList
-      .filter(wechaty => wechaty.logonoff())
-      .filter(this.bundle.selectors.isWechatyAvailable)
-      .map(wechaty => wechaty.Room.load(id))
 
-    const okList: Room[] = []
+    const roomListAll = await Promise.all(
+      this.wechatyList
+        .filter(wechaty => wechaty.logonoff())
+        .filter(this.bundle.selectors.isWechatyAvailable)
+        .map(wechaty => wechaty.Room.find({ id })),
+    )
 
-    for (const room of roomList) {
-      try {
-        await room.ready()
-        if (room.isReady()) {
-          log.verbose('HAWechaty', 'roomLoad() %s has room id %s', room.wechaty, room.id)
-          okList.push(room)
-        }
-      } catch (e) {
-        log.verbose('HAWechaty', 'roomLoad() %s has no room id %s', room.wechaty, room.id)
-      }
+    log.verbose('HAWechaty', 'roomLoad() found %s room(s) total', roomListAll.length)
+    const roomList = roomListAll.filter(Boolean) as Room[] // filter out undefined
+    log.verbose('HAWechaty', 'roomLoad() found %s room(s) valid', roomList.length)
+
+    if (roomList.length > 0) {
+      const randomIndex = Math.floor(Math.random() * roomList.length)
+      return roomList[randomIndex]!
     }
 
-    if (okList.length > 0) {
-      const randomIndex = Math.floor(Math.random() * okList.length)
-      return okList[randomIndex]!
-    }
-
-    return null
+    return undefined
   }
 
   constructor (
@@ -235,9 +225,13 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
 
       this.bundle.operations.add(this, wechaty)
 
-      if (wechaty.state.off()) {
+      if (wechaty.state.inactive()) {
         log.silly('HAWechaty', 'add() %s is starting', wechaty)
-        wechaty.wrapAsync(wechaty.start())
+        wechaty.wrapAsync(
+          wechaty.state.stable().then(
+            () => wechaty.start(),
+          ),
+        )
       } else {
         log.verbose('HAWechaty', 'add() skip starting for %s', wechaty)
       }
@@ -299,8 +293,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
 
     for (const wechaty of this.wechatyList) {
       log.silly('HAWechaty', 'onStart() %s starting', wechaty)
-      if (wechaty.state.off()) {
-        await wechaty.state.off()
+      if (wechaty.state.inactive()) {
+        await wechaty.state.stable()
         await wechaty.start()
       } else {
         log.verbose('HAWechaty', 'onStart() %s skip starting: its already started.', wechaty)
@@ -311,14 +305,10 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
       }
 
     }
-
-    this.state.on(true)
   }
 
   override async onStop () {
     log.verbose('HAWechaty', 'onStop()')
-
-    this.state.off(true)
 
     await Promise.all(
       this.wechatyList.map(
@@ -398,7 +388,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
     )
   }
 
-  async say (sayableMsg: SayableMessage): Promise<void> {
+  async say (sayableMsg: Sayable): Promise<void> {
     log.verbose('HAWechaty', 'say(%s)', sayableMsg)
     const wechatyList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
@@ -433,7 +423,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
     return throwUnsupportedError()
   }
 
-  get puppet (): PuppetInterface {
+  get puppet (): PUPPET.impl.PuppetInterface {
     return throwUnsupportedError()
   }
 
