@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "cuid": "^2.1.8",
+    "filter-async-rxjs-pipe": "^0.1.5",
     "state-switch": "^1.2.4",
     "typesafe-actions": "^5.1.0",
     "uuid": "^8.3.2"

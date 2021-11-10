@@ -17,14 +17,11 @@
  *   limitations under the License.
  *
  */
-import {
+import type {
   Contact,
   Message,
-}             from 'wechaty'
-
-import type {
-  MessageType,
-}               from 'wechaty-puppet'
+}                   from 'wechaty'
+import * as PUPPET  from 'wechaty-puppet'
 import {
   getWechaty,
   Duck as wechatyDuck,
@@ -77,7 +74,7 @@ const isMessageFromSelf = (isSelf = true) => <T extends { payload: PayloadMessag
   .Message.load(action.payload.messageId)
   .self() === isSelf
 
-const isMessageType = (type: MessageType) => (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => getWechaty(action.payload.wechatyId)
+const isMessageType = (type: PUPPET.type.Message) => (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => getWechaty(action.payload.wechatyId)
   .Message.load(action.payload.messageId)
   .type() === type
 
@@ -99,7 +96,7 @@ const belongsToWechaty = <T extends { payload: PayloadWechatyId }>(wechatyId: st
 //   return wechaty
 // }
 
-const isMessageTypeText = isMessageType(Message.Type.Text)
+const isMessageTypeText = isMessageType(PUPPET.type.Message.Text)
 const isMessageTextDong = isMessageText(DONG)
 
 // const isChatieOA = (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => getWechaty(action.payload.wechatyId)
@@ -121,7 +118,7 @@ const toChatieOA = (wechatyId: string): Contact => {
     See #1: https://github.com/wechaty/HAWechaty/issues/1
 
     `)
-    wechaty.emit('error', error)
+    wechaty.emitError(error)
   })
   return contact
 }

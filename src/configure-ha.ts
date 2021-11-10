@@ -93,7 +93,8 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
   const duckNameList = Object.keys(options.ducks.ducksify())
   log.verbose('HAWechaty', 'configureHa() %s ducks in duckery: %s', duckNameList.length, duckNameList.join(','))
 
-  let devCompose = compose
+  // Huan(202110): wait to use import to load remote-redux-devtools (see below)
+  const devCompose = compose
 
   if (options.reduxDevTools) {
     log.verbose('HAWechaty', 'configureHa() reduxDevTools: %s', options.reduxDevTools)
@@ -103,17 +104,20 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
         throw new Error('redux remote dev tools need options.')
       }
 
-      try {
-        const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
-        log.verbose('HAWechaty', 'configureHa() configure remote-redux-devtools with %s',
-          JSON.stringify(options.remoteReduxDevToolsOptions),
-        )
-        devCompose = composeWithDevTools(options.remoteReduxDevToolsOptions)
+      /**
+       * Huan(202110): TODO: use import to load remote-redux-devtools
+       */
+      // try {
+      //   const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
+      //   log.verbose('HAWechaty', 'configureHa() configure remote-redux-devtools with %s',
+      //     JSON.stringify(options.remoteReduxDevToolsOptions)
+      //   )
+      //   devCompose = composeWithDevTools(options.remoteReduxDevToolsOptions)
 
-      } catch (e) {
-        log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
-        console.error(e)
-      }
+      // } catch (e) {
+      //   log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
+      //   console.error(e)
+      // }
 
     } else {
       // return configureDevtools()
