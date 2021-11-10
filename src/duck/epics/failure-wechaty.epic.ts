@@ -41,7 +41,7 @@ const failureWechatyEpic: Epic = (action$) => action$.pipe(
     WechatyDuck.actions.scanEvent,
     WechatyDuck.actions.turnOffSwitch,
   ])),
-  map(action => actions.failureWechaty(action.payload.wechatyId))
+  map(action => actions.failureWechaty(action.payload.wechatyId)),
 )
 
 export { failureWechatyEpic }

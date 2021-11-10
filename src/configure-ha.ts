@@ -26,11 +26,9 @@ import type { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 import { Ducks }                      from 'ducks'
 import type { DucksMapObject }        from 'ducks/dist/esm/src/duck'
 import { Duck as WechatyDuck }        from 'wechaty-redux'
-import {
-  log,
-  MemoryCard,
-  Wechaty,
-}                     from 'wechaty'
+import { MemoryCard }                 from 'memory-card'
+import { log }                        from 'wechaty-puppet'
+import { WechatyBuilder }             from 'wechaty'
 
 import * as HaDuck    from './duck/mod.js'
 import { HAWechaty }  from './ha-wechaty.js'
@@ -86,6 +84,8 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
   } else {
     const haBundle      = options.ducks.ducksify(HaDuck as any)
     const wechatyBundle = options.ducks.ducksify(WechatyDuck as any)
+    // Huan(202111): why do we check the above variable at here?
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!haBundle || !wechatyBundle) {
       throw new Error('Ducks must at least contains HaDuck and WechatyDuck!')
     }
@@ -106,7 +106,7 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
       try {
         const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
         log.verbose('HAWechaty', 'configureHa() configure remote-redux-devtools with %s',
-          JSON.stringify(options.remoteReduxDevToolsOptions)
+          JSON.stringify(options.remoteReduxDevToolsOptions),
         )
         devCompose = composeWithDevTools(options.remoteReduxDevToolsOptions)
 
@@ -140,10 +140,10 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
     process.env as any,
     options.name,
     options.memory,
-  ).map(wechatyOptions => new Wechaty(wechatyOptions))
+  ).map(wechatyOptions => WechatyBuilder.build(wechatyOptions))
 
   haWechaty.add(
-    ...wechatyList
+    ...wechatyList,
   )
 
   return haWechaty

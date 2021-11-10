@@ -35,6 +35,7 @@ import {
   getWechaty,
   Duck as WechatyDuck,
 }                       from 'wechaty-redux'
+import { GError } from 'gerror'
 
 import * as actions from '../actions.js'
 
@@ -42,15 +43,20 @@ const DING = 'ding'
 
 const ding$ = (action: ReturnType<typeof actions.dingHa>) => from(
   getWechaty(action.payload.wechatyId)
-    .Contact.load(action.payload.contactId)
-    .say(DING)
+    .Contact.find({ id: action.payload.contactId }),
 ).pipe(
+  mergeMap(contact => {
+    if (!contact) {
+      throw new Error('contact not found for id:' + action.payload.contactId)
+    }
+    return from(contact.say(DING))
+  }),
   ignoreElements(),
-  catchError(e => of(
+  catchError((e: Error) => of(
     WechatyDuck.actions.errorEvent(
       action.payload.wechatyId,
-      { ...e },
-    )
+      { data: JSON.stringify(GError.from(e)) },
+    ),
   )),
 )
 
