@@ -1,6 +1,6 @@
 {
   "name": "ha-wechaty",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "HAWechaty is a Load Balance for providing High Availability for Wechaty Chatbot by spreading requests across multiple WeChat individual accounts.",
   "type": "module",
   "exports": {
