@@ -45,7 +45,7 @@ import {
   StateSwitch,
   serviceCtlFsmMixin,
 }                     from 'state-switch'
-import uuid            from 'uuid'
+import * as uuid      from 'uuid'
 import type {
   Bundle,
   Ducks,

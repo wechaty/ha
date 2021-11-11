@@ -54,7 +54,7 @@ const isHaAvailable = (state: State) => (haOrId?: string | HAWechaty): boolean =
 }
 
 const getHaByWechaty = (state: State) => (wechatyOrId: string | Wechaty): string => {
-  if (wechatyOrId instanceof Wechaty) {
+  if (impl.WechatyImpl.valid(wechatyOrId)) {
     wechatyOrId = wechatyOrId.id
   }
 
