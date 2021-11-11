@@ -1,10 +1,9 @@
 import {
-  Message,
+  type,
 }                     from 'wechaty'
 import type {
   mock,
 }                     from 'wechaty-puppet-mock'
-import type { ContactMock } from 'wechaty-puppet-mock/dist/src/mock/mod'
 
 import {
   CHATIE_OA_ID,
@@ -14,7 +13,7 @@ const HaEnvironment = (): mock.EnvironmentMock => {
 
   return function HaEnvironmentStart (mocker: mock.Mocker) {
 
-    const [user, mary, mike] = mocker.createContacts(3) as [ContactMock, ContactMock, ContactMock]
+    const [user, mary, mike] = mocker.createContacts(3) as [mock.ContactMock, mock.ContactMock, mock.ContactMock]
 
     // Initialize WeChat system accounts
     mocker.createContact({ id: 'filehelper' })
@@ -27,7 +26,7 @@ const HaEnvironment = (): mock.EnvironmentMock => {
       if (msg.talker().id === chatieio.id) {
         return
       }
-      if (msg.type() === Message.Type.Text && /^ding$/i.test(msg.text() || '')) {
+      if (msg.type() === type.Message.Text && /^ding$/i.test(msg.text() || '')) {
         msg.listener()?.say('dong').to(msg.talker())
         // console.info('no dong any more!')
       }
@@ -40,7 +39,7 @@ const HaEnvironment = (): mock.EnvironmentMock => {
     user.say('fine, thank you.').to(mary)
     void mike
 
-    let timer: undefined | NodeJS.Timer
+    let timer: undefined | ReturnType<typeof setTimeout>
     // timer = setInterval(() => mike.say().to(user), 10 * 1000)
 
     return function HaEnvironmentStop () {

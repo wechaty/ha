@@ -17,14 +17,17 @@
  *   limitations under the License.
  *
  */
-import { Wechaty }    from 'wechaty'
+import {
+  Wechaty,
+  impl,
+}                 from 'wechaty'
 
 import { HAWechaty }  from '../mod.js'
 
 import type { State } from './reducers.js'
 
 const isWechatyAvailable = (state: State) => (wechatyOrId: string | Wechaty): boolean => {
-  if (wechatyOrId instanceof Wechaty) {
+  if (impl.WechatyImpl.valid(wechatyOrId)) {
     wechatyOrId = wechatyOrId.id
   }
   return !!(state.availability[wechatyOrId])

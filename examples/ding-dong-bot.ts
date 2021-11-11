@@ -53,17 +53,16 @@ ha.use(
 const ROOM_ID = '17376996519@chatroom'
 let counter = 0
 
-ha.once('login', () => setInterval(
+ha.once('login', () => setInterval(ha.wrapAsync(
   async () => {
-    const room = await ha.Room.load(ROOM_ID)
+    const room = await ha.Room.find({ id: ROOM_ID })
     if (room) {
       await room.say('ding #' + counter++ + ' from HA Wechaty ding-dong-bot')
     } else {
-      log.error('ding-dong-bot', 'Room.load(%s) not found', ROOM_ID)
+      log.error('ding-dong-bot', 'Room.find(%s) not found', ROOM_ID)
     }
   },
-  5 * 1000,
-))
+), 5 * 1000))
 
 /**
  *

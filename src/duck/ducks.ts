@@ -7,10 +7,10 @@ import * as haDuck from './mod.js'
 
 let instance: undefined | Ducks<any>
 const getBundle = () => {
-  if (!instance) {
-    throw new Error('NO INSTANCE')
+  if (instance) {
+    return instance.ducksify(haDuck) as Bundle<typeof haDuck>
   }
-  instance.ducksify(haDuck) as Bundle<typeof haDuck>
+  throw new Error('NO INSTANCE')
 }
 
 function setDucks (ducks: Ducks<any>): void {

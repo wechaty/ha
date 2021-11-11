@@ -18,8 +18,8 @@
  *
  */
 import {
-  Wechaty,
-}             from 'wechaty'
+  WechatyBuilder,
+}                   from 'wechaty'
 import {
   PuppetMock,
   mock,
@@ -80,8 +80,8 @@ mocker2.use(HaEnvironment())
 const puppet1 = new PuppetMock({ mocker: mocker1 })
 const puppet2 = new PuppetMock({ mocker: mocker2 })
 
-const wechaty1 = new Wechaty({ name: 'wechaty1', puppet: puppet1 })
-const wechaty2 = new Wechaty({ name: 'wechaty2', puppet: puppet2 })
+const wechaty1 = WechatyBuilder.build({ name: 'wechaty1', puppet: puppet1 })
+const wechaty2 = WechatyBuilder.build({ name: 'wechaty2', puppet: puppet2 })
 
 const haWechaty = new HAWechaty({
   ducks,
