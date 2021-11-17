@@ -17,8 +17,8 @@
  *   limitations under the License.
  *
  */
-import type { Dispatch } from 'redux'
-import type { Wechaty } from 'wechaty'
+import type { Dispatch }  from 'redux'
+import type { Wechaty }   from 'wechaty'
 
 import type { HAWechaty } from '../ha-wechaty.js'
 

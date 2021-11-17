@@ -24,24 +24,23 @@ import {
 import type { RemoteReduxDevToolsOptions } from 'remote-redux-devtools'
 
 import { Ducks }                      from 'ducks'
-import type { DucksMapObject }        from 'ducks/dist/esm/src/duck'
 import { Duck as WechatyDuck }        from 'wechaty-redux'
 import { MemoryCard }                 from 'memory-card'
 import { log }                        from 'wechaty-puppet'
 import { WechatyBuilder }             from 'wechaty'
 
-import * as HaDuck    from './duck/mod.js'
-import { HAWechaty }  from './ha-wechaty.js'
-import { getWechatyOptionsListFromEnv } from './get-wechaty-options-from-env.js'
+import * as HaDuck                from './duck/mod.js'
+import { HAWechaty }              from './ha-wechaty.js'
+import type {
+  HADefaultDuckery,
+}                                 from './ha-wechaty.js'
+import {
+  getWechatyOptionsListFromEnv,
+}                                 from './get-wechaty-options-from-env.js'
 
 let initialized = false
 
-type DefaultDuckery = {
-  ha      : typeof HaDuck
-  wechaty : typeof WechatyDuck
-}
-
-interface ConfigureHaOptions<T extends DucksMapObject> {
+interface ConfigureHaOptions<T extends HADefaultDuckery> {
   name?   : string,
   memory? : MemoryCard,
 
@@ -51,24 +50,25 @@ interface ConfigureHaOptions<T extends DucksMapObject> {
   remoteReduxDevToolsOptions? : RemoteReduxDevToolsOptions
 }
 
-function configureHa <T extends DucksMapObject = DefaultDuckery> (
+async function configureHa <T extends HADefaultDuckery = HADefaultDuckery> (
   options: ConfigureHaOptions<T> = {},
-): HAWechaty<T> {
+): Promise<HAWechaty<T>> {
   log.verbose('HAWechaty', 'configureHa(%s)', JSON.stringify(options))
 
   if (initialized) {
     throw new Error([
       'configureHa() can not be called twice:',
       'it has only one global configurable instance',
-      'and it has already been called before.',
+      'and it has already been configured before.',
     ].join(' '))
   }
   initialized = true
 
   if (!options.name) {
     options.name = 'ha-wechaty'
-    log.verbose('HAWechaty', 'configureHa() name set to default: "%s"', options.name)
+    log.verbose('HAWechaty', 'configureHa() name set to default')
   }
+  log.verbose('HAWechaty', 'configureHa() name set to "%s"', options.name)
 
   if (!options.memory) {
     options.memory = new MemoryCard(options.name)
@@ -84,7 +84,8 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
   } else {
     const haBundle      = options.ducks.ducksify(HaDuck as any)
     const wechatyBundle = options.ducks.ducksify(WechatyDuck as any)
-    // Huan(202111): why do we check the above variable at here?
+
+    // Huan(202111): don't know why do we check the above variable with the following code?
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!haBundle || !wechatyBundle) {
       throw new Error('Ducks must at least contains HaDuck and WechatyDuck!')
@@ -93,8 +94,7 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
   const duckNameList = Object.keys(options.ducks.ducksify())
   log.verbose('HAWechaty', 'configureHa() %s ducks in duckery: %s', duckNameList.length, duckNameList.join(','))
 
-  // Huan(202110): wait to use import to load remote-redux-devtools (see below)
-  const devCompose = compose
+  let devCompose = compose
 
   if (options.reduxDevTools) {
     log.verbose('HAWechaty', 'configureHa() reduxDevTools: %s', options.reduxDevTools)
@@ -107,17 +107,20 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
       /**
        * Huan(202110): TODO: use import to load remote-redux-devtools
        */
-      // try {
-      //   const composeWithDevTools = require('remote-redux-devtools').composeWithDevTools
-      //   log.verbose('HAWechaty', 'configureHa() configure remote-redux-devtools with %s',
-      //     JSON.stringify(options.remoteReduxDevToolsOptions)
-      //   )
-      //   devCompose = composeWithDevTools(options.remoteReduxDevToolsOptions)
+      try {
+        const { composeWithDevTools } = await import('remote-redux-devtools')
 
-      // } catch (e) {
-      //   log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
-      //   console.error(e)
-      // }
+        log.verbose('HAWechaty', 'configureHa() configure remote-redux-devtools with %s',
+          JSON.stringify(options.remoteReduxDevToolsOptions),
+        )
+
+        // FIXME: remove `as any`
+        devCompose = composeWithDevTools(options.remoteReduxDevToolsOptions) as any
+
+      } catch (e) {
+        log.error('HAWechaty', 'configureHa() require(remote-redux-devtools) rejection: %s', e)
+        console.error(e)
+      }
 
     } else {
       // return configureDevtools()
@@ -127,12 +130,17 @@ function configureHa <T extends DucksMapObject = DefaultDuckery> (
 
   const ducksEnhancer = options.ducks.enhancer()
 
-  createStore(
+  const store = createStore(
     state => state,
     devCompose(
       ducksEnhancer,
     ),
   )
+
+  /**
+   * Ducks will manage the `store` for us
+   */
+  void store
 
   const haWechaty = new HAWechaty({
     ducks  : options.ducks,

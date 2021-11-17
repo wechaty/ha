@@ -17,7 +17,7 @@
  *   limitations under the License.
  *
  */
-import { EventEmitter }     from 'events'
+import { EventEmitter }         from 'events'
 import type {
   Contact,
   // Message,
@@ -26,41 +26,46 @@ import type {
   Wechaty,
   WechatyEventName,
   WechatyPlugin,
-  impl,
   ContactSelf,
-}                           from 'wechaty'
-import type { MemoryCard } from 'memory-card'
+}                               from 'wechaty'
+import {
+  impl,
+}                               from 'wechaty'
+import type { MemoryCard }      from 'memory-card'
 
-import {
-}                           from 'wechaty'
-import {
-  GError,
-}                   from 'gerror'
-import type * as PUPPET from 'wechaty-puppet'
+import { GError }               from 'gerror'
+import type * as PUPPET         from 'wechaty-puppet'
 import {
   log,
   throwUnsupportedError,
-}                           from 'wechaty-puppet'
+}                               from 'wechaty-puppet'
 import {
   StateSwitch,
   serviceCtlFsmMixin,
-}                     from 'state-switch'
-import * as uuid      from 'uuid'
+}                               from 'state-switch'
+import * as uuid                from 'uuid'
 import type {
   Bundle,
   Ducks,
-}                           from 'ducks'
-import type { DucksMapObject } from 'ducks/dist/esm/src/duck.js'
-
-import { WechatyRedux } from 'wechaty-redux'
+}                               from 'ducks'
+import type { DucksMapObject }  from 'ducks/dist/esm/src/duck.js'
+import {
+  WechatyRedux,
+  Duck as duckWechaty,
+}                               from 'wechaty-redux'
 
 import {
   VERSION,
-}                     from './config.js'
-import * as haDuck    from './duck/mod.js'
-import { addHa } from './global-instance-manager.js'
+}                   from './config.js'
+import * as duckHa  from './duck/mod.js'
+import { addHa }    from './global-instance-manager.js'
 
-export interface HAWechatyOptions<T extends DucksMapObject> {
+interface HADefaultDuckery extends DucksMapObject {
+  ha      : typeof duckHa
+  wechaty : typeof duckWechaty
+}
+
+export interface HAWechatyOptions<T extends HADefaultDuckery> {
   name?   : string,
   memory? : MemoryCard,
   ducks   : Ducks<T>,
@@ -68,12 +73,11 @@ export interface HAWechatyOptions<T extends DucksMapObject> {
 
 const mixinBase = serviceCtlFsmMixin('HAWechaty', { log })(EventEmitter)
 
-export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implements Wechaty {
+class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBase implements Wechaty {
 
   id: string
 
-  // state: StateSwitch
-  bundle: Bundle<typeof haDuck>
+  bundle: Bundle<typeof duckHa>
   ducks: Ducks<T>
 
   protected wechatyList: Wechaty[]
@@ -190,7 +194,8 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
     this.id = uuid.v4()
     this.wechatyList = []
 
-    this.bundle = options.ducks.ducksify(haDuck as any) as any
+    // FIXME: remove `as any`
+    this.bundle = options.ducks.ducksify(duckHa as any) as any
     this.ducks = options.ducks
 
     addHa(this)
@@ -249,13 +254,6 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
     return this
   }
 
-  /**
-   * @deprecated use remove instead
-   */
-  del (...args: any[]): this {
-    return this.remove(...args)
-  }
-
   remove (...wechatyList: Wechaty[]): this {
     log.verbose('HAWechaty', 'del(%s)',
       wechatyList
@@ -270,6 +268,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
     return this.wechatyList
   }
 
+  // TODO: remove this method
   test () {
 
     this._wechatifiedContact = {
@@ -344,8 +343,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
       this.wechatyList.forEach(wechaty => wechaty.use(...pluginList))
     }
 
-    // Huan(202110): FIXME: remove any
-    return this as any
+    return this
   }
 
   ready (): Promise<void> {
@@ -390,6 +388,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
 
   async say (sayableMsg: Sayable): Promise<void> {
     log.verbose('HAWechaty', 'say(%s)', sayableMsg)
+
     const wechatyList = this.wechatyList
       .filter(wechaty => wechaty.logonoff())
       .filter(
@@ -428,7 +427,7 @@ export class HAWechaty <T extends DucksMapObject = any> extends mixinBase implem
   }
 
   sleep (milliseconds: number): Promise<void> {
-    return throwUnsupportedError(milliseconds)
+    return impl.WechatyImpl.prototype.sleep(milliseconds)
   }
 
   ding (data?: string): void {
@@ -447,4 +446,11 @@ function guardWechatify<T extends Function> (userModule?: T): T {
     throw new Error('Wechaty user module (for example, wechaty.Room) can not be used before wechaty.start()!')
   }
   return userModule
+}
+
+export type {
+  HADefaultDuckery,
+}
+export {
+  HAWechaty,
 }

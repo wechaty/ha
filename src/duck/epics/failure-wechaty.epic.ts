@@ -39,7 +39,7 @@ const failureWechatyEpic: Epic = (action$) => action$.pipe(
   filter(isActionOf([
     WechatyDuck.actions.logoutEvent,
     WechatyDuck.actions.scanEvent,
-    WechatyDuck.actions.turnOffSwitch,
+    WechatyDuck.actions.inactiveSwitch,
   ])),
   map(action => actions.failureWechaty(action.payload.wechatyId)),
 )
