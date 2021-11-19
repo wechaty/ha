@@ -70,14 +70,14 @@ If you want to use HAProxy, please make sure every bot account has followed the 
 import { HAWechaty } from 'ha-wechaty'
 import { Wechaty } from 'wechaty'
 
-const wechaty1 = new Wechaty({
+const wechaty1 = WechatyBuilder.build({
   puppet: 'wechaty-puppet-service',
   puppetOptions: {
     token: 'puppet-service-token'
   }
 })
 
-const wechaty2 = new Wechaty({
+const wechaty2 = WechatyBuilder.build({
   puppet: 'wechaty-puppet-padlocal',
   puppetOptions: {
     token: 'padlocal-token'

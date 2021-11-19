@@ -20,9 +20,9 @@
 import {
   WechatyOptions,
   log,
-  MemoryCard,
   PuppetModuleName,
 }                   from 'wechaty'
+import { MemoryCard } from 'memory-card'
 
 interface HaWechatyEnv {
   HA_WECHATY_PUPPET?       : string,

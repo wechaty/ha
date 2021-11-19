@@ -17,96 +17,133 @@
  *   limitations under the License.
  *
  */
-import { EventEmitter }     from 'events'
+import { EventEmitter }         from 'events'
 import type {
-  MemoryCard,
-  Room,
-  Wechaty,
-  WechatyPlugin,
   Contact,
-}                           from 'wechaty'
-import type { WechatyEventName } from 'wechaty/dist/src/events/wechaty-events'
-import { StateSwitch }      from 'state-switch'
-import cuid                 from 'cuid'
+  // Message,
+  Room,
+  Sayable,
+  Wechaty,
+  WechatyEventName,
+  WechatyPlugin,
+  ContactSelf,
+}                               from 'wechaty'
+import {
+  impl,
+}                               from 'wechaty'
+import type { MemoryCard }      from 'memory-card'
+
+import { GError }               from 'gerror'
+import type * as PUPPET         from 'wechaty-puppet'
+import {
+  log,
+  throwUnsupportedError,
+}                               from 'wechaty-puppet'
+import {
+  StateSwitch,
+  serviceCtlFsmMixin,
+}                               from 'state-switch'
+import * as UUID                from 'uuid'
 import type {
   Bundle,
   Ducks,
-}                           from 'ducks'
-
-import { WechatyRedux } from 'wechaty-redux'
-
+}                               from 'ducks'
+import type { DucksMapObject }  from 'ducks/dist/esm/src/duck.js'
+import {
+  WechatyRedux,
+  Duck as duckWechaty,
+}                               from 'wechaty-redux'
+import type {
+  Logger,
+}                               from 'brolog'
 import {
   VERSION,
-  log,
-}                     from './config.js'
-import * as haDuck    from './duck/mod.js'
-import { addHa } from './global-instance-manager.js'
-import type { DucksMapObject } from 'ducks/dist/esm/src/duck'
+}                   from './config.js'
+import * as duckHa  from './duck/mod.js'
+import { addHa }    from './global-instance-manager.js'
 
-export interface HAWechatyOptions<T extends DucksMapObject> {
+interface HADefaultDuckery extends DucksMapObject {
+  ha      : typeof duckHa
+  wechaty : typeof duckWechaty
+}
+
+export interface HAWechatyOptions<T extends HADefaultDuckery> {
   name?   : string,
   memory? : MemoryCard,
   ducks   : Ducks<T>,
 }
 
-export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
+const mixinBase = serviceCtlFsmMixin('HAWechaty', { log })(EventEmitter)
 
-  public id: string
-  public state: StateSwitch
+class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBase implements Wechaty {
 
-  public bundle: Bundle<typeof haDuck>
-  public ducks: Ducks<T>
+  log: Logger = log
+  id: string
+
+  bundle: Bundle<typeof duckHa>
+  ducks: Ducks<T>
 
   protected wechatyList: Wechaty[]
 
-  public Contact = {
-    load : this.contactLoad.bind(this),
-  }
+  protected _wechatifiedContact?        : impl.ContactConstructor
+  protected _wechatifiedContactSelf?    : impl.ContactSelfConstructor
+  protected _wechatifiedFriendship?     : impl.FriendshipConstructor
+  protected _wechatifiedImage?          : impl.ImageConstructor
+  protected _wechatifiedMessage?        : impl.MessageConstructor
+  protected _wechatifiedMiniProgram?    : impl.MiniProgramConstructor
+  protected _wechatifiedRoom?           : impl.RoomConstructor
+  protected _wechatifiedRoomInvitation? : impl.RoomInvitationConstructor
+  protected _wechatifiedDelay?          : impl.DelayConstructor
+  protected _wechatifiedTag?            : impl.TagConstructor
+  protected _wechatifiedUrlLink?        : impl.UrlLinkConstructor
+  protected _wechatifiedLocation?       : impl.LocationConstructor
 
-  protected async contactLoad (id: string): Promise<null | Contact> {
+  get Contact ()        : impl.ContactConstructor        { return guardWechatify(this._wechatifiedContact)        }
+  get ContactSelf ()    : impl.ContactSelfConstructor    { return guardWechatify(this._wechatifiedContactSelf)    }
+  get Friendship ()     : impl.FriendshipConstructor     { return guardWechatify(this._wechatifiedFriendship)     }
+  get Image ()          : impl.ImageConstructor          { return guardWechatify(this._wechatifiedImage)          }
+  get Message ()        : impl.MessageConstructor        { return guardWechatify(this._wechatifiedMessage)        }
+  get MiniProgram ()    : impl.MiniProgramConstructor    { return guardWechatify(this._wechatifiedMiniProgram)    }
+  get Room ()           : impl.RoomConstructor           { return guardWechatify(this._wechatifiedRoom)           }
+  get RoomInvitation () : impl.RoomInvitationConstructor { return guardWechatify(this._wechatifiedRoomInvitation) }
+  get Delay ()          : impl.DelayConstructor          { return guardWechatify(this._wechatifiedDelay)          }
+  get Tag ()            : impl.TagConstructor            { return guardWechatify(this._wechatifiedTag)            }
+  get UrlLink ()        : impl.UrlLinkConstructor        { return guardWechatify(this._wechatifiedUrlLink)        }
+  get Location ()       : impl.LocationConstructor       { return guardWechatify(this._wechatifiedLocation)       }
+
+  protected async contactLoad (id: string): Promise<undefined | Contact> {
     log.verbose('HAWechaty', 'contactLoad(%s)', id)
-    const contactList = this.wechatyList
-      .filter(wechaty => wechaty.logonoff())
-      .filter(this.bundle.selectors.isWechatyAvailable)
-      .map(wechaty => wechaty.Contact.load(id))
+    const contactListAll = await Promise.all(
+      this.wechatyList
+        .filter(wechaty => wechaty.isLoggedIn)
+        .filter(this.bundle.selectors.isWechatyAvailable)
+        .map(wechaty => wechaty.Contact.find({ id })),
+    )
 
-    log.verbose('HAWechaty', 'contactLoad() found %s contact(s)', contactList.length)
+    log.verbose('HAWechaty', 'contactLoad() found %s contact(s) total', contactListAll.length)
+    const contactList = contactListAll.filter(Boolean) as Contact[] // filter out undefined
+    log.verbose('HAWechaty', 'contactLoad() found %s contact(s) valid', contactList.length)
 
-    const okList = [] as Contact[]
-    for (const contact of contactList) {
-      try {
-        await contact.ready()
-        okList.push(contact)
-      } catch (e) {
-        log.verbose('HAWechaty', 'contactLoad() %s has no contact id %s', contact.wechaty, contact.id)
-      }
+    if (contactList.length > 0) {
+      const randomIndex = Math.floor(Math.random() * contactList.length)
+      return contactList[randomIndex]!
     }
 
-    if (okList.length > 0) {
-      const randomIndex = Math.floor(Math.random() * okList.length)
-      return okList[randomIndex]!
-    }
-
-    return null
+    return undefined
   }
 
-  public Room = {
-    findAll : this.roomFindAll.bind(this),
-    load    : this.roomLoad.bind(this),
-  }
-
-  public async roomFindAll (): Promise<Room[]> {
+  async roomFindAll (): Promise<Room[]> {
     log.verbose('HAWechaty', 'roomFindAll()')
     const roomListList = await Promise.all(
       this.wechatyList
-        .filter(wechaty => wechaty.logonoff())
+        .filter(wechaty => wechaty.isLoggedIn)
         .filter(
-          this.bundle.selectors.isWechatyAvailable
+          this.bundle.selectors.isWechatyAvailable,
           // haApi.selectors.isWechatyAvailable(this.duckState())
         )
         .map(
-          wechaty => wechaty.Room.findAll()
-        )
+          wechaty => wechaty.Room.findAll(),
+        ),
     )
 
     // const roomList = [] as Room[]
@@ -128,72 +165,67 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     return allRoomList
   }
 
-  public async roomLoad (id: string): Promise<null | Room> {
+  async roomLoad (id: string): Promise<undefined | Room> {
     log.verbose('HAWechaty', 'roomLoad(%s)', id)
-    const roomList = this.wechatyList
-      .filter(wechaty => wechaty.logonoff())
-      .filter(this.bundle.selectors.isWechatyAvailable)
-      .map(wechaty => wechaty.Room.load(id))
 
-    const okList: Room[] = []
+    const roomListAll = await Promise.all(
+      this.wechatyList
+        .filter(wechaty => wechaty.isLoggedIn)
+        .filter(this.bundle.selectors.isWechatyAvailable)
+        .map(wechaty => wechaty.Room.find({ id })),
+    )
 
-    for (const room of roomList) {
-      try {
-        await room.ready()
-        if (room.isReady()) {
-          log.verbose('HAWechaty', 'roomLoad() %s has room id %s', room.wechaty, room.id)
-          okList.push(room)
-        }
-      } catch (e) {
-        log.verbose('HAWechaty', 'roomLoad() %s has no room id %s', room.wechaty, room.id)
-      }
+    log.verbose('HAWechaty', 'roomLoad() found %s room(s) total', roomListAll.length)
+    const roomList = roomListAll.filter(Boolean) as Room[] // filter out undefined
+    log.verbose('HAWechaty', 'roomLoad() found %s room(s) valid', roomList.length)
+
+    if (roomList.length > 0) {
+      const randomIndex = Math.floor(Math.random() * roomList.length)
+      return roomList[randomIndex]!
     }
 
-    if (okList.length > 0) {
-      const randomIndex = Math.floor(Math.random() * okList.length)
-      return okList[randomIndex]!
-    }
-
-    return null
+    return undefined
   }
 
   constructor (
-    public options: HAWechatyOptions<T>,
+    options: HAWechatyOptions<T>,
   ) {
     super()
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
-    this.id = cuid()
-    this.wechatyList = []
     this.state = new StateSwitch('HAWechaty')
 
-    this.bundle = options.ducks.ducksify(haDuck as any) as any
+    this.id = UUID.v4()
+    this.wechatyList = []
+
+    // FIXME: remove `as any`
+    this.bundle = options.ducks.ducksify(duckHa as any) as any
     this.ducks = options.ducks
 
     addHa(this)
   }
 
-  public name (): string {
+  name (): string {
     return this.wechatyList
-      // .filter(wechaty => wechaty.logonoff())
+      // .filter(wechaty => wechaty.isLoggedIn)
       // .filter(wechaty => availableState[wechaty.id])
       .map(wechaty => wechaty.name())
       .join(',')
   }
 
-  public version () {
+  version () {
     return VERSION
   }
 
-  public add (...wechatyList: Wechaty[]): this {
+  add (...wechatyList: Wechaty[]): this {
     log.verbose('HAWechaty', 'add(%s)',
       wechatyList
         .map(wechaty => wechaty.name())
-        .join(', ')
+        .join(', '),
     )
 
     const store = this.bundle.store
 
-    wechatyList.forEach(async wechaty => {
+    for (const wechaty of wechatyList) {
       log.verbose('HAWechaty', 'add() installing WechatyRedux to %s ...', wechaty)
 
       wechaty.use(WechatyRedux({ store }))
@@ -201,117 +233,107 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
 
       this.bundle.operations.add(this, wechaty)
 
-      if (this.state.on() && wechaty.state.off()) {
+      if (wechaty.state.inactive()) {
         log.silly('HAWechaty', 'add() %s is starting', wechaty)
-        await wechaty.start()
+        wechaty.wrapAsync(
+          wechaty.state.stable().then(
+            () => wechaty.start(),
+          ),
+        )
       } else {
         log.verbose('HAWechaty', 'add() skip starting for %s', wechaty)
       }
 
-      if (wechaty.logonoff()) {
+      if (wechaty.isLoggedIn) {
         this.bundle.operations.recoverWechaty(wechaty)
       }
 
-    })
+    }
 
     this.wechatyList.push(
-      ...wechatyList
+      ...wechatyList,
     )
 
     return this
   }
 
-  public del (...wechatyList: Wechaty[]): this {
+  remove (...wechatyList: Wechaty[]): this {
     log.verbose('HAWechaty', 'del(%s)',
       wechatyList
         .map(wechaty => wechaty.name())
-        .join(', ')
+        .join(', '),
     )
     throw new Error('to be implemented')
   }
 
-  public nodes (): Wechaty[] {
+  nodes (): Wechaty[] {
     log.verbose('HAWechaty', 'nodes() total %s wechaty instances are under management', this.wechatyList.length)
     return this.wechatyList
   }
 
-  public async start () {
-    log.verbose('HAWechaty', 'start()')
+  // TODO: remove this method
+  test () {
 
-    if (this.state.on()) {
-      await this.state.ready('on')
-      return
-    }
+    this._wechatifiedContact = {
+      load : this.contactLoad.bind(this),
+    } as any
 
-    try {
-      this.state.on('pending')
-
-      if (this.wechatyList.length <= 0) {
-        throw new Error('no wechaty puppet found')
-      }
-
-      log.verbose('HAWechaty', 'start() %s wechaty instance found. Initializing ...', this.wechatyList.length)
-
-      for (const wechaty of this.wechatyList) {
-        log.silly('HAWechaty', 'start() %s starting', wechaty)
-        if (wechaty.state.off()) {
-          await wechaty.state.off()
-          await wechaty.start()
-        } else {
-          log.verbose('HAWechaty', 'start() %s skip starting: its already started.', wechaty)
-        }
-
-        if (wechaty.logonoff()) {
-          this.bundle.operations.recoverWechaty(wechaty)
-        }
-
-      }
-
-      this.state.on(true)
-
-    } catch (e) {
-      log.warn('HAWechaty', 'start() rejection: %s', e)
-      console.info(e)
-      this.state.off(true)
-    }
-
+    this._wechatifiedRoom = {
+      findAll : this.roomFindAll.bind(this),
+      load    : this.roomLoad.bind(this),
+    } as any
   }
 
-  public async stop () {
-    log.verbose('HAWechaty', 'stop()')
+  override async onStart (): Promise<void> {
+    log.verbose('HAWechaty', 'onStart()')
 
-    if (this.state.off()) {
-      await this.state.ready('off')
-      return
+    if (this.wechatyList.length <= 0) {
+      throw new Error('no wechaty puppet found')
     }
 
-    try {
-      this.state.off('pending')
+    log.verbose('HAWechaty', 'onStart() %s wechaty instance found. Initializing ...', this.wechatyList.length)
 
-      await Promise.all(
-        this.wechatyList.map(
-          wechaty => wechaty.stop()
-        )
-      )
+    for (const wechaty of this.wechatyList) {
+      log.silly('HAWechaty', 'onStart() %s starting', wechaty)
+      if (wechaty.state.inactive()) {
+        await wechaty.state.stable()
+        await wechaty.start()
+      } else {
+        log.verbose('HAWechaty', 'onStart() %s skip starting: its already started.', wechaty)
+      }
 
-      /**
-       * Delete all Wechaty instances
-       *  Huan(202005) TODO: make sure they are GC-ed?
-       */
-      this.wechatyList = []
+      if (wechaty.isLoggedIn) {
+        this.bundle.operations.recoverWechaty(wechaty)
+      }
 
-    } catch (e) {
-      log.warn('HAWechaty', 'stop() rejection: %s', e)
-      throw e
-    } finally {
-      this.state.off(true)
     }
   }
 
-  public use (...pluginList: WechatyPlugin[]): void {
+  override async onStop () {
+    log.verbose('HAWechaty', 'onStop()')
+
+    await Promise.all(
+      this.wechatyList.map(
+        wechaty => wechaty.stop(),
+      ),
+    )
+
+    /**
+     * Delete all Wechaty instances
+     *  Huan(202005) TODO: make sure they are GC-ed?
+     */
+    this.wechatyList = []
+  }
+
+  use (
+    ...plugins: (
+      WechatyPlugin | WechatyPlugin[]
+    )[]
+  ): Wechaty {
+    const pluginList = plugins.flat()
     log.verbose('HAWechaty', 'use(%s)',
       pluginList.map(
-        plugin => plugin.name
+        plugin => plugin.name,
       ).join(','),
     )
 
@@ -323,16 +345,30 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     if (this.wechatyList.length > 0) {
       this.wechatyList.forEach(wechaty => wechaty.use(...pluginList))
     }
+
+    return this
   }
 
-  public logonoff (): boolean {
-    log.verbose('HAWechaty', 'logonoff()')
-    return this.wechatyList
+  ready (): Promise<void> {
+    log.verbose('HAWechaty', 'ready()')
+    const readyList = this.wechatyList
       .filter(
-        this.bundle.selectors.isWechatyAvailable
+        this.bundle.selectors.isWechatyAvailable,
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
-      .some(wechaty => wechaty.logonoff())
+      .map(wechaty => wechaty.ready())
+
+    return Promise.race(readyList)
+  }
+
+  get isLoggedIn (): boolean {
+    log.verbose('HAWechaty', 'get isLoggedIn()')
+    return this.wechatyList
+      .filter(
+        this.bundle.selectors.isWechatyAvailable,
+        // haApi.selectors.isWechatyAvailable(this.duckState())
+      )
+      .some(wechaty => wechaty.isLoggedIn)
   }
 
   override on (
@@ -343,25 +379,85 @@ export class HAWechaty <T extends DucksMapObject = any> extends EventEmitter {
     return this
   }
 
-  public async logout (): Promise<void> {
+  async logout (): Promise<void> {
     log.verbose('HAWechaty', 'logout()')
 
     await Promise.all(
       this.wechatyList.map(
-        wechaty => wechaty.logout()
-      )
+        wechaty => wechaty.logout(),
+      ),
     )
   }
 
-  public async say (text: string): Promise<void> {
-    log.verbose('HAWechaty', 'say(%s)', text)
-    this.wechatyList
-      .filter(wechaty => wechaty.logonoff())
+  async say (sayableMsg: Sayable): Promise<void> {
+    log.verbose('HAWechaty', 'say(%s)', sayableMsg)
+
+    const wechatyList = this.wechatyList
+      .filter(wechaty => wechaty.isLoggedIn)
       .filter(
-        this.bundle.selectors.isWechatyAvailable
+        this.bundle.selectors.isWechatyAvailable,
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
-      .forEach(wechaty => wechaty.say(text))
+
+    if (wechatyList.length <= 0) {
+      this.emitError(new Error('no wechaty instance available'))
+      return
+    }
+
+    const wechaty = wechatyList[
+      Math.floor(
+        wechatyList.length * Math.random(),
+      )
+    ]
+
+    if (wechaty) {
+      await wechaty.say(sayableMsg)
+    } else {
+      this.emitError(new Error('no wechaty instance available'))
+    }
   }
 
+  emitError (e: unknown): void {
+    this.emit('error', GError.from(e))
+  }
+
+  get currentUser (): ContactSelf {
+    return throwUnsupportedError()
+  }
+
+  get puppet (): PUPPET.impl.PuppetInterface {
+    return throwUnsupportedError()
+  }
+
+  get authQrCode (): string {
+    return throwUnsupportedError()
+  }
+
+  sleep (milliseconds: number): Promise<void> {
+    return impl.WechatyImpl.prototype.sleep(milliseconds)
+  }
+
+  ding (data?: string): void {
+    return throwUnsupportedError(data)
+  }
+
+  wrapAsync: Wechaty['wrapAsync'] = (...args: any[]) => throwUnsupportedError(...args)
+
+}
+
+/**
+ * Huan(202008): we will bind the wechaty puppet with user modules (Contact, Room, etc) together inside the start() method
+ */
+function guardWechatify<T extends Function> (userModule?: T): T {
+  if (!userModule) {
+    throw new Error('Wechaty user module (for example, wechaty.Room) can not be used before wechaty.start()!')
+  }
+  return userModule
+}
+
+export type {
+  HADefaultDuckery,
+}
+export {
+  HAWechaty,
 }

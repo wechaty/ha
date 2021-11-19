@@ -17,14 +17,11 @@
  *   limitations under the License.
  *
  */
-import {
+import type {
   Contact,
   Message,
-}             from 'wechaty'
-
-import type {
-  MessageType,
-}               from 'wechaty-puppet'
+}                   from 'wechaty'
+import * as PUPPET  from 'wechaty-puppet'
 import {
   getWechaty,
   Duck as wechatyDuck,
@@ -57,7 +54,7 @@ interface PayloadWechatyId { wechatyId: string }
  */
 const milliAroundSeconds = (
   seconds: number,
-  factor = 1 / 6,
+  factor = 1 / 5,
 ) => {
   const ms = seconds * 1000
 
@@ -68,22 +65,42 @@ const milliAroundSeconds = (
   return finalTime
 }
 
-const isFromOf = (contact: Contact) => <T extends { payload: PayloadMessageId }>(action: T) => getWechaty(action.payload.wechatyId)
-  .Message.load(action.payload.messageId)
-  .from()!.id === contact.id
+const isFromContact = (contact: Contact) => async <T extends { payload: PayloadMessageId }>(action: T) => {
+  const message = await getWechaty(action.payload.wechatyId)
+    .Message.find({ id: action.payload.messageId })
+  if (message) {
+    return message.talker().id === contact.id
+  }
+  return false
+}
 
 // TODO
-const isMessageFromSelf = (isSelf = true) => <T extends { payload: PayloadMessageId }>(action: T) => getWechaty(action.payload.wechatyId)
-  .Message.load(action.payload.messageId)
-  .self() === isSelf
+const isMessageFromSelf = (isSelf = true) => async <T extends { payload: PayloadMessageId }> (action: T) => {
+  const message = await getWechaty(action.payload.wechatyId)
+    .Message.find({ id: action.payload.messageId })
+  if (message) {
+    return message.self() === isSelf
+  }
+  return false
+}
 
-const isMessageType = (type: MessageType) => (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => getWechaty(action.payload.wechatyId)
-  .Message.load(action.payload.messageId)
-  .type() === type
+const isMessageType = (type: PUPPET.type.Message) => async (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => {
+  const message = await getWechaty(action.payload.wechatyId)
+    .Message.find({ id: action.payload.messageId })
+  if (message) {
+    return message.type() === type
+  }
+  return false
+}
 
-const isMessageText = (text: string) => (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => getWechaty(action.payload.wechatyId)
-  .Message.load(action.payload.messageId)
-  .text() === text
+const isMessageText = (text: string) => async (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => {
+  const message = await getWechaty(action.payload.wechatyId)
+    .Message.find({ id: action.payload.messageId })
+  if (message) {
+    return message.text() === text
+  }
+  return false
+}
 
 const belongsToWechaty = <T extends { payload: PayloadWechatyId }>(wechatyId: string) => (action: T) => action.payload.wechatyId === wechatyId
 
@@ -99,7 +116,7 @@ const belongsToWechaty = <T extends { payload: PayloadWechatyId }>(wechatyId: st
 //   return wechaty
 // }
 
-const isMessageTypeText = isMessageType(Message.Type.Text)
+const isMessageTypeText = isMessageType(PUPPET.type.Message.Text)
 const isMessageTextDong = isMessageText(DONG)
 
 // const isChatieOA = (action: ReturnType<typeof wechatyDuck.actions.messageEvent>) => getWechaty(action.payload.wechatyId)
@@ -110,20 +127,20 @@ const isDong      = (action: ReturnType<typeof wechatyDuck.actions.messageEvent>
 
 const isNotSelf   = (message: Message) => !message.self()
 
-const toChatieOA = (wechatyId: string): Contact => {
+const toChatieOA = async (wechatyId: string): Promise<Contact> => {
   const wechaty = getWechaty(wechatyId)
-  const contact = wechaty.Contact.load(CHATIE_OA_ID)
-  contact.ready().catch(e => {
-    log.error('HAWechaty', 'heartbeat$ chatie(%s) contact.ready() rejection: %s', wechaty, e)
-    const error = new Error(`
+  const contact = await wechaty.Contact.find({ id: CHATIE_OA_ID })
+  if (contact) {
+    return contact
+  }
 
-    In order to use HAWechaty, we need to follow WeChat Official Account "chatieio" first.
-    See #1: https://github.com/wechaty/HAWechaty/issues/1
-
-    `)
-    wechaty.emit('error', error)
-  })
-  return contact
+  log.error('HAWechaty', 'toChatieOA(%s) find OA failed.', wechaty)
+  throw new Error([
+    '',
+    'In order to use HAWechaty, we need to follow WeChat Official Account "chatieio" first.',
+    'See #1: https://github.com/wechaty/HAWechaty/issues/1',
+    '',
+  ].join('\n'))
 }
 
 const toWechaty = <T extends { payload: PayloadWechatyId }>(action: T) => getWechaty(action.payload.wechatyId)
@@ -139,7 +156,7 @@ export {
   belongsToWechaty,
   // isChatieOA,
   isDong,
-  isFromOf,
+  isFromContact,
   isMessageFromSelf,
   isMessageText,
   isMessageType,

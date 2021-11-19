@@ -5,8 +5,13 @@ import type {
 
 import * as haDuck from './mod.js'
 
-let instance: Ducks<any>
-const getBundle = () => instance.ducksify(haDuck) as Bundle<typeof haDuck>
+let instance: undefined | Ducks<any>
+const getBundle = () => {
+  if (instance) {
+    return instance.ducksify(haDuck) as Bundle<typeof haDuck>
+  }
+  throw new Error('NO INSTANCE')
+}
 
 function setDucks (ducks: Ducks<any>): void {
   if (instance) {

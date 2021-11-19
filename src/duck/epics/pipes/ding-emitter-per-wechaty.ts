@@ -75,7 +75,7 @@ const dingEmitterPerWechaty$ = (
       )),
       takeUntilDong(action.payload.wechatyId, action$),
       takeUntilLoginout(action.payload.wechatyId, action$),
-    )
+    ),
   )),
 )
 

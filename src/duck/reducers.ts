@@ -17,20 +17,21 @@
  *   limitations under the License.
  *
  */
+/* eslint-disable no-whitespace-before-property */
 import {
   ActionType,
   createReducer,
-}                         from 'typesafe-actions'
-import type { DeepReadonly }   from 'utility-types'
+}                             from 'typesafe-actions'
+import type { DeepReadonly }  from 'utility-types'
 
 import * as actions from './actions.js'
 
 const initialState: DeepReadonly<{
   availability: {
-    [wechatyId: string]: undefined | boolean  // the wechaty available or not
+    [wechatyId: string]: boolean  // the wechaty available or not
   }
   cluster: {
-    [wechatyId: string]: undefined | string // wechatyId to haId
+    [wechatyId: string]: string // wechatyId to haId
   },
 }> = {
   availability : {},   // map wechaty id to availability (true or false)
@@ -62,17 +63,20 @@ const reducer = createReducer<
       [action.payload.wechatyId]: action.payload.haId,
     },
   }))
-  .handleAction(actions.delWechaty, (state, action) => ({
-    ...state,
-    availability: {
-      ...state.availability,
-      [action.payload.wechatyId]: undefined,
-    },
-    cluster: {
-      ...state.cluster,
-      [action.payload.wechatyId]: undefined,
-    },
-  }))
+  .handleAction(actions.delWechaty, (state, action) => {
+    const newState = {
+      ...state,
+      availability: {
+        ...state.availability,
+      },
+      cluster: {
+        ...state.cluster,
+      },
+    }
+    delete newState.availability[action.payload.wechatyId]
+    delete newState.cluster     [action.payload.wechatyId]
+    return newState
+  })
 
 export type State = ReturnType<typeof reducer>
 

@@ -103,7 +103,7 @@
 //     t.deepEqual(actual, expected, 'actual match expected')
 //   })
 
-//   const wechaty = new Wechaty()
+//   const wechaty = WechatyBuilder.build()
 
 //   testScheduler.run(({ hot, cold, expectObservable }) => {
 //     const action$ = hot('-a', {

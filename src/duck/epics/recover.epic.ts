@@ -50,7 +50,7 @@ const recoverEpic: Epic = action$ => action$.pipe(
   mergeMap(action => merge(
     recoverWechaty$(action),
     recoverHa$(action),
-  ))
+  )),
 )
 
 export { recoverEpic }

@@ -76,7 +76,7 @@
 
 //   // (wechaty: Wechaty) => fromEvent<Message>(wechaty, 'message').pipe(filter(notSelf))
 //   const sandbox = sinon.createSandbox()
-//   const wechaty = new Wechaty()
+//   const wechaty = WechatyBuilder.build()
 //   const message = wechaty.Message.load('aaa')
 //   sandbox.stub(message, 'self').returns(false)
 
