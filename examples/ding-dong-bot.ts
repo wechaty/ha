@@ -34,7 +34,7 @@ dotenv.config()
  * 1. Declare your Bot!
  *
  */
-const ha = configureHa({
+const ha = await configureHa({
   reduxDevTools: 'remote',
   remoteReduxDevToolsOptions: {
     hostname : 'localhost',

@@ -43,7 +43,7 @@ import {
   StateSwitch,
   serviceCtlFsmMixin,
 }                               from 'state-switch'
-import * as uuid                from 'uuid'
+import * as UUID                from 'uuid'
 import type {
   Bundle,
   Ducks,
@@ -53,7 +53,9 @@ import {
   WechatyRedux,
   Duck as duckWechaty,
 }                               from 'wechaty-redux'
-
+import type {
+  Logger,
+}                               from 'brolog'
 import {
   VERSION,
 }                   from './config.js'
@@ -75,6 +77,7 @@ const mixinBase = serviceCtlFsmMixin('HAWechaty', { log })(EventEmitter)
 
 class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBase implements Wechaty {
 
+  log: Logger = log
   id: string
 
   bundle: Bundle<typeof duckHa>
@@ -112,7 +115,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
     log.verbose('HAWechaty', 'contactLoad(%s)', id)
     const contactListAll = await Promise.all(
       this.wechatyList
-        .filter(wechaty => wechaty.logonoff())
+        .filter(wechaty => wechaty.isLoggedIn)
         .filter(this.bundle.selectors.isWechatyAvailable)
         .map(wechaty => wechaty.Contact.find({ id })),
     )
@@ -133,7 +136,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
     log.verbose('HAWechaty', 'roomFindAll()')
     const roomListList = await Promise.all(
       this.wechatyList
-        .filter(wechaty => wechaty.logonoff())
+        .filter(wechaty => wechaty.isLoggedIn)
         .filter(
           this.bundle.selectors.isWechatyAvailable,
           // haApi.selectors.isWechatyAvailable(this.duckState())
@@ -167,7 +170,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
 
     const roomListAll = await Promise.all(
       this.wechatyList
-        .filter(wechaty => wechaty.logonoff())
+        .filter(wechaty => wechaty.isLoggedIn)
         .filter(this.bundle.selectors.isWechatyAvailable)
         .map(wechaty => wechaty.Room.find({ id })),
     )
@@ -191,7 +194,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
     log.verbose('HAWechaty', 'constructor("%s")', JSON.stringify(options))
     this.state = new StateSwitch('HAWechaty')
 
-    this.id = uuid.v4()
+    this.id = UUID.v4()
     this.wechatyList = []
 
     // FIXME: remove `as any`
@@ -203,7 +206,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
 
   name (): string {
     return this.wechatyList
-      // .filter(wechaty => wechaty.logonoff())
+      // .filter(wechaty => wechaty.isLoggedIn)
       // .filter(wechaty => availableState[wechaty.id])
       .map(wechaty => wechaty.name())
       .join(',')
@@ -241,7 +244,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
         log.verbose('HAWechaty', 'add() skip starting for %s', wechaty)
       }
 
-      if (wechaty.logonoff()) {
+      if (wechaty.isLoggedIn) {
         this.bundle.operations.recoverWechaty(wechaty)
       }
 
@@ -299,7 +302,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
         log.verbose('HAWechaty', 'onStart() %s skip starting: its already started.', wechaty)
       }
 
-      if (wechaty.logonoff()) {
+      if (wechaty.isLoggedIn) {
         this.bundle.operations.recoverWechaty(wechaty)
       }
 
@@ -358,14 +361,14 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
     return Promise.race(readyList)
   }
 
-  logonoff (): boolean {
-    log.verbose('HAWechaty', 'logonoff()')
+  get isLoggedIn (): boolean {
+    log.verbose('HAWechaty', 'get isLoggedIn()')
     return this.wechatyList
       .filter(
         this.bundle.selectors.isWechatyAvailable,
         // haApi.selectors.isWechatyAvailable(this.duckState())
       )
-      .some(wechaty => wechaty.logonoff())
+      .some(wechaty => wechaty.isLoggedIn)
   }
 
   override on (
@@ -390,7 +393,7 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
     log.verbose('HAWechaty', 'say(%s)', sayableMsg)
 
     const wechatyList = this.wechatyList
-      .filter(wechaty => wechaty.logonoff())
+      .filter(wechaty => wechaty.isLoggedIn)
       .filter(
         this.bundle.selectors.isWechatyAvailable,
         // haApi.selectors.isWechatyAvailable(this.duckState())
@@ -418,11 +421,15 @@ class HAWechaty <T extends HADefaultDuckery = HADefaultDuckery> extends mixinBas
     this.emit('error', GError.from(e))
   }
 
-  currentUser (): ContactSelf {
+  get currentUser (): ContactSelf {
     return throwUnsupportedError()
   }
 
   get puppet (): PUPPET.impl.PuppetInterface {
+    return throwUnsupportedError()
+  }
+
+  get authQrCode (): string {
     return throwUnsupportedError()
   }
 

@@ -111,5 +111,4 @@ haWechaty.use(
 //   5 * 1000,
 // ))
 
-haWechaty.start()
-  .catch(console.error)
+await haWechaty.start()
